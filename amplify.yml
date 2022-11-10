@@ -5,6 +5,7 @@ frontend:
       commands:
         - npm install react-router-dom
         - npm install reactstrap
+        - npm install react-query
         - npm install
         - npm ci
     build:
