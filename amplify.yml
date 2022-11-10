@@ -4,6 +4,7 @@ frontend:
     preBuild:
       commands:
         - npm install react-router-dom
+        - npm install
         - npm ci
     build:
       commands:
