@@ -9,13 +9,13 @@ body {
 
 .table {
 	display: grid;
-	grid-template-columns: 1.5fr 1fr 1fr 1fr .5fr .5fr .5fr 1fr .25fr .25fr;
-	max-width: 90%;
+	grid-template-columns: 12.5fr 10fr 10fr 10fr 5fr 5fr 5fr 15fr 1fr 1fr;
+	max-width: 1400px;
 }
 
 .table > div {
 	border-color: #e9e9e9;
-	padding: 12px 15px;
+	padding: 2px 15px;
 	vertical-align: middle;
 }
 
@@ -24,7 +24,31 @@ body {
 	font-weight: bold;
 	margin: 0 5px;
 	cursor: pointer;
+	background-color: #fff!important;
+	padding: 12px 15px!important;
+	border-bottom: solid 1px black;
 }
+
+
+.table>div:nth-child(20n+1),
+  .table>div:nth-child(20n+2),
+  .table>div:nth-child(20n+3),
+  .table>div:nth-child(20n+4),
+  .table>div:nth-child(20n+5),
+  .table>div:nth-child(20n+6),
+  .table>div:nth-child(20n+7),
+  .table>div:nth-child(20n+8),
+  .table>div:nth-child(20n+9),
+  .table>div:nth-child(20n+10) {
+	background-color: #ddd;
+}
+
+.table>div:nth-child(10n+5),
+  .table>div:nth-child(10n+6),
+  .table>div:nth-child(10n+7) {
+	text-align: center;
+}
+
 
 li.tag {
 	padding: 0px!important;
