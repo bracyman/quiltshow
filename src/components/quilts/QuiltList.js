@@ -17,8 +17,7 @@ const EMPTY_QUILT = {
 };
 
 function QuiltList() {
-  const { quilts, addQuilt, validateQuilt, deleteQuilt } =
-    useContext(QuiltContext);
+  const { quilts, addQuilt, validateQuilt } = useContext(QuiltContext);
   const [showNewQuiltForm, setShowNewQuiltForm] = useState(false);
   const [newQuilt, setNewQuilt] = useState(EMPTY_QUILT);
 
@@ -62,25 +61,23 @@ function QuiltList() {
         </div>
       </div>
 
-      <table className="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Pieced By</th>
-            <th>Quilted By</th>
-            <th>Width</th>
-            <th>Length</th>
-          </tr>
-        </thead>
-        <tbody>
-          {quilts &&
-            quilts.map((quilt) => (
-              <tr key={quilt.id}>
-                <QuiltRow quilt={quilt} />
-              </tr>
-            ))}
-        </tbody>
-      </table>
+      <div className="table table-striped table-hover">
+        <div className="table-header">Name</div>
+        <div className="table-header">Pieced By</div>
+        <div className="table-header">Quilted By</div>
+        <div className="table-header">Category</div>
+        <div className="table-header">Width</div>
+        <div className="table-header">Length</div>
+        <div className="table-header">Judged</div>
+        <div className="table-header">Tags</div>
+        <div className="table-header"></div>
+        <div className="table-header"></div>
+
+        {quilts &&
+          quilts.map((quilt) => (
+              <QuiltRow quilt={quilt} />
+          ))}
+      </div>
 
       <Modal show={showNewQuiltForm} onHide={handleCloseNewQuilt}>
         <Modal.Header closeButton>

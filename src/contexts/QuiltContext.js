@@ -5,16 +5,18 @@ export const EMPTY_QUILT = {
     id: null,
     name: "",
     description: "",
+    category: null,
     tags: [],
     length: null,
     width: null,
     piecedBy: null,
     quiltedBy: null,
+    judged: false
   };
 
 const QuiltContextProvider = (props) => {
     const [quilts, setQuilts] = useState([
-        {"id":1,"name":"SuperQuilt","description":"A super quilt","tags":[],"length":0,"width":42,"piecedBy":"Mary Sue","quiltedBy":"Mary Sue"}
+        {"id":1,"name":"SuperQuilt","description":"A super quilt","tags":[],"length":33,"width":42,"piecedBy":"Mary Sue","quiltedBy":"Mary Sue"}
     ]);
 
     var identifier = quilts.length > 0 ? Math.max(quilts.map(q => q.id)) + 1 : 1;

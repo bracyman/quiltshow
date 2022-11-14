@@ -7,6 +7,29 @@ body {
 	font-size: 13px;
 }
 
+.table {
+	display: grid;
+	grid-template-columns: 1.5fr 1fr 1fr 1fr .5fr .5fr .5fr 1fr .25fr .25fr;
+	max-width: 90%;
+}
+
+.table > div {
+	border-color: #e9e9e9;
+	padding: 12px 15px;
+	vertical-align: middle;
+}
+
+.table-header {
+	font-size: 16px;
+	font-weight: bold;
+	margin: 0 5px;
+	cursor: pointer;
+}
+
+li.tag {
+	padding: 0px!important;
+}
+
 .btn-act {
 	padding: 4px;
 }
