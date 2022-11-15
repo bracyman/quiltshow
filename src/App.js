@@ -18,7 +18,7 @@ function App() {
         <Router>
           <Routes>
             <Route path="/" exact={true} element={<Home />} />
-            <Route path="/quiltEntry" exact={true} element={<QuiltList />} />
+            <Route path="/quilts" exact={true} element={<QuiltList />} />
           </Routes>
         </Router>
       </QuiltContextProvider>

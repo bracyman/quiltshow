@@ -7,6 +7,40 @@ body {
 	font-size: 13px;
 }
 
+.site-title {
+	font-size: 60px;
+	margin-left: 20px;
+}
+
+.site-navbar {
+	background-color: #566787;
+	margin-bottom: 10px;
+}
+
+.site-navbar ul {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.site-navbar li {
+	margin-right: 25px;
+}
+
+.site-navbar a {
+	color: white;
+	font-size: 24px;
+}
+.site-navbar a:hover {
+	color: white;
+	text-decoration: underline overline;
+}
+
+.site-navbar a.current {
+	font-weight: bold;
+}
+
+
+
 .table {
 	display: grid;
 	grid-template-columns: 12.5fr 10fr 10fr 10fr 5fr 5fr 5fr 15fr 1fr 1fr;
@@ -26,7 +60,7 @@ body {
 	cursor: pointer;
 	background-color: #fff!important;
 	padding: 12px 15px!important;
-	border-bottom: solid 1px black;
+	border-bottom: solid 3px black;
 }
 
 

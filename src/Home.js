@@ -1,20 +1,7 @@
-import React, { Component } from 'react';
-import './App.css';
-import AppNavbar from './AppNavBar';
-import SelectableTagList from './SelectableTagList';
-import { Link } from 'react-router-dom';
-import { Button, Container } from 'reactstrap';
+import React, { Component } from "react";
+import "./App.css";
 
-class Home extends Component {
-    render() {
-        return (
-            <div>
-                <AppNavbar/>
-                <Container fluid>
-                    <SelectableTagList/>
-                </Container>
-            </div>
-        );
-    }
+function Home() {
+  return <div></div>;
 }
 export default Home;

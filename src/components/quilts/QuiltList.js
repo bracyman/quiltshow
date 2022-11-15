@@ -41,13 +41,6 @@ function QuiltList() {
 
   return (
     <>
-      <div className="table-title">
-        <div className="row">
-          <div className="col-sm-6">
-            <h2>Quilts</h2>
-          </div>
-        </div>
-      </div>
       <div className="row">
         <div className="col-sm-6">
           <Button
@@ -75,7 +68,7 @@ function QuiltList() {
 
         {quilts &&
           quilts.map((quilt) => (
-              <QuiltRow quilt={quilt} />
+              <QuiltRow key={quilt.id} quilt={quilt} />
           ))}
       </div>
 
