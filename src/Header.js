@@ -1,13 +1,21 @@
 import React, { useState } from "react";
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from "reactstrap";
+import {useIsAuthenticated} from 'react-auth-kit';
 
-function Header() {
+function Header(props) {
   let pages = [
     { route: "quilts", name: "Quilts" },
     { route: "reports", name: "Reports" },
     { route: "layout", name: "Floor Layout" },
     { route: "configuration", name: "Configuration" },
   ];
+
+  const isAuthenticated = useIsAuthenticated();
+
+
+  if(!isAuthenticated()) {
+    return (<></>);
+  }
 
   return (
     <>

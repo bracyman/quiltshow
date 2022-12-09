@@ -43,14 +43,14 @@ const QuiltForm = (props) => {
       <Form.Group className="mb-1">
         <Row>
           <Col sm={2}>
-            <Form.Label for="name">Quilt Name</Form.Label>
+            <Form.Label htmlFor="name">Quilt Name</Form.Label>
           </Col>
           <Col>
             <Form.Control
               type="text"
               placeholder="Name"
               name="name"
-              value={name}
+              value={name || ""}
               onChange={(e) => onInputChange(e)}
               required
             />
@@ -60,7 +60,7 @@ const QuiltForm = (props) => {
       <Form.Group className="mb-1">
         <Row>
           <Col sm={2}>
-            <Form.Label for="description">Description</Form.Label>
+            <Form.Label htmlFor="description">Description</Form.Label>
           </Col>
           <Col>
             <Form.Control
@@ -68,7 +68,7 @@ const QuiltForm = (props) => {
               placeholder="Description"
               rows={4}
               name="description"
-              value={description}
+              value={description || ""}
               onChange={(e) => onInputChange(e)}
               required
             />
@@ -78,14 +78,14 @@ const QuiltForm = (props) => {
       <Form.Group className="mb-1">
         <Row>
           <Col sm={2}>
-            <Form.Label for="width">Width</Form.Label>
+            <Form.Label htmlFor="width">Width</Form.Label>
           </Col>
           <Col>
             <Form.Control
               type="number"
               placeholder="0"
               name="width"
-              value={width}
+              value={width || ""}
               onChange={(e) => onInputChange(e)}
             />
           </Col>
@@ -94,14 +94,14 @@ const QuiltForm = (props) => {
       <Form.Group className="mb-1">
         <Row>
           <Col sm={2}>
-            <Form.Label for="length">Length</Form.Label>
+            <Form.Label htmlFor="length">Length</Form.Label>
           </Col>
           <Col>
             <Form.Control
               type="number"
               placeholder="0"
               name="length"
-              value={length}
+              value={length || ""}
               onChange={(e) => onInputChange(e)}
             />
           </Col>
@@ -110,7 +110,7 @@ const QuiltForm = (props) => {
       <Form.Group className="mb-1">
         <Row>
           <Col sm={2}>
-            <Form.Label for="category">Category</Form.Label>
+            <Form.Label htmlFor="category">Category</Form.Label>
           </Col>
           <Col>
             <Form.Select
@@ -130,14 +130,14 @@ const QuiltForm = (props) => {
       <Form.Group className="mb-1">
         <Row>
           <Col sm={2}>
-            <Form.Label for="name">Pieced by</Form.Label>
+            <Form.Label htmlFor="name">Pieced by</Form.Label>
           </Col>
           <Col>
             <Form.Control
               type="text"
               placeholder="Pieced By"
               name="piecedBy"
-              value={piecedBy}
+              value={piecedBy || ""}
               onChange={(e) => onInputChange(e)}
             />
           </Col>
@@ -146,14 +146,14 @@ const QuiltForm = (props) => {
       <Form.Group className="mb-1">
         <Row>
           <Col sm={2}>
-            <Form.Label for="name">Quilted By</Form.Label>
+            <Form.Label htmlFor="name">Quilted By</Form.Label>
           </Col>
           <Col>
             <Form.Control
               type="text"
               placeholder="Quilted By"
               name="quiltedBy"
-              value={quiltedBy}
+              value={quiltedBy || ""}
               onChange={(e) => onInputChange(e)}
             />
           </Col>
@@ -162,7 +162,7 @@ const QuiltForm = (props) => {
       <Form.Group className="mb-1">
         <Row>
           <Col sm={2}>
-            <Form.Label for="judged">Judged?</Form.Label>
+            <Form.Label htmlFor="judged">Judged?</Form.Label>
           </Col>
           <Col>
           <Form.Check
@@ -191,7 +191,7 @@ const QuiltForm = (props) => {
       <Form.Group className="mb-1">
         <Row>
           <Col sm={2}>
-            <Form.Label for="tags">Tags</Form.Label>
+            <Form.Label htmlFor="tags">Tags</Form.Label>
           </Col>
           <Col>
             {quiltTags.map((t) => (
