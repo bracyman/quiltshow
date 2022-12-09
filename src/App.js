@@ -1,28 +1,49 @@
 import React, { Component } from "react";
 import "./App.css";
 import Home from "./Home";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import QuiltList from "./components/quilts/QuiltList";
-import Header from "./Header.js";
+import Header from "./Header";
+import Login from "./Login";
 import QuiltContextProvider from "./contexts/QuiltContext";
 import CategoryContextProvider from "./contexts/CategoryContext";
 import TagContextProvider from "./contexts/TagContext";
+import { useAuthUser, RequireAuth } from "react-auth-kit";
 
 function App() {
+  const auth = useAuthUser();
+
   return (
     <div>
       <Header />
       <CategoryContextProvider>
-      <TagContextProvider>
-      <QuiltContextProvider>
-        <Router>
-          <Routes>
-            <Route path="/" exact={true} element={<Home />} />
-            <Route path="/quilts" exact={true} element={<QuiltList />} />
-          </Routes>
-        </Router>
-      </QuiltContextProvider>
-      </TagContextProvider>
+        <TagContextProvider>
+          <QuiltContextProvider>
+          <BrowserRouter>
+              <Routes>
+                <Route
+                  path={"/"}
+                  exact={true}
+                  element={
+                    <RequireAuth loginPath={"/login"}>
+                      <Home />
+                    </RequireAuth>
+                  }
+                />
+                <Route
+                  path={"/quilts"}
+                  exact={true}
+                  element={
+                    <RequireAuth loginPath={"/login"}>
+                      <QuiltList />
+                    </RequireAuth>
+                  }
+                />
+                <Route path={"/login"} exact={true} element={<Login />} />
+              </Routes>
+            </BrowserRouter>
+          </QuiltContextProvider>
+        </TagContextProvider>
       </CategoryContextProvider>
     </div>
   );
