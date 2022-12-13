@@ -5,48 +5,28 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import QuiltList from "./components/quilts/QuiltList";
 import Header from "./Header";
 import Login from "./Login";
-import QuiltContextProvider from "./contexts/QuiltContext";
-import CategoryContextProvider from "./contexts/CategoryContext";
-import TagContextProvider from "./contexts/TagContext";
-import { useAuthUser, RequireAuth } from "react-auth-kit";
+import AuthService from "./services/AuthService";
 
 function App() {
-  const auth = useAuthUser();
 
-  return (
-    <div>
-      <Header />
-      <CategoryContextProvider>
-        <TagContextProvider>
-          <QuiltContextProvider>
+  if(!AuthService.loggedIn()) {
+    return (
+        <Login />
+    );
+  }
+  else {
+    return (
+        <div>
+          <Header />
           <BrowserRouter>
               <Routes>
-                <Route
-                  path={"/"}
-                  exact={true}
-                  element={
-                    <RequireAuth loginPath={"/login"}>
-                      <Home />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path={"/quilts"}
-                  exact={true}
-                  element={
-                    <RequireAuth loginPath={"/login"}>
-                      <QuiltList />
-                    </RequireAuth>
-                  }
-                />
-                <Route path={"/login"} exact={true} element={<Login />} />
+                <Route path={"/"} exact={true} element={ <Home /> } />
+                <Route path={"/quilts"} exact={true} element={ <QuiltList /> } />
               </Routes>
             </BrowserRouter>
-          </QuiltContextProvider>
-        </TagContextProvider>
-      </CategoryContextProvider>
-    </div>
-  );
+        </div>
+    );
+  }
 }
 
 export default App;

@@ -1,7 +1,8 @@
 import React from "react";
 import { Modal, Button, Alert } from "react-bootstrap";
 import { useState, useContext } from "react";
-import { QuiltContext } from "../../contexts/QuiltContext";
+import QuiltService from "../../services/QuiltService";
+import { useQuery } from "react-query";
 import QuiltRow from "./QuiltRow";
 import QuiltForm from "./QuiltForm";
 
@@ -16,8 +17,10 @@ const EMPTY_QUILT = {
   quiltedBy: null,
 };
 
+
+
 function QuiltList() {
-  const { quilts, addQuilt, validateQuilt } = useContext(QuiltContext);
+  const { data, status } = useQuery("quilts", QuiltService.fetchQuilts());
   const [showNewQuiltForm, setShowNewQuiltForm] = useState(false);
   const [newQuilt, setNewQuilt] = useState(EMPTY_QUILT);
 
@@ -28,12 +31,13 @@ function QuiltList() {
     setNewQuilt(quilt);
   };
 
+ 
   const handleSubmitNewQuilt = (e) => {
     e.preventDefault();
 
-    if (validateQuilt(newQuilt)) {
+    if (QuiltService.validateQuilt(newQuilt)) {
       console.log(`Adding new quilt: ${newQuilt}`);
-      addQuilt(newQuilt);
+      QuiltService.addQuilt(newQuilt);
       setNewQuilt(EMPTY_QUILT);
       handleCloseNewQuilt();
     }
@@ -66,12 +70,16 @@ function QuiltList() {
         <div className="table-header"></div>
         <div className="table-header"></div>
 
-        {quilts &&
-          quilts.map((quilt) => (
-              <QuiltRow key={quilt.id} quilt={quilt} />
-          ))}
+        {status === "error" && <p>Error fetching quilts</p>}
+        {status === "loading" && <p>Fetching quilts ...</p>}
+        {status === "success" && data && (data.length === 0) && <p>No quilts entered yet</p>}
+        {status === "success" && data && (data.length > 0) && 
+            data.map((quilt) => (
+                <QuiltRow key={quilt.id} quilt={quilt} />
+            ))
+        }
       </div>
-
+        
       <Modal show={showNewQuiltForm} onHide={handleCloseNewQuilt}>
         <Modal.Header closeButton>
           <Modal.Title>Enter New Quilt</Modal.Title>

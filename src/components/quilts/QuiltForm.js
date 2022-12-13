@@ -1,17 +1,25 @@
 import { Form, Row, Col } from "react-bootstrap";
-import { CategoryContext } from "../../contexts/CategoryContext";
-import { TagContext } from "../../contexts/TagContext";
-import { useContext } from "react";
+import QuiltService from "../../services/QuiltService";
 
 const QuiltForm = (props) => {
-  const { categories } = useContext(CategoryContext);
-  const { quiltTags } = useContext(TagContext);
+
+  const categories = [
+      {"id":1,"name":"Small","shortDescription":"0 to 10 sq inches", "description": "really small"},
+      {"id":2,"name":"Medium","shortDescription":"11 to 1000 sq inches", "description": "pretty average"},
+      {"id":3,"name":"Large","shortDescription":"1001 to 100,000 sq inches", "description": "friggin' huge"},
+  ];
+
+  const quiltTags = [
+    {"id":1,"name":"Special Event", "description": "Made for a special event"},
+    {"id":2,"name":"Christmas", "description": "This is a gift"},
+    {"id":3,"name":"President's Challenge", "description": "Made for the president's challenge"},
+  ];
 
   const onInputChange = (e) => {
     let propertyName = e.target.name;
     let updatedValue = e.target.value;
     if (propertyName === "category") {
-      updatedValue = categories.find((c) => c.id == updatedValue);
+      updatedValue = categories.find((c) => c.id === updatedValue);
     } 
     else if (propertyName === "judged") {
       updatedValue = e.target.value === "yes";

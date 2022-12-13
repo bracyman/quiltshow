@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Navbar, NavbarBrand, Nav, NavItem, NavLink } from "reactstrap";
-import {useIsAuthenticated} from 'react-auth-kit';
+import AuthService from "./services/AuthService";
 
 function Header(props) {
   let pages = [
@@ -10,10 +10,8 @@ function Header(props) {
     { route: "configuration", name: "Configuration" },
   ];
 
-  const isAuthenticated = useIsAuthenticated();
 
-
-  if(!isAuthenticated()) {
+  if(!AuthService.loggedIn()) {
     return (<></>);
   }
 
@@ -41,6 +39,7 @@ function Header(props) {
               </NavLink>
             </NavItem>
           ))}
+          <NavItem key="signOut"><button onClick={() => AuthService.logout()}>Sign Out</button></NavItem>
         </Nav>
       </Navbar>
     </>

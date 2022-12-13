@@ -1,11 +1,10 @@
 import { useState, useContext } from "react";
 import { Modal, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
-import { QuiltContext } from "../../contexts/QuiltContext";
+import QuiltService from "../../services/QuiltService";
 import QuiltForm from "./QuiltForm";
 import Prompt from "../Prompt";
 
 function QuiltRow(props) {
-  const { validateQuilt, updateQuilt, deleteQuilt } = useContext(QuiltContext);
   const [editQuilt, setEditQuilt] = useState({});
   const [showDeletePrompt, setShowDeletePrompt] = useState(false);
   const [selectedDelete, setSelectedDelete] = useState(false);
@@ -26,8 +25,8 @@ function QuiltRow(props) {
   const handleSubmitQuiltChanges = (e) => {
     e.preventDefault();
 
-    if (validateQuilt(editQuilt)) {
-      updateQuilt(editQuilt);
+    if (QuiltService.validateQuilt(editQuilt)) {
+      QuiltService.updateQuilt(editQuilt);
       handleClose();
     }
   };
@@ -42,7 +41,7 @@ function QuiltRow(props) {
   };
 
   const deleteSelectedQuilt = () => {
-    deleteQuilt(selectedDelete);
+    QuiltService.deleteQuilt(selectedDelete);
     handleCloseDelete();
   };
 
