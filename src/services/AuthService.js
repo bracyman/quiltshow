@@ -2,50 +2,70 @@ import Config from "./Config";
 import { encode as base64_encode } from "base-64";
 
 class AuthService {
-    login(username, password) {
+    verifyUser(username) {
+        return true;
+    }
+
+    async login(username, password) {
         let basicAuth = base64_encode(`${username}:${password}`);
-        fetch(`${Config.apiHost()}/token`, {
+        let res = await fetch(`${Config.apiHost()}/token`, {
             method: "POST",
             headers: new Headers({
                 Authorization: `Basic ${basicAuth}`,
             }),
         })
-        .then(response => {
-            if(response.data.accessToken) {
-                localStorage.setItem("user", JSON.stringify(response.data));
+        .then((response) =>  {
+            if(!response.ok) {
+                throw new Error(response.statusText);  
             }
 
-            return response.data;
+            return response.json();
+        })
+        .then(tokenRespose => {
+            if(tokenRespose.accessToken) {
+                localStorage.setItem("user", JSON.stringify(tokenRespose));
+                return true;
+            }
+
+            return false;
+        })
+        .catch((error) => {
+            console.log("Login failure: " + error);
+            return false;
         });
+
+        return res;
     }
 
-    register(newPerson) {
-        fetch(`${Config.apiHost()}/register`, {
+    async register(newPerson) {
+        await fetch(`${Config.apiHost()}/register`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
               },
             body: JSON.stringify(newPerson),
         })
-        .then(response => {
-            if(response.data.accessToken) {
-                localStorage.setItem("user", JSON.stringify(response.data));
+        .then(tokenRespose => {
+            if(tokenRespose.accessToken) {
+                localStorage.setItem("user", JSON.stringify(tokenRespose));
             }
         });  
     }
 
-    authHeader() {
+    authHeader(headers) {
+        let authHeaders = headers ? headers : {};
         let usr = JSON.parse(localStorage.getItem("user"));
-        return (usr && usr.accessToken) ? { Authorization: `Bearer${usr.accessToken}` } : {};
+        return (usr && usr.accessToken) ? {...authHeaders,  Authorization: `Bearer ${usr.accessToken}` } : authHeaders;
     }
 
     getCurrentUser() {
-        return JSON.parse(localStorage.getItem("user"));
+        return JSON.parse(localStorage.getItem("user")?.user);
     }
 
     logout() {
         localStorage.removeItem("user");
     }
+    
 
     loggedIn() {
         let usr = localStorage.getItem("user");

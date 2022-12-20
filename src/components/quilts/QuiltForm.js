@@ -4,12 +4,18 @@ import QuiltService from "../../services/QuiltService";
 const QuiltForm = (props) => {
 
   const categories = [
-      {"id":1,"name":"Small","shortDescription":"0 to 10 sq inches", "description": "really small"},
-      {"id":2,"name":"Medium","shortDescription":"11 to 1000 sq inches", "description": "pretty average"},
-      {"id":3,"name":"Large","shortDescription":"1001 to 100,000 sq inches", "description": "friggin' huge"},
+    {"id":1,"name":"Small","shortDescription":"0 to 10 sq inches", "description": "really small"},
+    {"id":2,"name":"Medium","shortDescription":"11 to 1000 sq inches", "description": "pretty average"},
+    {"id":3,"name":"Large","shortDescription":"1001 to 100,000 sq inches", "description": "friggin' huge"},
   ];
 
-  const quiltTags = [
+  const efforts = [
+    {"id":"SOLO","name":"Solo","shortDescription":"Solo effort", "description": "Solo effort"},
+    {"id":"DUET","name":"Duet","shortDescription":"Two person effort", "description": "Two person effort"},
+    {"id":"GROUP","name":"Group","shortDescription":"3 or more people", "description": "3 or more people"},
+  ];
+
+const quiltTags = [
     {"id":1,"name":"Special Event", "description": "Made for a special event"},
     {"id":2,"name":"Christmas", "description": "This is a gift"},
     {"id":3,"name":"President's Challenge", "description": "Made for the president's challenge"},
@@ -19,8 +25,8 @@ const QuiltForm = (props) => {
     let propertyName = e.target.name;
     let updatedValue = e.target.value;
     if (propertyName === "category") {
-      updatedValue = categories.find((c) => c.id === updatedValue);
-    } 
+      updatedValue = categories.find((c) => c.id == updatedValue);
+    }
     else if (propertyName === "judged") {
       updatedValue = e.target.value === "yes";
     } 
@@ -36,12 +42,13 @@ const QuiltForm = (props) => {
   const {
     id,
     name,
-    category,
     description,
-    width,
+    category,
+    effort,
     length,
-    piecedBy,
-    quiltedBy,
+    width,
+    enteredBy,
+    additionalQuilters,
     judged,
     tags,
   } = props.quilt;
@@ -127,7 +134,7 @@ const QuiltForm = (props) => {
               value={category ? category.id : ""}
             >
               {categories.map((c) => (
-                <option value={c.id}>
+                <option value={c.id} key={c.id}>
                   {c.name} ({c.shortDescription})
                 </option>
               ))}
@@ -138,30 +145,34 @@ const QuiltForm = (props) => {
       <Form.Group className="mb-1">
         <Row>
           <Col sm={2}>
-            <Form.Label htmlFor="name">Pieced by</Form.Label>
+            <Form.Label htmlFor="name">Effort</Form.Label>
           </Col>
           <Col>
-            <Form.Control
-              type="text"
-              placeholder="Pieced By"
-              name="piecedBy"
-              value={piecedBy || ""}
+          <Form.Select
+              name="effort"
               onChange={(e) => onInputChange(e)}
-            />
+              value={effort ? effort.id : ""}
+            >
+              {efforts.map((e) => (
+                <option value={e.id} key={e.id}>
+                  {e.name} ({e.shortDescription})
+                </option>
+              ))}
+            </Form.Select>
           </Col>
         </Row>
       </Form.Group>
       <Form.Group className="mb-1">
         <Row>
           <Col sm={2}>
-            <Form.Label htmlFor="name">Quilted By</Form.Label>
+            <Form.Label htmlFor="name">Additional Quilters</Form.Label>
           </Col>
           <Col>
             <Form.Control
               type="text"
-              placeholder="Quilted By"
-              name="quiltedBy"
-              value={quiltedBy || ""}
+              placeholder="Names, separated with commas"
+              name="additionalQuilters"
+              value={additionalQuilters || ""}
               onChange={(e) => onInputChange(e)}
             />
           </Col>

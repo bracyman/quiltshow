@@ -1,7 +1,7 @@
 
 class Config {
 
-    apiHost() { return "localhost:8080" };
+    apiHost() { return "http://localhost:8080" };
 }
 
 export default new Config();

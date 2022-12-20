@@ -1,23 +1,33 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import Home from "./Home";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "react-query";
 import QuiltList from "./components/quilts/QuiltList";
 import Header from "./Header";
 import Login from "./Login";
 import AuthService from "./services/AuthService";
 
-function App() {
+const queryClient = new QueryClient();
 
-  if(!AuthService.loggedIn()) {
+function App() {
+  const [authenticated, setAuthenticated] = useState(AuthService.loggedIn());
+
+  const logout = () => {
+    AuthService.logout();
+    setAuthenticated(false);
+  }
+
+  if(!authenticated) {
     return (
         <Login />
     );
   }
   else {
     return (
+      <QueryClientProvider client={queryClient}>
         <div>
-          <Header />
+          <Header logout={logout}/>
           <BrowserRouter>
               <Routes>
                 <Route path={"/"} exact={true} element={ <Home /> } />
@@ -25,6 +35,7 @@ function App() {
               </Routes>
             </BrowserRouter>
         </div>
+      </QueryClientProvider>
     );
   }
 }

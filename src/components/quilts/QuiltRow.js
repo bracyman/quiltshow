@@ -25,10 +25,8 @@ function QuiltRow(props) {
   const handleSubmitQuiltChanges = (e) => {
     e.preventDefault();
 
-    if (QuiltService.validateQuilt(editQuilt)) {
-      QuiltService.updateQuilt(editQuilt);
-      handleClose();
-    }
+    props.mutator({modifier: QuiltService.updateQuilt, validator: QuiltService.validateQuilt, params: editQuilt});
+    handleClose();
   };
 
   const handleClose = () => {
@@ -41,7 +39,7 @@ function QuiltRow(props) {
   };
 
   const deleteSelectedQuilt = () => {
-    QuiltService.deleteQuilt(selectedDelete);
+    props.mutator({modifier: QuiltService.deleteQuilt, params: selectedDelete});
     handleCloseDelete();
   };
 

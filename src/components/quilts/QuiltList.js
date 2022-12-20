@@ -2,7 +2,7 @@ import React from "react";
 import { Modal, Button, Alert } from "react-bootstrap";
 import { useState, useContext } from "react";
 import QuiltService from "../../services/QuiltService";
-import { useQuery } from "react-query";
+import { useQueryClient, useQuery, useMutation } from "react-query";
 import QuiltRow from "./QuiltRow";
 import QuiltForm from "./QuiltForm";
 
@@ -20,9 +20,21 @@ const EMPTY_QUILT = {
 
 
 function QuiltList() {
-  const { data, status } = useQuery("quilts", QuiltService.fetchQuilts());
   const [showNewQuiltForm, setShowNewQuiltForm] = useState(false);
   const [newQuilt, setNewQuilt] = useState(EMPTY_QUILT);
+  const queryClient = useQueryClient();
+  const {data, status} = useQuery("quilts", QuiltService.fetchQuilts);
+  const mutation = useMutation({
+    mutationFn: (mutator) => {
+      if (!mutator.validator || mutator.validator(mutator.params)) {
+        return mutator.modifier(mutator.params);
+      }
+    },
+    onSuccess: (data, error, variables, context) => {
+      setNewQuilt(EMPTY_QUILT);
+      return queryClient.invalidateQueries({ queryKey: ['quilts'] });
+    }
+  });
 
   const handleShowNewQuilt = () => setShowNewQuiltForm(true);
   const handleCloseNewQuilt = () => setShowNewQuiltForm(false);
@@ -31,16 +43,13 @@ function QuiltList() {
     setNewQuilt(quilt);
   };
 
+
  
   const handleSubmitNewQuilt = (e) => {
     e.preventDefault();
-
-    if (QuiltService.validateQuilt(newQuilt)) {
-      console.log(`Adding new quilt: ${newQuilt}`);
-      QuiltService.addQuilt(newQuilt);
-      setNewQuilt(EMPTY_QUILT);
-      handleCloseNewQuilt();
-    }
+    console.log(`Adding new quilt: ${newQuilt}`);
+    mutation.mutate({modifier: QuiltService.addQuilt, validator: QuiltService.validateQuilt, params: newQuilt});
+    handleCloseNewQuilt();
   };
 
   return (
@@ -70,12 +79,10 @@ function QuiltList() {
         <div className="table-header"></div>
         <div className="table-header"></div>
 
-        {status === "error" && <p>Error fetching quilts</p>}
-        {status === "loading" && <p>Fetching quilts ...</p>}
-        {status === "success" && data && (data.length === 0) && <p>No quilts entered yet</p>}
-        {status === "success" && data && (data.length > 0) && 
+        {data && (data.length === 0) && <p>No quilts entered yet</p>}
+        {data && (data.length > 0) && 
             data.map((quilt) => (
-                <QuiltRow key={quilt.id} quilt={quilt} />
+                <QuiltRow key={quilt.id} quilt={quilt} mutator={mutation.mutate} />
             ))
         }
       </div>

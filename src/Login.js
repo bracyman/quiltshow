@@ -32,7 +32,8 @@ function Login() {
       promptForRegistration();
     }
     else {
-      if(AuthService.login(username, password)) {
+      let success = await AuthService.login(username, password);
+      if(success) {
         window.location.href = "/";
       }
       else {

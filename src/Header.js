@@ -15,6 +15,7 @@ function Header(props) {
     return (<></>);
   }
 
+  
   return (
     <>
       <Navbar light expand="md" className="page-title">
@@ -39,7 +40,7 @@ function Header(props) {
               </NavLink>
             </NavItem>
           ))}
-          <NavItem key="signOut"><button onClick={() => AuthService.logout()}>Sign Out</button></NavItem>
+          <NavItem key="signOut"><button onClick={() => props.logout()}>Sign Out</button></NavItem>
         </Nav>
       </Navbar>
     </>
