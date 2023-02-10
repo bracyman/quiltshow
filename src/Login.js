@@ -28,7 +28,8 @@ function Login() {
     e.preventDefault();
 
     // check to see if the user is not yet registered
-    if(!AuthService.verifyUser(username)) {
+    let registered = await(AuthService.verifyUser(username));
+    if(!registered) {
       promptForRegistration();
     }
     else {
@@ -44,26 +45,25 @@ function Login() {
 
   const promptForRegistration = () => {
     setNewPerson({
-      email: username,
-      firstName: "",
-      lastName: "",
-      phone: "",
+      email: username
     });
 
     setShowNewPersonForm(true);
   };
 
   const handleCloseNewPersonForm = () => {
-    setNewPerson({
-      email: username,
-      firstName: "",
-      lastName: "",
-      phone: "",
-    });
+    setNewPerson({});
     setShowNewPersonForm(false);
   };
 
   const handleRegisterNewPerson = async () => {
+    let registerResult = await AuthService.register(newPerson);
+    if(registerResult) {
+      window.location.href = "/";
+    }
+    else {
+      alert("Failed to create new user account");
+    }
   };
 
   return (

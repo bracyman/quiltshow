@@ -1,9 +1,32 @@
 import Config from "./Config";
 import { encode as base64_encode } from "base-64";
+import ExpiringStorage from "./ExpiringStorage"
+
+
+
+const parseJwt = (token) => {
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+      return null;
+    }
+};
+
 
 class AuthService {
-    verifyUser(username) {
-        return true;
+    async verifyUser(username) {
+        let res = await fetch(`${Config.apiHost()}/verify/${encodeURIComponent(username)}`, {
+            method: "GET",
+        })
+        .then((response) => {
+            if(response.ok) {
+                return response.json();
+            }
+
+            return false;
+        });
+
+        return res;
     }
 
     async login(username, password) {
@@ -23,7 +46,7 @@ class AuthService {
         })
         .then(tokenRespose => {
             if(tokenRespose.accessToken) {
-                localStorage.setItem("user", JSON.stringify(tokenRespose));
+                ExpiringStorage.setItem("user", tokenRespose);
                 return true;
             }
 
@@ -38,38 +61,67 @@ class AuthService {
     }
 
     async register(newPerson) {
-        await fetch(`${Config.apiHost()}/register`, {
+        const userCreated = await fetch(`${Config.apiHost()}/register`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
               },
             body: JSON.stringify(newPerson),
         })
+        .then((response) =>  {
+            if(!response.ok) {
+                throw new Error(response.statusText);  
+            }
+
+            return response.json();
+        })
         .then(tokenRespose => {
             if(tokenRespose.accessToken) {
-                localStorage.setItem("user", JSON.stringify(tokenRespose));
+                ExpiringStorage.setItem("user", tokenRespose);
+                return true;
             }
+
+            return false;
         });  
+
+        return userCreated;
     }
 
     authHeader(headers) {
         let authHeaders = headers ? headers : {};
-        let usr = JSON.parse(localStorage.getItem("user"));
+        let usr = ExpiringStorage.getItem("user");
         return (usr && usr.accessToken) ? {...authHeaders,  Authorization: `Bearer ${usr.accessToken}` } : authHeaders;
     }
 
     getCurrentUser() {
-        return JSON.parse(localStorage.getItem("user")?.user);
+        return ExpiringStorage.getItem("user");
+    }
+
+    userHasRole(role) {
+        let usr = ExpiringStorage.getItem("user");
+        if(usr === null) {
+            return false;
+        }
+
+        let jwt = parseJwt(usr.accessToken);
+        return jwt.scope.includes(`ROLE_${role.toUpperCase()}`);
     }
 
     logout() {
-        localStorage.removeItem("user");
+        ExpiringStorage.clear();
     }
     
 
     loggedIn() {
-        let usr = localStorage.getItem("user");
-        return localStorage.getItem("user") !== null;
+        let usr = ExpiringStorage.getItem("user");
+        if(usr === null) {
+            return false;
+        }
+
+        let jwt = parseJwt(usr.accessToken);
+        let expires = jwt.exp * 1000;
+
+        return expires > Date.now();
     }
 }
 

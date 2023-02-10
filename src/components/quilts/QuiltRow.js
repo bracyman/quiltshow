@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { Modal, Button, OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Modal, Button, OverlayTrigger, Tooltip, Badge } from "react-bootstrap";
 import QuiltService from "../../services/QuiltService";
 import QuiltForm from "./QuiltForm";
 import Prompt from "../Prompt";
@@ -18,12 +18,14 @@ function QuiltRow(props) {
     setShowEdit(true);
   };
 
-  const handleQuiltChange = (quilt) => {
-    setEditQuilt(quilt);
+  const handleQuiltChange = (propertyName, updatedValue) => {    
+    setEditQuilt({ ...quilt, [propertyName]: updatedValue });
   };
 
   const handleSubmitQuiltChanges = (e) => {
-    e.preventDefault();
+    if(e) {
+      e.preventDefault();
+    }
 
     props.mutator({modifier: QuiltService.updateQuilt, validator: QuiltService.validateQuilt, params: editQuilt});
     handleClose();
@@ -54,15 +56,13 @@ function QuiltRow(props) {
       <div>{quilt.piecedBy}</div>
       <div>{quilt.quiltedBy || ""}</div>
       <div>{quilt.category?.name || ""}</div>
-      <div>{quilt.width}</div>
       <div>{quilt.length}</div>
+      <div>{quilt.width}</div>
       <div>{quilt.judged ? "Yes" : "No"}</div>
       <div>
-        <ul>
           {quilt.tags.map((t) => (
-            <li className="tag">{t.name}</li>
+            <Badge pill bg="primary">{t.name}</Badge>
           ))}
-        </ul>
       </div>
       <div>
         <OverlayTrigger overlay={<Tooltip id={`tooltip-top`}>Edit</Tooltip>}>
@@ -92,20 +92,8 @@ function QuiltRow(props) {
           <Modal.Title>Edit Quilt</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <QuiltForm quilt={editQuilt} updateQuilt={handleQuiltChange} />
+          <QuiltForm quilt={editQuilt} show={props.show} updateQuilt={handleQuiltChange} saveQuilt={handleSubmitQuiltChanges} validQuilt={QuiltService.validateQuilt} cancelQuilt={handleClose} />
         </Modal.Body>
-        <Modal.Footer>
-          <Button
-            variant="success"
-            type="submit"
-            onClick={handleSubmitQuiltChanges}
-          >
-            Save Changes
-          </Button>
-          <Button variant="secondary" onClick={handleClose}>
-            Cancel
-          </Button>
-        </Modal.Footer>
       </Modal>
 
       <Prompt
