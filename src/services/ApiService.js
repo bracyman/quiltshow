@@ -1,9 +1,9 @@
-
+import Config from "./Config";
 import AuthService from "./AuthService";
 
 class ApiService {
     async get(url) {
-        return await fetch(url, {
+        return await fetch(`${Config.apiHost()}/${url}`, {
             method: "GET",
             headers: AuthService.authHeader(),
         });
@@ -14,7 +14,7 @@ class ApiService {
             ...(AuthService.authHeader()),
             "Content-Type": "application/json"
         };
-        return await fetch(url, {
+        return await fetch(`${Config.apiHost()}/${url}`, {
             method: "POST",
             headers: headers,
             body: JSON.stringify(bodyObj),
