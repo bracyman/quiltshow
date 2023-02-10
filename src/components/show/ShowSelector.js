@@ -1,6 +1,6 @@
 import React from "react";
 import { Form } from "react-bootstrap";
-import { useQueryClient, useQuery, useMutation } from "react-query";
+import { useQuery } from "react-query";
 import ShowService from "../../services/ShowService";
 
 
@@ -19,7 +19,6 @@ import ShowService from "../../services/ShowService";
  * @returns 
  */
 function ShowSelector(props) {
-    const queryClient = useQueryClient();
     const {data, isLoading, isError, isSuccess} = useQuery("shows", ShowService.fetchShows);
   
     const onInputChange = (e) => {

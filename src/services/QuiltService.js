@@ -1,4 +1,3 @@
-import Config from "./Config";
 import AuthService from "./AuthService";
 import ApiService from "./ApiService";
 
@@ -8,7 +7,7 @@ class QuiltService {
      * @returns 
      */
     async fetchQuilts() {
-        return await ApiService.get(`${Config.apiHost()}/quilts`, {
+        return await ApiService.get(`quilts`, {
             method: "GET",
             headers: AuthService.authHeader(),
         })
@@ -39,7 +38,7 @@ class QuiltService {
      * @param {*} newQuilt 
      */
     async addQuilt(newQuilt) {
-        return await ApiService.post(`${Config.apiHost()}/quilts`, newQuilt)
+        return await ApiService.post(`quilts`, newQuilt)
         .then((response) => response.json())
         .then(response => {
             return response;
@@ -51,7 +50,7 @@ class QuiltService {
      * @param {*} updatedQuilt 
      */
     async updateQuilt(updatedQuilt) {
-        return fetch(`${Config.apiHost()}/quilts/${updatedQuilt.id}`, {
+        return fetch(`quilts/${updatedQuilt.id}`, {
             method: "PUT",
             headers: AuthService.authHeader({ 'Content-Type': 'application/json' }),
             body: JSON.stringify(updatedQuilt),
@@ -70,7 +69,7 @@ class QuiltService {
      * @param {*} id 
      */
     async deleteQuilt(id) {
-        return await fetch(`${Config.apiHost()}/quilts/${id}`, {
+        return await fetch(`quilts/${id}`, {
             method: "DELETE",
             headers: AuthService.authHeader(),
         })

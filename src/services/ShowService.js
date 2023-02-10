@@ -1,4 +1,3 @@
-import Config from "./Config";
 import AuthService from "./AuthService";
 import ApiService from "./ApiService";
 import ExpiringStorage from "./ExpiringStorage";
@@ -29,7 +28,7 @@ class ShowService {
      * @returns 
      */
      async fetchShows() {
-        return await ApiService.get(`${Config.apiHost()}/shows/`, {
+        return await ApiService.get(`shows/`, {
             method: "GET",
             headers: AuthService.authHeader(),
         })
@@ -84,7 +83,7 @@ class ShowService {
             showId = this.getSelectedShowId() || "current";
         }
 
-        return await ApiService.get(`${Config.apiHost()}/shows/${showId}`, {
+        return await ApiService.get(`shows/${showId}`, {
             method: "GET",
             headers: AuthService.authHeader(),
         })
@@ -107,7 +106,7 @@ class ShowService {
     async fetchCategories(showId) {
         let url = showId ? `showId/${showId}/categories` : "shows/categories";
 
-        let categories = await ApiService.get(`${Config.apiHost()}/${url}`, {
+        let categories = await ApiService.get(`${url}`, {
             method: "GET",
             headers: AuthService.authHeader(),
         })

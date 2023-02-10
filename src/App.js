@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./App.css";
 import Home from "./Home";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { useQueryClient, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import QuiltList from "./components/quilts/QuiltList";
 import Header from "./Header";
 import Login from "./Login";
@@ -12,20 +12,17 @@ import Configuration from "./configuration/Configuration";
 
 
 
-const getSelectedShow = async () => {
-  return await ShowService.getSelectedShow();
-}
 
 function App() {
   const [authenticated, setAuthenticated] = useState(AuthService.loggedIn());
-  const queryClient = useQueryClient();
-  const {data, status} = useQuery("selectedShow", getSelectedShow);
+  const {data, status} = useQuery("selectedShow", async () => { return await ShowService.getSelectedShow(); });
   const {show, setShow} = useState(data);
+
 
   const logout = () => {
     AuthService.logout();
     setAuthenticated(false);
-  }
+  };
 
   if(!authenticated) {
     return (
