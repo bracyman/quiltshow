@@ -35,4 +35,14 @@
   to {
     transform: rotate(360deg);
   }
+
+}
+
+div.tagList {
+  margin-bottom: 5px;
+}
+
+a.tag {
+  cursor: pointer;
+  text-decoration: none;
 }

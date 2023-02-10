@@ -1,52 +1,56 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import "./App.css";
 import Home from "./Home";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { useQueryClient, useQuery } from "react-query";
 import QuiltList from "./components/quilts/QuiltList";
 import Header from "./Header";
 import Login from "./Login";
-import QuiltContextProvider from "./contexts/QuiltContext";
-import CategoryContextProvider from "./contexts/CategoryContext";
-import TagContextProvider from "./contexts/TagContext";
-import { useAuthUser, RequireAuth } from "react-auth-kit";
+import AuthService from "./services/AuthService";
+import ShowService from "./services/ShowService";
+import Configuration from "./configuration/Configuration";
+
+
+
+const getSelectedShow = async () => {
+  return await ShowService.getSelectedShow();
+}
 
 function App() {
-  const auth = useAuthUser();
+  const [authenticated, setAuthenticated] = useState(AuthService.loggedIn());
+  const queryClient = useQueryClient();
+  const {data, status} = useQuery("selectedShow", getSelectedShow);
+  const {show, setShow} = useState(data);
 
-  return (
-    <div>
-      <Header />
-      <CategoryContextProvider>
-        <TagContextProvider>
-          <QuiltContextProvider>
+  const logout = () => {
+    AuthService.logout();
+    setAuthenticated(false);
+  }
+
+  if(!authenticated) {
+    return (
+        <Login />
+    );
+  }
+  else {
+    if(status === "loading") {
+      return (<p>Loading....</p>);
+    }
+
+    let selectedShow = show || data;
+    return (
+        <>
+          <Header logout={logout} selectedShow={selectedShow} selectShow={setShow}/>
           <BrowserRouter>
               <Routes>
-                <Route
-                  path={"/"}
-                  exact={true}
-                  element={
-                    <RequireAuth loginPath={"/login"}>
-                      <Home />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path={"/quilts"}
-                  exact={true}
-                  element={
-                    <RequireAuth loginPath={"/login"}>
-                      <QuiltList />
-                    </RequireAuth>
-                  }
-                />
-                <Route path={"/login"} exact={true} element={<Login />} />
+                <Route path={"/"} exact={true} element={ <Home show={selectedShow} /> } />
+                <Route path={"/quilts"} exact={true} element={ <QuiltList show={selectedShow} /> } />
+                <Route path={"/configuration"} exact={true} element={ <Configuration show={selectedShow} /> } />
               </Routes>
             </BrowserRouter>
-          </QuiltContextProvider>
-        </TagContextProvider>
-      </CategoryContextProvider>
-    </div>
-  );
+        </>
+    );
+  }
 }
 
 export default App;

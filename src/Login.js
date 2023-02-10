@@ -1,8 +1,8 @@
 import { Form, Row, Col, Button, Modal } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { encode as base64_encode } from "base-64";
-import { useSignIn, useIsAuthenticated } from "react-auth-kit";
 import PersonForm from "./components/persons/PersonForm";
+import AuthService from "./services/AuthService";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -10,10 +10,8 @@ function Login() {
   const [newPerson, setNewPerson] = useState({});
   const [showNewPersonForm, setShowNewPersonForm] = useState(false);
 
-  const signIn = useSignIn();
-
-  const isAuthenticated = useIsAuthenticated();
-  if (isAuthenticated()) {
+  const isAuthenticated = AuthService.loggedIn();
+  if (isAuthenticated) {
     window.location.href = "/";
     return <></>;
   }
@@ -30,79 +28,42 @@ function Login() {
     e.preventDefault();
 
     // check to see if the user is not yet registered
-    fetch(`http://localhost:8080/verify/${username}`, {
-        method: "GET",
-    })
-    .then((exists) => {
-        return exists.text();
-    })
-    .then((existsResponse) => {
-        if(existsResponse === "false") {
-            promptForRegistration();
-        }
-        else {
-            let basicAuth = base64_encode(`${username}:${password}`);
-            fetch("http://localhost:8080/token", {
-                method: "POST",
-                headers: new Headers({
-                    Authorization: `Basic ${basicAuth}`,
-                }),
-            })
-            .then((response) => {
-                if (response.ok) {
-                    signIn({
-                        token: response.body,
-                        expiresIn: 3600,
-                        tokenType: "Bearer",
-                        authState: { email: username },
-                    });
-                    window.location.href = "/";
-                }
-            });
-        }
-    });
+    let registered = await(AuthService.verifyUser(username));
+    if(!registered) {
+      promptForRegistration();
+    }
+    else {
+      let success = await AuthService.login(username, password);
+      if(success) {
+        window.location.href = "/";
+      }
+      else {
+        alert("Invalid password");
+      }
+    }
   };
 
   const promptForRegistration = () => {
     setNewPerson({
-      email: username,
-      firstName: "",
-      lastName: "",
-      phone: "",
+      email: username
     });
 
     setShowNewPersonForm(true);
   };
 
   const handleCloseNewPersonForm = () => {
-    setNewPerson({
-      email: username,
-      firstName: "",
-      lastName: "",
-      phone: "",
-    });
+    setNewPerson({});
     setShowNewPersonForm(false);
   };
 
   const handleRegisterNewPerson = async () => {
-    const response = await fetch("http://localhost:8080/register", {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json'
-          },
-        body: JSON.stringify(newPerson),
-      });
-  
-      if (response.ok) {
-        signIn({
-          token: response.body,
-          expiresIn: 3600,
-          tokenType: "Bearer",
-          authState: { email: username },
-        });
-        window.location.href = "/";
-      }
-  
+    let registerResult = await AuthService.register(newPerson);
+    if(registerResult) {
+      window.location.href = "/";
+    }
+    else {
+      alert("Failed to create new user account");
+    }
   };
 
   return (

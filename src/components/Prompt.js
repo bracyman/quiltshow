@@ -9,7 +9,9 @@ function Prompt(props) {
   return (
     <>
       <Modal show={props.show} >
-        <Modal.Header closeButton />
+        <Modal.Header closeButton>
+          <b>{props.title || ""}</b>
+        </Modal.Header>
         <Modal.Body>
           {props.message}
         </Modal.Body>
