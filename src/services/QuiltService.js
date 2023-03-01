@@ -50,11 +50,7 @@ class QuiltService {
      * @param {*} updatedQuilt 
      */
     async updateQuilt(updatedQuilt) {
-        return fetch(`quilts/${updatedQuilt.id}`, {
-            method: "PUT",
-            headers: AuthService.authHeader({ 'Content-Type': 'application/json' }),
-            body: JSON.stringify(updatedQuilt),
-        })
+        return await ApiService.put(`quilts/${updatedQuilt.id}`, updatedQuilt)
         .then(response => {
             if(response.ok) {
                 return response.data;
@@ -69,10 +65,7 @@ class QuiltService {
      * @param {*} id 
      */
     async deleteQuilt(id) {
-        return await fetch(`quilts/${id}`, {
-            method: "DELETE",
-            headers: AuthService.authHeader(),
-        })
+        return await ApiService.delete(`quilts/${id}`)
         .then(response => {
             return response.ok;
         });           

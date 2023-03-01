@@ -5,6 +5,7 @@ import QuiltService from "../../services/QuiltService";
 import { useQueryClient, useQuery, useMutation } from "react-query";
 import BasicRow from "../BasicRow";
 import QuiltForm from "./QuiltForm";
+import Prompt from "../Prompt";
 
 const EMPTY_QUILT = {
   id: null,
@@ -22,10 +23,13 @@ const EMPTY_QUILT = {
 const QuiltList = (props) =>  {
   const [showNewQuiltForm, setShowNewQuiltForm] = useState(false);
   const [newQuilt, setNewQuilt] = useState(EMPTY_QUILT);
+  const [showEditQuiltForm, setShowEditQuiltForm] = useState(false);
+  const [editQuilt, setEditQuilt] = useState(EMPTY_QUILT);  const [showDeletePrompt, setShowDeletePrompt] = useState(false);
+  const [selectedDelete, setSelectedDelete] = useState(false);
   const queryClient = useQueryClient();
   const {data, isLoading, isError, isSuccess} = useQuery("quilts", QuiltService.fetchQuilts);
-  const mutation = useMutation({
-    mutationFn: (mutator) => {
+  const quiltMutator = useMutation({
+    mutationFn: (mutator, quilt) => {
       if (!mutator.validator || mutator.validator(mutator.params)) {
         return mutator.modifier(mutator.params);
       }
@@ -42,24 +46,46 @@ const QuiltList = (props) =>  {
   const handleNewQuiltChange = (propertyName, updatedValue) => { 
     setNewQuilt({ ...newQuilt, [propertyName]: updatedValue });
   };
-
-  const handleEditQuilt = (quilt) => {
-    alert(`Editing quilt ${quilt.id}`);
-  };
-
-  const handleDeleteQuilt = (quilt) => {
-    alert(`Deleting quilt ${quilt.id}`);
-  };
  
   const handleSubmitNewQuilt = (e) => {
     if(e) {
       e.preventDefault();
     }
     console.log(`Adding new quilt: ${newQuilt}`);
-    mutation.mutate({modifier: QuiltService.addQuilt, validator: QuiltService.validateQuilt, params: newQuilt});
+    quiltMutator.mutate({modifier: QuiltService.addQuilt, validator: QuiltService.validateQuilt, params: newQuilt});
     setNewQuilt({});
     handleCloseNewQuilt();
   };
+
+
+  const handleEditQuilt = (quilt) => {
+    setEditQuilt(quilt);
+    setShowEditQuiltForm(true);
+  };
+  const handleCloseEditQuilt = ()  => { setShowEditQuiltForm(false); };
+
+  const handleEditQuiltChange = (propertyName, updatedValue) => { 
+    setEditQuilt({ ...editQuilt, [propertyName]: updatedValue });
+  };
+
+  const handleSubmitEditQuiltChanges = () => {
+    quiltMutator.mutate({modifier: QuiltService.updateQuilt, validator: QuiltService.validateQuilt, params: editQuilt});
+    setEditQuilt({});
+    handleCloseEditQuilt();
+  };
+
+
+  const handleDeleteQuilt = (quilt) => {
+    setSelectedDelete(quilt);
+    setShowDeletePrompt(true);
+  };
+  const handleCloseDelete = () => { setShowDeletePrompt(false); };
+
+  const deleteSelectedQuilt = () => {
+    quiltMutator.mutate({modifier: QuiltService.deleteQuilt, params: selectedDelete.id});
+    handleCloseDelete();
+  };
+
 
 
   const converters = {
@@ -73,9 +99,9 @@ const QuiltList = (props) =>  {
   let columns = [
       {field: "name", name: "Name"}, 
       {field: "category", name: "Category", displayFunction: converters.category}, 
-      {field: "width", name: "Width"}, 
-      {field: "length", name: "Height"}, 
-      {field: "judged", name: "Judged"}, 
+      {field: "width", name: "Width", dataType: "number"}, 
+      {field: "length", name: "Height", dataType: "number"}, 
+      {field: "judged", name: "Judged", dataType: "boolean"}, 
       {field: "tags", name: "Tags", displayFunction: converters.tags}];
 
   const rowProperties = { 
@@ -134,6 +160,23 @@ const QuiltList = (props) =>  {
             <QuiltForm quilt={newQuilt} show={props.show} updateQuilt={handleNewQuiltChange} saveQuilt={handleSubmitNewQuilt} validQuilt={QuiltService.validateQuilt} cancelQuilt={handleCloseNewQuilt}/>
           </Modal.Body>       
         </Modal>
+        
+        <Modal show={showEditQuiltForm} onHide={handleCloseEditQuilt}>
+          <Modal.Header closeButton>
+            <Modal.Title>Edit Quilt</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <QuiltForm quilt={editQuilt} show={props.show} updateQuilt={handleEditQuiltChange} saveQuilt={handleSubmitEditQuiltChanges} validQuilt={QuiltService.validateQuilt} cancelQuilt={handleCloseEditQuilt} />
+          </Modal.Body>
+        </Modal>
+
+        <Prompt
+          show={showDeletePrompt}
+          message={`Are you sure you want to delete this quilt [${selectedDelete}]?`}
+          onYes={deleteSelectedQuilt}
+          onNo={handleCloseDelete}
+        />
+
       </>
     );
   }

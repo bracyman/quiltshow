@@ -1,5 +1,7 @@
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.css");
 
+/*div {border: 1px solid green;}*/
 body {
 	color: #566787;
 	background: #f5f5f5;
@@ -384,4 +386,162 @@ div.innerContainer {
 	width: 40px;
 	height: 40px;
 	text-indent: -9999px;
+}
+
+.report-list {
+	display: flex;
+	padding: 1em 3em;
+	margin-bottom: 1em;
+	max-height: 35vh;
+	overflow-y: scroll;
+}
+
+.report-list > div {
+	flex-direction: row;
+	flex-basis: 100%;
+}
+
+.report-category td {
+	display: flex;
+}
+
+.report-category button {
+	border: none;
+	background-color: white;
+	height: 20px;
+	width: 20px;
+	text-indent: -99999px;
+	background-image: url("/public/img/run-report-20.png");
+}
+
+.report-preview-container {
+	padding: 1em 2em;
+	border-top: 2px solid black;
+	margin: 0em 2em;
+}
+
+.report-preview-container .name {
+	font-size: 2em;
+	font-weight: bold;
+}
+
+.report-preview-container .description {
+	margin-bottom: 1em;
+}
+
+.report-preview-container .preview > div {
+	display: flex;
+}
+
+.report-preview-container .preview > div > * {
+	flex-basis: 100%;
+}
+
+button.run-report {
+	max-width: 10em;
+}
+
+.report-preview-container .preview .title {
+	font-size: 1.5em;
+	font-weight: 600;
+}
+
+.preview table thead td {
+	font-weight: bold;
+	border-bottom: 2px solid darkgray;
+}
+
+#searchFields,
+div.report-info {
+	width: 90vw;
+	max-width: 90em;
+	margin: auto;
+}
+
+#searchFields > div {
+	display:grid;
+	grid-template-columns: .5fr 1fr 2fr 1fr .5fr;
+	border-bottom: solid 2px #999;
+	padding: .3em 0;
+}
+
+div.report-info {
+	display: flex;
+	margin-bottom: 2em;
+	border: solid 2px darkgray;
+	border-radius: 10px;
+	background-color: #f5e964;
+	padding: 1em .5em;
+}
+
+div.report-info > div {
+	display: flex;
+	flex-direction: row;
+	flex-basis: 100%;
+}
+
+div.report-info div.form-label {
+	margin-right: 1em;
+	font-weight: bold;
+}
+div.report-info div.form-input {
+	flex-basis: 100%;
+}
+
+div.report-info  div.category > div.form-input {
+	display: flex;
+	flex-direction: column;
+}
+
+div.report-info div.operations {
+	display: flex;
+	flex-direction: column;
+}
+
+div.report-info div.operations button {
+	width: auto;
+	max-width: 8em;
+	margin: .25em 0;
+	font-weight: 500;
+	color: white;
+	background-color: #435d7d;
+	border-radius: 5px;
+}
+
+
+#searchFields div.header > div {
+	font-weight: bold;
+	padding: .25em 1em;
+}
+
+div.search-field > div {
+	padding: 0 1em;
+}
+
+#searchFields .include,
+#searchFields .sort-by {
+	text-align: center;
+	vertical-align: middle;
+}
+
+input[type="radio"], input[type="checkbox"] {
+	margin-right: .3em;
+}
+
+#searchFields .boolean label {
+	margin-right: 2em;
+}
+div.sort-by > input {
+	width: 3em;
+	text-align: center;
+}
+
+div.search-field > div.match-type {
+	display: flex;
+	flex-direction: column;
+}
+
+div.search-field.select-many > div.matches {
+	display: grid;
+	grid-template-columns: .6fr .6fr .6fr;
 }

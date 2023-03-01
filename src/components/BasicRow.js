@@ -2,6 +2,7 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import Prompt from "./Prompt";
 import ObjectUtils from "../utilities/ObjectUtils";
 import { useState } from "react";
+import StringUtils from "../utilities/StringUtils";
 
 /**
  * Displays a row of object properties, as specified by fields in the props. Supports an edit and delete button as well
@@ -54,9 +55,8 @@ const BasicRow = (props) => {
                 return column.displayFunction(val, field);
             }
         }
-
-        if(column.dataType === "boolean" || ObjectUtils.isBoolean(val)) {
-            return val ? "Yes" : "No";
+        else {
+            val = StringUtils.toString(val, column.dataType);
         }
 
         return val;

@@ -20,6 +20,26 @@ class ApiService {
             body: JSON.stringify(bodyObj),
         });
     }
+
+    async put(url, bodyObj) {
+        var headers = {
+            ...(AuthService.authHeader()),
+            "Content-Type": "application/json"
+        };
+        return await fetch(`${Config.apiHost()}/${url}`, {
+            method: "PUT",
+            headers: headers,
+            body: JSON.stringify(bodyObj),
+        });
+    }
+
+    async delete(url) {
+        return await fetch(`${Config.apiHost()}/${url}`, {
+            method: "DELETE",
+            headers: AuthService.authHeader(),
+        });
+    }
+
 }
 
 
