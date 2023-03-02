@@ -1,0 +1,32 @@
+/* { border: 1px dashed green} */
+
+canvas {
+    border: 2px solid #555; 
+}
+
+.floor-layout-container {
+    padding: 1em;
+    display: grid;
+    grid-template-columns: * 30em;
+}
+
+.floor-container {
+
+}
+
+.canvas-container {
+    width: 50vw;
+}
+    
+.structure-container {
+
+}
+    
+.group-container {
+
+}
+    
+.operations-container {
+
+}
+    
