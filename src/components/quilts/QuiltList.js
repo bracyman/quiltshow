@@ -8,6 +8,7 @@ import QuiltForm from "./QuiltForm";
 import Prompt from "../Prompt";
 import PaymentDisplay from "./forms/PaymentDisplay";
 import ObjectUtils from "../../utilities/ObjectUtils";
+import "../../styles/quiltList.css";
 
 const EMPTY_QUILT = {
   id: null,
@@ -147,7 +148,7 @@ const QuiltList = (props) => {
     return (
       <>
         <div className={`table table-striped table-hover ${listClass}`}>
-          <div className="tr">
+          <div className="tr operations">
             <Button
               onClick={handleShowNewQuilt}
               className="btn btn-success"

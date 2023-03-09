@@ -112,6 +112,34 @@ class QuiltService {
       return response.ok;
     });
   }
+
+
+  /**
+   * Returns the amount due to be paid
+   */
+  async getAmountDue() {
+    return await ApiService.get(`quilts/total-due`).then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+
+      return null;
+    });
+  }
+
+
+  /**
+   * Creates a remote payment, and returns a link to the payment portal
+   */
+  async createPayment() {
+    return await ApiService.get(`quilts/pay`).then((response) => {
+      if (response.ok) {
+        return response.text();
+      }
+
+      return null;
+    });
+  }
 }
 
 export default new QuiltService();
