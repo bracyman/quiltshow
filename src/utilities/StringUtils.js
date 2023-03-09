@@ -4,7 +4,7 @@ const listType = (type) => {
 };
 
 const isList = (type) => {
-    return type.startsWith("list(") || type.endsWith("[]");
+    return type && (type.startsWith("list(") || type.endsWith("[]"));
 };
 
 const numberFormat = new Intl.NumberFormat('en-EN', {maximumFractionDigits: 2, minimumFractionDigits: 0});

@@ -43,8 +43,7 @@ function App() {
           {params.headless ? <></> : <Header logout={logout} selectedShow={selectedShow} selectShow={setShow}/>}
           <BrowserRouter>
               <Routes>
-                <Route path={"/"} exact={true} element={ <Home show={selectedShow} /> } />
-                <Route path={"/quilts"} exact={true} element={ <QuiltList show={selectedShow} /> } />
+                <Route path={"/"} exact={true} element={ <QuiltList show={selectedShow} /> } />
                 <Route path={"/reports"} exact={true} element={ <ReportRunner show={selectedShow} /> } />
                 <Route path={"/reportBuilder"} exact={true} element={<ReportBuilder show={selectedShow} /> } />
                 <Route path={"/configuration"} exact={true} element={ <Configuration show={selectedShow} /> } />

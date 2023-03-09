@@ -17,8 +17,7 @@ const Header = (props) => {
   const [displayShowSelector, setDisplayShowSelector] = useState(false);
   const [updatedSelectedShow, setUpdateSelectedShow] = useState(null);
   const pages = [
-    { route: "", name: "Home", accessLevel: "user" },
-    { route: "quilts", name: "Quilts", accessLevel: "user" },
+    { route: "", name: "Quilts", accessLevel: "user" },
     { route: "reports", name: "Reports", accessLevel: "admin" },
     { route: "layout", name: "Floor Layout", accessLevel: "admin" },
     { route: "configuration", name: "Configuration", accessLevel: "admin" },
@@ -51,7 +50,7 @@ const Header = (props) => {
       <>
         <Navbar light expand="md" className="page-title">
           <Nav>
-            <Navbar.Brand href="/quilts">
+            <Navbar.Brand href="/">
               <img src={props.selectedShow.logo || "/img/logo.jpg"} width="125px" />
               <span className="site-title">{props.selectedShow.name} {DateUtils.getYear(props.selectedShow.startDate)}</span>
             </Navbar.Brand>
