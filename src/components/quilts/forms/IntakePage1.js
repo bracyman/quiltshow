@@ -1,32 +1,24 @@
 import { Form, Row, Col } from "react-bootstrap";
-import DesignSourceSelector from "./DesignSourceSelector";
-
 
 const IntakePage1 = (props) => {
-
-  const efforts = [
-    {"id":"SOLO","name":"Solo","shortDescription":"One person", multiPerson: false},
-    {"id":"DUET","name":"Duet","shortDescription":"Two people", multiPerson: true},
-    {"id":"GROUP","name":"Group","shortDescription":"3 or more people", multiPerson: true},
-  ];
-
-
-
   const onInputChange = (e) => {
     let propertyName = e.target.name;
     let updatedValue = e.target.value;
 
-    if(updatedValue === "") {
+    if (updatedValue === "") {
       updatedValue = null;
-    }
-    else {
-      if ((propertyName === "width") || (propertyName === "length")) {
+    } else {
+      if (propertyName === "width" || propertyName === "length") {
         updatedValue = updatedValue ? Number(updatedValue) : 0;
-      }
-      else {
-        if(propertyName === "designSourceType") {
+      } else if (propertyName === "presidentsChallenge") {
+        updatedValue = updatedValue === "yes";
+      } else {
+        if (propertyName === "designSourceType") {
           propertyName = "designSource";
-          updatedValue = { ...props.quilt.designSource, designSourceType: updatedValue };
+          updatedValue = {
+            ...props.quilt.designSource,
+            designSourceType: updatedValue,
+          };
         }
       }
     }
@@ -34,7 +26,7 @@ const IntakePage1 = (props) => {
     props.updateQuilt(propertyName, updatedValue);
   };
 
-  let showMultiperson = (props.quilt.groupSize !== null) && (efforts.filter(e => e.multiPerson).map(e=> e.id).includes(props.quilt.groupSize));
+
   return (
     <Form>
       <Form.Group className="mb-1">
@@ -66,7 +58,7 @@ const IntakePage1 = (props) => {
               name="description"
               value={props.quilt.description || ""}
               onChange={(e) => onInputChange(e)}
-              style={{ height: '100px'}}
+              style={{ height: "100px" }}
               required
             />
           </Col>
@@ -123,7 +115,9 @@ const IntakePage1 = (props) => {
       <Form.Group className="mb-1">
         <Row>
           <Col sm={2}>
-            <Form.Label htmlFor="hangingPreference">Hanging Preference</Form.Label>
+            <Form.Label htmlFor="hangingPreference">
+              Hanging Preference
+            </Form.Label>
           </Col>
           <Col>
             <Form.Control
@@ -136,73 +130,8 @@ const IntakePage1 = (props) => {
           </Col>
         </Row>
       </Form.Group>
-      <Form.Group className="mb-1">
-        <Row><Col sm={12} /><hr/></Row>
-        <Row>
-          <Col sm={2}>
-            <Form.Label htmlFor="name">Group Size</Form.Label>
-            <Form.Text id={"groupSizeHelpBlock"} muted>Including quilter</Form.Text>
-          </Col>
-          <Col>
-            <Form.Select
-                name="groupSize"
-                onChange={(e) => onInputChange(e)}
-                value={props.quilt.groupSize ? props.quilt.groupSize : ""}
-              >
-                <option value=""></option>
-                {efforts.map((e) => (
-                  <option value={e.id} key={e.id}>
-                    {e.name} - {e.shortDescription}
-                  </option>
-                ))}
-            </Form.Select>
-          </Col>
-        </Row>
-      </Form.Group>
-
-      {showMultiperson ? (<>
-        <Form.Group className="mb-1" >
-        <Row>
-          <Col sm={2}>
-            <Form.Label htmlFor="name">Quilted By</Form.Label>
-          </Col>
-          <Col>
-            <Form.Control
-              type="text"
-              placeholder="Quilted By"
-              name="quiltedBy"
-              value={props.quilt.quiltedBy || ""}
-              onChange={(e) => onInputChange(e)}
-            />
-          </Col>
-        </Row>
-        </Form.Group>
-        <Form.Group className="mb-1" >
-          <Row>
-            <Col sm={2}>
-              <Form.Label htmlFor="name">Additional Quilters</Form.Label>
-            </Col>
-            <Col>
-              <Form.Control
-                type="text"
-                placeholder="Names, separated with commas"
-                name="additionalQuilters"
-                value={props.quilt.additionalQuilters || ""}
-                onChange={(e) => onInputChange(e)}
-              />
-            </Col>
-          </Row>
-        </Form.Group>
-        </>) : (<></>)
-      }
-      <Form.Group className="mb-1">
-        <Row><Col sm={12} /><hr/></Row>
-        <DesignSourceSelector {...props} />
-      </Form.Group>
-      
     </Form>
   );
-}
-
+};
 
 export default IntakePage1;

@@ -6,7 +6,8 @@ const DesignSourceSelector = (props) => {
         {"id":"MAGAZINE","name":"Magazine", order: 1, labels: {name: "Magazine", issueNumber: "Issue", publishedYear: "Year", title: "Project Title"}},
         {"id":"BOOK","name":"Book/Pattern", order: 2, labels: {name: "Book/Pattern", author: "Author", publishedYear: "Year", title: "Project Title"}},
         {"id":"WORKSHOP","name":"Workshop", order: 3, labels: {name: "Workshop Title", author: "Instructor"}},
-        {"id":"OTHER","name":"Other Artwork/Type", order: 4, labels: {name: "Title/Type", contactInfo: "Contact Information for Source"}},
+        {"id":"ORIGINAL","name":"Original Design", order: 4, labels: {}},
+        {"id":"OTHER","name":"Other", order: 5, labels: {name: "Source/Inspiration"}},
     ];
     
     
@@ -78,90 +79,96 @@ const DesignSourceSelector = (props) => {
           </Col>
         </Row>
 
-        {(!designSourceTypeSelected) ? (<></>) : (<>
-          <Row>
-            <Col sm={2}><Form.Label htmlFor="designSource_name">{getDesignFieldLabel("name")}</Form.Label></Col>
-            <Col>
-              <Form.Control
-                type="text"
-                placeholder={getDesignFieldLabel("name")}
-                name="designSource_name"
-                value={props.quilt.designSource.name || ""}
-                onChange={(e) => onInputChange(e)}
-              />
-            </Col>
-          </Row>
-          {(getDesignFieldLabel("issueNumber") == null) ? (<></>) : (
-            <Row>
-              <Col sm={2}><Form.Label htmlFor="designSource_issueNumber">{getDesignFieldLabel("issueNumber")}</Form.Label></Col>
-              <Col>
-                <Form.Control
-                  type="text"
-                  placeholder={getDesignFieldLabel("issueNumber")}
-                  name="designSource_issueNumber"
-                  value={props.quilt.designSource.issueNumber || ""}
-                  onChange={(e) => onInputChange(e)}
-                />
-              </Col>
-            </Row>
-          )}
-          {(getDesignFieldLabel("author") == null) ? (<></>) : (
-            <Row>
-              <Col sm={2}><Form.Label htmlFor="designSource_author">{getDesignFieldLabel("author")}</Form.Label></Col>
-              <Col>
-                <Form.Control
-                  type="text"
-                  placeholder={getDesignFieldLabel("author")}
-                  name="designSource_author"
-                  value={props.quilt.designSource.author || ""}
-                  onChange={(e) => onInputChange(e)}
-                />
-              </Col>
-            </Row>
-          )}
-          {(getDesignFieldLabel("publishedYear") == null) ? (<></>) : (
-            <Row>
-              <Col sm={2}><Form.Label htmlFor="designSource_publishedYear">{getDesignFieldLabel("publishedYear")}</Form.Label></Col>
-              <Col>
-                <Form.Control
-                  type="text"
-                  placeholder={getDesignFieldLabel("publishedYear")}
-                  name="designSource_publishedYear"
-                  value={props.quilt.designSource.publishedYear || ""}
-                  onChange={(e) => onInputChange(e)}
-                />
-              </Col>
-            </Row>
-          )}
-          {(getDesignFieldLabel("title") == null) ? (<></>) : (
-            <Row>
-              <Col sm={2}><Form.Label htmlFor="designSource_title">{getDesignFieldLabel("title")}</Form.Label></Col>
-              <Col>
-                <Form.Control
-                  type="text"
-                  placeholder={getDesignFieldLabel("title")}
-                  name="designSource_title"
-                  value={props.quilt.designSource.title || ""}
-                  onChange={(e) => onInputChange(e)}
-                />
-              </Col>
-            </Row>
-          )}
-          {(getDesignFieldLabel("contactInfo") == null) ? (<></>) : (
-            <Row>
-              <Col sm={2}><Form.Label htmlFor="designSource_contactInfo">{getDesignFieldLabel("contactInfo")}</Form.Label></Col>
-              <Col>
-                <Form.Control
-                  type="text"
-                  placeholder={getDesignFieldLabel("contactInfo")}
-                  name="designSource_contactInfo"
-                  value={props.quilt.designSource.contactInfo || ""}
-                  onChange={(e) => onInputChange(e)}
-                />
-              </Col>
-            </Row>
-          )}
-          </>)
+        {(!designSourceTypeSelected) 
+          ? (<></>) 
+          : (
+            <>
+              {(getDesignFieldLabel("name") == null) ? (<></>) : (
+                <Row>
+                  <Col sm={2}><Form.Label htmlFor="designSource_name">{getDesignFieldLabel("name")}</Form.Label></Col>
+                  <Col>
+                    <Form.Control
+                      type="text"
+                      placeholder={getDesignFieldLabel("name")}
+                      name="designSource_name"
+                      value={props.quilt.designSource.name || ""}
+                      onChange={(e) => onInputChange(e)}
+                    />
+                  </Col>
+                </Row>
+              )}
+              {(getDesignFieldLabel("issueNumber") == null) ? (<></>) : (
+                <Row>
+                  <Col sm={2}><Form.Label htmlFor="designSource_issueNumber">{getDesignFieldLabel("issueNumber")}</Form.Label></Col>
+                  <Col>
+                    <Form.Control
+                      type="text"
+                      placeholder={getDesignFieldLabel("issueNumber")}
+                      name="designSource_issueNumber"
+                      value={props.quilt.designSource.issueNumber || ""}
+                      onChange={(e) => onInputChange(e)}
+                    />
+                  </Col>
+                </Row>
+              )}
+              {(getDesignFieldLabel("author") == null) ? (<></>) : (
+                <Row>
+                  <Col sm={2}><Form.Label htmlFor="designSource_author">{getDesignFieldLabel("author")}</Form.Label></Col>
+                  <Col>
+                    <Form.Control
+                      type="text"
+                      placeholder={getDesignFieldLabel("author")}
+                      name="designSource_author"
+                      value={props.quilt.designSource.author || ""}
+                      onChange={(e) => onInputChange(e)}
+                    />
+                  </Col>
+                </Row>
+              )}
+              {(getDesignFieldLabel("publishedYear") == null) ? (<></>) : (
+                <Row>
+                  <Col sm={2}><Form.Label htmlFor="designSource_publishedYear">{getDesignFieldLabel("publishedYear")}</Form.Label></Col>
+                  <Col>
+                    <Form.Control
+                      type="text"
+                      placeholder={getDesignFieldLabel("publishedYear")}
+                      name="designSource_publishedYear"
+                      value={props.quilt.designSource.publishedYear || ""}
+                      onChange={(e) => onInputChange(e)}
+                    />
+                  </Col>
+                </Row>
+              )}
+              {(getDesignFieldLabel("title") == null) ? (<></>) : (
+                <Row>
+                  <Col sm={2}><Form.Label htmlFor="designSource_title">{getDesignFieldLabel("title")}</Form.Label></Col>
+                  <Col>
+                    <Form.Control
+                      type="text"
+                      placeholder={getDesignFieldLabel("title")}
+                      name="designSource_title"
+                      value={props.quilt.designSource.title || ""}
+                      onChange={(e) => onInputChange(e)}
+                    />
+                  </Col>
+                </Row>
+              )}
+              {(getDesignFieldLabel("contactInfo") == null) ? (<></>) : (
+                <Row>
+                  <Col sm={2}><Form.Label htmlFor="designSource_contactInfo">{getDesignFieldLabel("contactInfo")}</Form.Label></Col>
+                  <Col>
+                    <Form.Control
+                      type="text"
+                      placeholder={getDesignFieldLabel("contactInfo")}
+                      name="designSource_contactInfo"
+                      value={props.quilt.designSource.contactInfo || ""}
+                      onChange={(e) => onInputChange(e)}
+                    />
+                  </Col>
+                </Row>
+              )}
+            </>
+          )
         }
       </Form.Group>
     );
