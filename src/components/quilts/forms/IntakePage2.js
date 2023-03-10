@@ -68,7 +68,7 @@ const IntakePage2 = (props) => {
         <Form>
             <Form.Group className="mb-1">
                 <Row>
-                    <Col sm={2}>
+                    <Col sm={3}>
                         <Form.Label htmlFor="name">Group Size</Form.Label>
                         <Form.Text id={"groupSizeHelpBlock"} muted>
                             Including quilter
@@ -95,7 +95,7 @@ const IntakePage2 = (props) => {
                 <>
                     <Form.Group className="mb-1">
                         <Row>
-                            <Col sm={2}>
+                            <Col sm={3}>
                                 <Form.Label htmlFor="name">Quilted By</Form.Label>
                             </Col>
                             <Col>
@@ -111,7 +111,7 @@ const IntakePage2 = (props) => {
                     </Form.Group>
                     <Form.Group className="mb-1">
                         <Row>
-                            <Col sm={2}>
+                            <Col sm={3}>
                                 <Form.Label htmlFor="name">Additional Quilters</Form.Label>
                             </Col>
                             <Col>
@@ -135,7 +135,7 @@ const IntakePage2 = (props) => {
                     <hr />
                 </Row>
                 <Row>
-                    <Col sm={2}>
+                    <Col sm={3}>
                         <Form.Label htmlFor="presidentsChallenge">
                             President's Challenge
                         </Form.Label>
@@ -167,7 +167,7 @@ const IntakePage2 = (props) => {
             </Form.Group>
             <Form.Group className="mb-1">
                 <Row>
-                    <Col sm={2}>
+                    <Col sm={3}>
                         <Form.Label htmlFor="category">Category</Form.Label>
                     </Col>
                     <Col>
@@ -197,7 +197,7 @@ const IntakePage2 = (props) => {
                 hidden={props.quilt.category?.judgeable === false}
             >
                 <Row>
-                    <Col sm={2}>
+                    <Col sm={3}>
                         <Form.Label htmlFor="judged">Judged?</Form.Label>
                     </Col>
                     <Col>
@@ -226,8 +226,8 @@ const IntakePage2 = (props) => {
             </Form.Group>
             <Form.Group className="mb-1">
                 <Row>
-                    <Col sm={2}>
-                        <Form.Label htmlFor="judged">First ever entry?</Form.Label>
+                    <Col sm={3}>
+                        <Form.Label htmlFor="judged">First EIHQ Show entry?</Form.Label>
                     </Col>
                     <Col>
                         <Form.Check

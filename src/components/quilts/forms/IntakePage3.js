@@ -17,7 +17,7 @@ const IntakePage3 = (props) => {
                 {props.show.tagCategories.map((tc, index) => (<>
                     {index > 0 ? (<Row><Col sm={12}><hr /></Col></Row>) : (<></>)}
                     <Row>
-                        <Col sm={2}>
+                        <Col sm={3}>
                             <Form.Label htmlFor="tags">{tc.name}</Form.Label>
                         </Col>
                         <Col>

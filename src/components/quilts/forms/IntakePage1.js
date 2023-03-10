@@ -31,7 +31,7 @@ const IntakePage1 = (props) => {
     <Form>
       <Form.Group className="mb-1">
         <Row>
-          <Col sm={2}>
+          <Col sm={3}>
             <Form.Label htmlFor="name">Quilt Name</Form.Label>
           </Col>
           <Col>
@@ -48,7 +48,7 @@ const IntakePage1 = (props) => {
       </Form.Group>
       <Form.Group className="mb-1">
         <Row>
-          <Col sm={2}>
+          <Col sm={3}>
             <Form.Label htmlFor="description">Description</Form.Label>
           </Col>
           <Col>
@@ -66,7 +66,7 @@ const IntakePage1 = (props) => {
       </Form.Group>
       <Form.Group className="mb-1">
         <Row>
-          <Col sm={2}>
+          <Col sm={3}>
             <Form.Label htmlFor="width">Width</Form.Label>
           </Col>
           <Col>
@@ -82,7 +82,7 @@ const IntakePage1 = (props) => {
       </Form.Group>
       <Form.Group className="mb-1">
         <Row>
-          <Col sm={2}>
+          <Col sm={3}>
             <Form.Label htmlFor="length">Length</Form.Label>
           </Col>
           <Col>
@@ -98,8 +98,8 @@ const IntakePage1 = (props) => {
       </Form.Group>
       <Form.Group className="mb-1">
         <Row>
-          <Col sm={2}>
-            <Form.Label htmlFor="mainColor">Main Color</Form.Label>
+          <Col sm={3}>
+            <Form.Label htmlFor="mainColor">Main Color(s)</Form.Label>
           </Col>
           <Col>
             <Form.Control
@@ -114,7 +114,7 @@ const IntakePage1 = (props) => {
       </Form.Group>
       <Form.Group className="mb-1">
         <Row>
-          <Col sm={2}>
+          <Col sm={3}>
             <Form.Label htmlFor="hangingPreference">
               Hanging Preference
             </Form.Label>
