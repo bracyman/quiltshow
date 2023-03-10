@@ -35,11 +35,15 @@ const TagSelector = (props) => {
         }
     };
 
+    const sortByName = (a, b) => {
+        return (a.name < b.name) ? -1 : (a.name > b.name) ? 1 : 0;
+    }
+
 
     return (
         <>
             {
-                props.tagCategory.tags.map(t => (
+                props.tagCategory.tags.sort(sortByName).map(t => (
                     <Form.Check
                         inline
                         type={props.tagCategory.onlyOne ? "radio" : "checkbox"}

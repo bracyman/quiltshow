@@ -88,6 +88,10 @@ form .btn {
   width: -webkit-fill-available;
 }
 
+form .row {
+	margin-top: .25em;
+}
+
 div.outerContainer {
   width: 100%;
   height: 90vh;
