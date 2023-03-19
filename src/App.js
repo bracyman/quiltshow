@@ -10,6 +10,7 @@ import AuthService from "./services/AuthService";
 import ShowService from "./services/ShowService";
 import Configuration from "./configuration/Configuration";
 import ReportBuilder from "./reports/ReportBuilder";
+import Layout from "./components/floorLayout/Layout";
 
 
 
@@ -43,9 +44,11 @@ function App() {
         <BrowserRouter>
           <Routes>
             <Route path={"/"} exact={true} element={<QuiltList show={selectedShow} />} />
+            <Route path={"/login"} exact={true} element={<Login />} />
             <Route path={"/reports"} exact={true} element={<ReportRunner show={selectedShow} />} />
             <Route path={"/reportBuilder"} exact={true} element={<ReportBuilder show={selectedShow} />} />
             <Route path={"/configuration"} exact={true} element={<Configuration show={selectedShow} />} />
+            <Route path={"/floorLayout"} exact={true} element={<Layout show={selectedShow} />} />
           </Routes>
         </BrowserRouter>
       </>

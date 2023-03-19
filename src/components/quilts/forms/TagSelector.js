@@ -57,8 +57,10 @@ const TagSelector = (props) => {
                     />
                 ))
             }
-            <br /><Form.Text id={props.tagCategory.id + "HelpBlock"} muted>{(props.tagCategory.requireOne && props.tagCategory.onlyOne) ? "(Pick the most relevant)(Required)"
-                : (props.tagCategory.requireOne && !props.tagCategory.onlyOne) ? "(Required)"
+            <br />
+            {props.tagCategory.requireOne ? <Form.Text className="required" id={props.tagCategory.id + "HelpBlockRequired"}>(Required)</Form.Text> : <></>}
+            <Form.Text id={props.tagCategory.id + "HelpBlock"} muted>
+                {(props.tagCategory.onlyOne) ? "(Pick the most relevant)"
                     : (props.tagCategory.requireOne) ? "(Pick at least one option)"
                         : (!props.tagCategory.onlyOne) ? "(Pick all that apply)"
                             : ""}</Form.Text>

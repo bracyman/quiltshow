@@ -28,6 +28,12 @@ const QuiltForm = (props) => {
   };
 
   const visitedAllSteps = () => {
+    // already created - no need to check
+    if (props.quilt.number) {
+      return true;
+    }
+
+    // check that all steps have been visited
     for (let i = 1; i <= lastStep; i++) {
       if (visitedSteps.indexOf(i) < 0) {
         return false;

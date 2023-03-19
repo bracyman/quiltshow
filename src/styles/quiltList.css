@@ -320,3 +320,8 @@ table.table .avatar {
     margin-left: 1em;
     margin-top: .25em;
 }
+
+
+.required {
+    color: #d90000 !important;
+}

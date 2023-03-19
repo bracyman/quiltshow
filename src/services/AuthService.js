@@ -6,83 +6,83 @@ import ExpiringStorage from "./ExpiringStorage"
 
 const parseJwt = (token) => {
     try {
-      return JSON.parse(atob(token.split('.')[1]));
+        return JSON.parse(atob(token.split('.')[1]));
     } catch (e) {
-      return null;
+        return null;
     }
 };
 
 
 class AuthService {
     async verifyUser(username) {
-        let res = await fetch(`${Config.apiHost()}/verify/${encodeURIComponent(username)}`, {
+        let res = await fetch(`${Config.authHost()}/verify/${encodeURIComponent(username)}`, {
             method: "GET",
         })
-        .then((response) => {
-            if(response.ok) {
-                return response.json();
-            }
+            .then((response) => {
+                if (response.ok) {
+                    return response.json();
+                }
 
-            return false;
-        });
+                return false;
+            });
 
         return res;
     }
 
     async login(username, password) {
         let basicAuth = base64_encode(`${username}:${password}`);
-        let res = await fetch(`${Config.apiHost()}/token`, {
+        let res = await fetch(`${Config.authHost()}/token`, {
             method: "POST",
             headers: new Headers({
                 Authorization: `Basic ${basicAuth}`,
             }),
         })
-        .then((response) =>  {
-            if(!response.ok) {
-                throw new Error(response.statusText);  
-            }
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(response.statusText);
+                }
 
-            return response.json();
-        })
-        .then(tokenRespose => {
-            if(tokenRespose.accessToken) {
-                ExpiringStorage.setItem("user", tokenRespose);
-                return true;
-            }
+                return response.json();
+            })
+            .then(tokenRespose => {
+                if (tokenRespose.accessToken) {
+                    ExpiringStorage.setItem("user", tokenRespose);
+                    return true;
+                }
 
-            return false;
-        })
-        .catch((error) => {
-            console.log("Login failure: " + error);
-            return false;
-        });
+                return false;
+            })
+            .catch((error) => {
+                console.log("Login failure: " + error);
+                return false;
+            });
 
         return res;
     }
 
     async register(newPerson) {
-        const userCreated = await fetch(`${Config.apiHost()}/register`, {
+        const userCreated = await fetch(`${Config.authHost()}/register`, {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
-              },
+            },
             body: JSON.stringify(newPerson),
         })
-        .then((response) =>  {
-            if(!response.ok) {
-                throw new Error(response.statusText);  
-            }
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(response.statusText);
+                }
 
-            return response.json();
-        })
-        .then(tokenRespose => {
-            if(tokenRespose.accessToken) {
-                ExpiringStorage.setItem("user", tokenRespose);
-                return true;
-            }
+                return response.json();
+            })
+            .then(tokenRespose => {
+                if (tokenRespose.accessToken) {
+                    ExpiringStorage.setItem("user", tokenRespose);
+                    return true;
+                }
 
-            return false;
-        });  
+                return false;
+            });
 
         return userCreated;
     }
@@ -90,7 +90,7 @@ class AuthService {
     authHeader(headers) {
         let authHeaders = headers ? headers : {};
         let usr = ExpiringStorage.getItem("user");
-        return (usr && usr.accessToken) ? {...authHeaders,  Authorization: `Bearer ${usr.accessToken}` } : authHeaders;
+        return (usr && usr.accessToken) ? { ...authHeaders, Authorization: `Bearer ${usr.accessToken}` } : authHeaders;
     }
 
     getCurrentUser() {
@@ -99,7 +99,7 @@ class AuthService {
 
     userHasRole(role) {
         let usr = ExpiringStorage.getItem("user");
-        if(usr === null) {
+        if (usr === null) {
             return false;
         }
 
@@ -110,11 +110,11 @@ class AuthService {
     logout() {
         ExpiringStorage.clear();
     }
-    
+
 
     loggedIn() {
         let usr = ExpiringStorage.getItem("user");
-        if(usr === null) {
+        if (usr === null) {
             return false;
         }
 

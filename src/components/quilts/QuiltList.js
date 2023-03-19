@@ -183,6 +183,7 @@ const QuiltList = (props) => {
           <Modal.Body>
             <QuiltForm
               quilt={newQuilt}
+              numQuilts={data.length}
               show={props.show}
               updateQuilt={handleNewQuiltChange}
               saveQuilt={handleSubmitNewQuilt}
@@ -199,6 +200,7 @@ const QuiltList = (props) => {
           <Modal.Body>
             <QuiltForm
               quilt={editQuilt}
+              numQuilts={data.length}
               show={props.show}
               updateQuilt={handleEditQuiltChange}
               saveQuilt={handleSubmitEditQuiltChanges}
