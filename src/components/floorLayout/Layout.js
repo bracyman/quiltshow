@@ -22,7 +22,7 @@ const Layout = (props) => {
         };
     };
     const [canvasUnits, setCanvasUnits] = useState(calcCanvasUnits());
-    
+
     useEffect(() => {
         let newCanvasUnits = calcCanvasUnits();
         setCanvas(initCanvas(newCanvasUnits));
@@ -40,29 +40,30 @@ const Layout = (props) => {
 
         // create the grid
         for (let i = 1; (i * units.gridUnits) < units.canvasWidth; i++) {
-            newCanvas.add(new fabric.Line([ i * units.gridUnits, 0, i * units.gridUnits, units.canvasHeight], { stroke: '#888', selectable: false }));
+            newCanvas.add(new fabric.Line([i * units.gridUnits, 0, i * units.gridUnits, units.canvasHeight], { stroke: '#888', selectable: false }));
         }
         for (let i = 1; (i * units.gridUnits) < units.canvasHeight; i++) {
-            newCanvas.add(new fabric.Line([0,  i * units.gridUnits, units.canvasWidth, i * units.gridUnits], { stroke: '#888', selectable: false }));
-        }  
+            newCanvas.add(new fabric.Line([0, i * units.gridUnits, units.canvasWidth, i * units.gridUnits], { stroke: '#888', selectable: false }));
+        }
 
-        let circle = new fabric.Rect({ 
-            left: 0, 
-            top: 0, 
-            width: (10 / gridSize) * units.gridUnits, 
-            height: (5 / gridSize) * units.gridUnits, 
-            fill: '#faa', 
-            originX: 'left', 
+        let circle = new fabric.Rect({
+            left: 0,
+            top: 0,
+            width: (10 / gridSize) * units.gridUnits,
+            height: (5 / gridSize) * units.gridUnits,
+            fill: '#faa',
+            originX: 'left',
             originY: 'top',
             centeredRotation: true,
             selectable: true,
             lockScalingX: true,
-            lockScalingY: true
-        });     
+            lockScalingY: true,
+            snapAngle: 45.0
+        });
         newCanvas.add(circle);
 
         createBooth(newCanvas);
-        
+
         newCanvas.on('object:moving', (options) => {
             options.target.set({
                 left: Math.round(options.target.left / units.gridUnits) * units.gridUnits,
@@ -76,12 +77,12 @@ const Layout = (props) => {
 
     const createBooth = (targetCanvas) => {
         let lineOptions = {
-            originX: 'left', 
-            originY: 'top', 
-            centeredRotation: true, 
-            selectable: false, 
+            originX: 'left',
+            originY: 'top',
+            centeredRotation: true,
+            selectable: false,
             stroke: '#000',
-            strokeWidth: 4,
+            strokeWidth: '4px',
             strokeLineCap: "round",
             strokeLineJoin: "miter",
         };
@@ -91,7 +92,7 @@ const Layout = (props) => {
         let backWall = new fabric.Line([canvasUnits.gridUnits, 0, canvasUnits.gridUnits, canvasUnits.gridUnits * 2], lineOptions);
 
         targetCanvas.add(leftWall, rightWall, backWall);
-      
+
         var rectGroup = new fabric.Group([leftWall, rightWall, backWall]);
         targetCanvas.add(rectGroup);
     };

@@ -9,7 +9,7 @@ const IntakePage1 = (props) => {
       updatedValue = null;
     } else {
       if (propertyName === "width" || propertyName === "length") {
-        updatedValue = updatedValue ? Number(updatedValue) : 0;
+        updatedValue = updatedValue.replaceAll(/[^0-9.]/ig, '');
       } else if (propertyName === "presidentsChallenge") {
         updatedValue = updatedValue === "yes";
       } else {
@@ -71,7 +71,7 @@ const IntakePage1 = (props) => {
           </Col>
           <Col>
             <Form.Control
-              type="number"
+              type="text"
               placeholder="0"
               name="width"
               value={props.quilt.width || ""}
@@ -87,7 +87,7 @@ const IntakePage1 = (props) => {
           </Col>
           <Col>
             <Form.Control
-              type="number"
+              type="text"
               placeholder="0"
               name="length"
               value={props.quilt.length || ""}
@@ -124,7 +124,7 @@ const IntakePage1 = (props) => {
               type="number"
               placeholder="1"
               name="hangingPreference"
-              value={props.quilt.hangingPreference || 1}
+              value={props.quilt.hangingPreference || (props.numQuilts + 1)}
               onChange={(e) => onInputChange(e)}
             />
           </Col>
