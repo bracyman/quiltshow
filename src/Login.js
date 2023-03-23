@@ -28,13 +28,13 @@ function Login() {
     e.preventDefault();
 
     // check to see if the user is not yet registered
-    let registered = await(AuthService.verifyUser(username));
-    if(!registered) {
+    let registered = await (AuthService.verifyUser(username));
+    if (!registered) {
       promptForRegistration();
     }
     else {
       let success = await AuthService.login(username, password);
-      if(success) {
+      if (success) {
         window.location.href = "/";
       }
       else {
@@ -58,7 +58,7 @@ function Login() {
 
   const handleRegisterNewPerson = async () => {
     let registerResult = await AuthService.register(newPerson);
-    if(registerResult) {
+    if (registerResult) {
       window.location.href = "/";
     }
     else {
@@ -106,6 +106,7 @@ function Login() {
             </Form.Group>
           </Form>
         </div>
+        <Form.Text muted>Use the password from your membership card</Form.Text>
       </div>
 
       <Modal show={showNewPersonForm} onHide={handleCloseNewPersonForm}>
