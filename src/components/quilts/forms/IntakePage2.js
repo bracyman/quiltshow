@@ -37,7 +37,7 @@ const IntakePage2 = (props) => {
                     updateQuilt({ category: updatedValue, judged: false });
                     return;
                 }
-            } else if (propertyName === "judged" || propertyName === "firstEntry") {
+            } else if (propertyName === "judged" || propertyName === "firstEntry" || propertyName === "presidentsChallenge") {
                 updatedValue = updatedValue === "yes";
             }
         }

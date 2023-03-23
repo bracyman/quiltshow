@@ -30,7 +30,7 @@ const QuiltList = (props) => {
   const [selectedDelete, setSelectedDelete] = useState(false);
   const queryClient = useQueryClient();
   const { data, isLoading, isError, isSuccess } = useQuery(
-    "quilts",
+    "quiltList",
     QuiltService.fetchQuilts
   );
   const quiltMutator = useMutation({
@@ -41,7 +41,7 @@ const QuiltList = (props) => {
     },
     onSuccess: (data, error, variables, context) => {
       setNewQuilt(EMPTY_QUILT);
-      return queryClient.invalidateQueries({ queryKey: ["quilts"] });
+      return queryClient.invalidateQueries("quiltList");
     },
   });
 
