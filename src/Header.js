@@ -15,7 +15,7 @@ const Header = (props) => {
   const pages = [
     { route: "", name: "Quilts", accessLevel: "user" },
     { route: "reports", name: "Reports", accessLevel: "admin" },
-    { route: "layout", name: "Floor Layout", accessLevel: "admin" },
+    { route: "floorLayout", name: "Floor Layout", accessLevel: "admin" },
     { route: "configuration", name: "Configuration", accessLevel: "admin" },
   ];
 
