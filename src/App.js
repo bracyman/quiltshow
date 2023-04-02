@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
-import { BrowserRouter, Route, Routes, } from "react-router-dom";
+import { HashRouter, Route, Routes, } from "react-router-dom";
 import { useQuery } from "react-query";
 import QuiltList from "./components/quilts/QuiltList";
 import Header from "./Header";
@@ -39,19 +39,18 @@ function App() {
 
     let selectedShow = show || data;
     return (
-      <>
-        {params.headless ? <></> : <Header logout={logout} selectedShow={selectedShow} selectShow={setShow} />}
-        <BrowserRouter>
-          <Routes>
-            <Route path={"/"} exact={true} element={<QuiltList show={selectedShow} />} />
-            <Route path={"/login"} exact={true} element={<Login />} />
-            <Route path={"/reports"} exact={true} element={<ReportRunner show={selectedShow} />} />
-            <Route path={"/reportBuilder"} exact={true} element={<ReportBuilder show={selectedShow} />} />
-            <Route path={"/configuration"} exact={true} element={<Configuration show={selectedShow} />} />
-            <Route path={"/floorLayout"} exact={true} element={<Layout show={selectedShow} />} />
-          </Routes>
-        </BrowserRouter>
-      </>
+      <HashRouter>
+        <Routes>
+          <Route path={"/"} element={<Header logout={logout} selectedShow={selectedShow} selectShow={setShow} />} >
+            <Route index element={<QuiltList show={selectedShow} />} />
+            <Route path={"login"} element={<Login />} />
+            <Route path={"reports"} element={<ReportRunner show={selectedShow} />} />
+            <Route path={"reportBuilder"} element={<ReportBuilder show={selectedShow} />} />
+            <Route path={"configuration"} element={<Configuration show={selectedShow} />} />
+            <Route path={"floorLayout"} element={<Layout show={selectedShow} />} />
+          </Route>
+        </Routes>
+      </HashRouter>
     );
   }
 }

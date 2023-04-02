@@ -1,4 +1,5 @@
-/* { border: 1px dashed green} */
+  
+ /** { border: 1px dashed green} */
 
 canvas {
     border: 2px solid #555; 
@@ -6,27 +7,80 @@ canvas {
 
 .floor-layout-container {
     padding: 1em;
-    display: grid;
-    grid-template-columns: * 30em;
+    display: flex;
+    flex-direction: row;
 }
 
-.floor-container {
+.room-values {
+    display: flex;
+    margin-bottom: .5em;
+}
 
+.room-values > div {
+    margin-right: 2em;
+}
+
+.room-values input {
+    width: 3em;
+}
+
+.grid-controls {
+    margin-left: 1.5em;
+    width: 100%;
+}
+
+.hanging-unit-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.hanging-unit-form .row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1em;
+    padding: .5em;
+
+    border: 2px solid gray;
+    border-radius: 5px;
+    padding-top: 1.0em;
+}
+
+
+.hanging-unit-form>.row::before {
+    content: attr(aria-label);
+    font-weight: bold;
+    font-size: 1.1em;
+    position: absolute;
+    margin: -1.7em 0em 0;
+    z-index: 1000;
+    background-color: white;
+    padding-left: .5ch;
+    padding-right: .5ch;
+}
+
+.hanging-unit-form .cell {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    width: auto;
+}
+
+.hanging-unit-form .cell .label {
+    min-width: 7em;
+    font-weight: bold;
 }
 
 .canvas-container {
     width: 50vw;
 }
     
-.structure-container {
-
+.floor-layout-operations .add-units {
+    display: flex;
+    margin-bottom: 2em;;
 }
-    
-.group-container {
 
+.floor-layout-operations .add-units button {
+    margin-left: 2.5em;
 }
-    
-.operations-container {
-
-}
-    

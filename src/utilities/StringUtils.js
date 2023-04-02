@@ -52,6 +52,10 @@ class StringUtils {
 
         return new Date(date).toDateString();
     }
+
+    numerize(str) {
+        return str.replaceAll(/[^0-9.]/ig, '');
+    }
 }
 
 export default new StringUtils();
