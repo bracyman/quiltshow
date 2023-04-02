@@ -1,4 +1,4 @@
-import React from "react";
+import { Outlet, Link } from "react-router-dom";
 import { Navbar, Nav, NavItem, NavLink, } from "react-bootstrap";
 import AuthService from "./services/AuthService";
 import DateUtils from "./utilities/DateUtils";
@@ -44,14 +44,7 @@ const Header = (props) => {
           <Nav navbar>
             {pages.filter(p => AuthService.userHasRole(p.accessLevel || "user")).map(page => (
               <NavItem key={page.route}>
-                <NavLink
-                  href={`/${page.route}`}
-                  className={
-                    currentPage === page.route ? "current" : ""
-                  }
-                >
-                  {page.name}
-                </NavLink>
+                <Link to={page.route} className={currentPage === page.route ? "current nav-link" : "nav-link"} >{page.name}</Link>
               </NavItem>
             ))}
             <NavItem key="signout">
@@ -60,6 +53,7 @@ const Header = (props) => {
           </Nav>
         </Navbar>
 
+        <Outlet />
       </>
     );
   }
