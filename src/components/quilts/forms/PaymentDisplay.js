@@ -3,15 +3,14 @@
 import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
 import QuiltService from "../../../services/QuiltService";
-import { useQueryClient, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import StringUtils from "../../../utilities/StringUtils";
 import LoadingSpinner from "../../LoadingSpinner";
 
 const PaymentDisplay = (props) => {
     const [showPaymentInfo, setShowPaymentInfo] = useState(false);
     const [paymentProcessing, setPaymentProcessing] = useState(false);
-    const queryClient = useQueryClient();
-    queryClient.invalidateQueries("quiltAmountDue");
+
     const { data, isLoading, isError, isSuccess } = useQuery(
         "quiltAmountDue",
         QuiltService.getAmountDue

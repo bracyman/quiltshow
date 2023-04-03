@@ -41,7 +41,8 @@ const QuiltList = (props) => {
     },
     onSuccess: (data, error, variables, context) => {
       setNewQuilt(EMPTY_QUILT);
-      return queryClient.invalidateQueries("quiltList");
+      queryClient.invalidateQueries("quiltList");
+      queryClient.invalidateQueries("quiltAmountDue");
     },
   });
 
@@ -61,6 +62,12 @@ const QuiltList = (props) => {
       e.preventDefault();
     }
     console.log(`Adding new quilt: ${newQuilt}`);
+
+    // check the hanging preference
+    if (!newQuilt.hangingPreference) {
+      newQuilt.hangingPreference = data.length + 1;
+    }
+
     quiltMutator.mutate({
       modifier: QuiltService.addQuilt,
       validator: QuiltService.validateQuilt,
@@ -121,11 +128,13 @@ const QuiltList = (props) => {
   let listClass = "pre-show-user";
   let columns = [
     { field: "name", name: "Name" },
-    {
-      field: "category",
-      name: "Category",
-      displayFunction: converters.category,
-    },
+    /*    {
+          field: "category",
+          name: "Category",
+          displayFunction: converters.category,
+        },
+        //*/
+    { field: "hangingPreference", name: "Preference", dataType: "number" },
     { field: "width", name: "Width", dataType: "number" },
     { field: "length", name: "Height", dataType: "number" },
     { field: "judged", name: "Judged", dataType: "boolean" },
