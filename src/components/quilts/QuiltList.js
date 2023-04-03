@@ -128,13 +128,11 @@ const QuiltList = (props) => {
   let listClass = "pre-show-user";
   let columns = [
     { field: "name", name: "Name" },
-    /*    {
-          field: "category",
-          name: "Category",
-          displayFunction: converters.category,
-        },
-        //*/
-    { field: "hangingPreference", name: "Preference", dataType: "number" },
+    {
+      field: "category",
+      name: "Category",
+      displayFunction: converters.category,
+    },
     { field: "width", name: "Width", dataType: "number" },
     { field: "length", name: "Height", dataType: "number" },
     { field: "judged", name: "Judged", dataType: "boolean" },
