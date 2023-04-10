@@ -1,0 +1,14 @@
+
+thead {
+    font-weight: bold;
+}
+
+tbody > tr:nth-child(2n) {
+    background-color: lightgray;
+}
+
+.report td {
+    padding: 0 1em;
+    border: 1px solid black !important;
+    max-width: 50ch;
+}

@@ -1,0 +1,16 @@
+.report-header {
+    display: flex;
+    flex-direction: row;
+}
+
+.report-header .logo {
+    width: 125px;
+}
+
+.report-header .title {
+    font-size: 3em;
+    font-weight: normal;
+    margin-left: 2em;
+    display: flex;
+    align-items: center;
+}

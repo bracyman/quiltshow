@@ -1,24 +1,27 @@
 
 import NumericalSearchField from "./NumericalSearchField";
-import { QuiltFields } from "../utilities/ObjectUtils";
 import BooleanSearchField from "./BooleanSearchField";
 import SelectOneSearchField from "./SelectOneSearchField";
 import StringSearchField from "./StringSearchField";
 import SelectManySearchField from "./SelectManySearchField";
+import { QuiltFields } from "../components/quilts/QuiltFields";
+import PsuedoSearchField from "./PsuedoSearchField";
 
 
 const getDataType = (type) => {
-    switch(type) {
+    switch (type) {
         case "category":
         case "list(tag)":
         case "list(award)":
             return "select-many";
-        
+
         case "date":
-        case "designSource":
         case "longString":
             return "string";
-                        
+
+        case "designSource":
+            return "nosearch";
+
         default:
             return type;
     }
@@ -26,16 +29,17 @@ const getDataType = (type) => {
 
 
 const SearchField = (props) => {
+    const { id, field, search, updateSearch, dataType, label } = props;
+    console.log(`Creating search field for ${field}`);
 
-    const { id, field, search, updateSearch, dataType } = props;
     const elementId = id || field + "_search";
     const included = search.fields.includes(field);
     const finalDataType = dataType || getDataType(QuiltFields[field].type);
 
     const toggleInclude = (evt) => {
-        let newSearch =  { ...search };
+        let newSearch = { ...search };
 
-        if(included) {
+        if (included) {
             newSearch[field] = null;
             newSearch.fields = search.fields.filter(f => f !== field);
             newSearch.sortOrder = search.sortOrder ? search.sortOrder.filter(f => f !== field) : [];;
@@ -52,54 +56,57 @@ const SearchField = (props) => {
         let newOrder = search.sortOrder ? search.sortOrder.filter(f => f && f !== field) : [];
         let newSortPosition = parseInt(document.getElementById(`${elementId}_sort`).value);
 
-        if(newSortPosition > 0) {
-            if(!search.sortOrder || (newSortPosition > search.sortOrder.length)) {
+        if (newSortPosition > 0) {
+            if (!search.sortOrder || (newSortPosition > search.sortOrder.length)) {
                 newOrder.push(field);
             }
             else {
-                newOrder.splice(newSortPosition-1, 0, field);
+                newOrder.splice(newSortPosition - 1, 0, field);
             }
         }
-        
+
         updateSearch({ ...search, sortOrder: newOrder });
     };
 
     const searchColumns = () => {
-        let params = { ...props, idPrefix: elementId, disabled: !included};
-        
-        if(finalDataType) {
-            switch(finalDataType) {
+        let params = { ...props, idPrefix: elementId, disabled: !included };
+
+        if (finalDataType) {
+            switch (finalDataType) {
                 case "number":
                     return (<NumericalSearchField {...params} />);
-                
+
                 case "select-many":
-                    return (<SelectManySearchField { ...params } />);
+                    return (<SelectManySearchField {...params} />);
+
+                /*                case "date":
+                                    return (<></>);
                                 
-/*                case "date":
-                    return (<></>);
-                
-                case "designSource":
-                    return (<StringSearchField {...params} />);
-*/                
+                                case "designSource":
+                                    return (<StringSearchField {...params} />);
+                */
                 case "boolean":
-                    return (<BooleanSearchField { ...params } />);
+                    return (<BooleanSearchField {...params} />);
+
+                case "nosearch":
+                    return (<PsuedoSearchField {...params} />);
 
                 case "string":
                 default:
                     return (<StringSearchField {...params} />);
-                };
+            };
         }
 
-        return (<><div/><div/></>);
+        return (<><div /><div /></>);
     };
 
     return (
         <div id={`${elementId}`} className={`search-field ${finalDataType}`}>
-            <div className="include"><input type="checkbox" id={`${elementId}_include`} name={`${elementId}_include`} onChange={toggleInclude} checked={included}/></div>
-            <div className="field-name"><label htmlFor={`${elementId}_include`}>{field}</label></div>
+            <div className="include"><input type="checkbox" id={`${elementId}_include`} name={`${elementId}_include`} onChange={toggleInclude} checked={included} /></div>
+            <div className="field-name"><label htmlFor={`${elementId}_include`}>{label || QuiltFields[field].label}</label></div>
             {searchColumns()}
-            <div className="sort-by">{search.fields.includes(field) 
-                ? <input type="number" id={`${elementId}_sort`} onChange={updateSort} value={search.sortOrder?.indexOf(field)+1}/>
+            <div className="sort-by">{search.fields.includes(field)
+                ? <input type="number" id={`${elementId}_sort`} onChange={updateSort} value={search.sortOrder?.indexOf(field) + 1} />
                 : <></>
             } </div>
         </div>
