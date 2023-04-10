@@ -4,6 +4,7 @@ import { HashRouter, Route, Routes, } from "react-router-dom";
 import { useQuery } from "react-query";
 import QuiltList from "./components/quilts/QuiltList";
 import Header from "./Header";
+import Headless from "./Headless";
 import ReportRunner from "./ReportRunner";
 import Login from "./Login";
 import AuthService from "./services/AuthService";
@@ -41,7 +42,7 @@ function App() {
     return (
       <HashRouter>
         <Routes>
-          <Route path={"/"} element={<Header logout={logout} selectedShow={selectedShow} selectShow={setShow} />} >
+          <Route path={"/"} element={params.headless ? <Headless logout={logout} selectedShow={selectedShow} selectShow={setShow} /> : <Header logout={logout} selectedShow={selectedShow} selectShow={setShow} />} >
             <Route index element={<QuiltList show={selectedShow} />} />
             <Route path={"login"} element={<Login />} />
             <Route path={"reports"} element={<ReportRunner show={selectedShow} />} />

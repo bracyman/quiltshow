@@ -1,0 +1,25 @@
+
+
+div.report-card {
+    margin-bottom: 2em;
+    display: flex;
+    flex-direction: column;
+}
+
+.report-card .field {
+    display: flex;
+    flex-direction: row;
+    height: 1.8em;
+    border-bottom: 1px solid lightgray;
+}
+
+.report-card .field-value {
+    padding-top: .3em;
+}
+
+.report-card .label {
+    font-weight: bold;
+    width: 20ch;
+    padding-top: .2em;
+}
+

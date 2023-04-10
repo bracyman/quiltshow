@@ -1,108 +1,53 @@
-import { useState, useContext } from "react";
-import { Modal, Button, OverlayTrigger, Tooltip, Badge } from "react-bootstrap";
-import QuiltService from "../../services/QuiltService";
-import QuiltForm from "./QuiltForm";
-import Prompt from "../Prompt";
+import React from "react";
+import { OverlayTrigger, Tooltip, } from "react-bootstrap";
+import { Renderers } from "./QuiltFields";
 
 function QuiltRow(props) {
-  const [editQuilt, setEditQuilt] = useState({});
-  const [showDeletePrompt, setShowDeletePrompt] = useState(false);
-  const [selectedDelete, setSelectedDelete] = useState(false);
 
-  const [showEdit, setShowEdit] = useState(false);
+  const { columns, quilt, rowClass, editHandler, deleteHandler } = props;
 
-  let quilt = props.quilt;
-
-  const handleEdit = () => {
-    setEditQuilt({ ...props.quilt });
-    setShowEdit(true);
-  };
-
-  const handleQuiltChange = (propertyName, updatedValue) => {    
-    setEditQuilt({ ...quilt, [propertyName]: updatedValue });
-  };
-
-  const handleSubmitQuiltChanges = (e) => {
-    if(e) {
-      e.preventDefault();
+  const render = (field) => {
+    let renderers = Renderers[field];
+    let renderer = Renderers.default;
+    if (renderer) {
+      renderer = renderers.list || renderers.default;
     }
 
-    props.mutator({modifier: QuiltService.updateQuilt, validator: QuiltService.validateQuilt, params: editQuilt});
-    handleClose();
-  };
-
-  const handleClose = () => {
-    setShowEdit(false);
-  };
-
-  const handleDelete = (id) => {
-    setSelectedDelete(id);
-    setShowDeletePrompt(true);
-  };
-
-  const deleteSelectedQuilt = () => {
-    props.mutator({modifier: QuiltService.deleteQuilt, params: selectedDelete});
-    handleCloseDelete();
-  };
-
-  const handleCloseDelete = () => {
-    setSelectedDelete(null);
-    setShowDeletePrompt(false);
+    return renderer(quilt[field]);
   };
 
   return (
-    <>
-      <div>{quilt.name}</div>
-      <div>{quilt.piecedBy}</div>
-      <div>{quilt.quiltedBy || ""}</div>
-      <div>{quilt.category?.name || ""}</div>
-      <div>{quilt.length}</div>
-      <div>{quilt.width}</div>
-      <div>{quilt.judged ? "Yes" : "No"}</div>
-      <div>
-          {quilt.tags.map((t) => (
-            <Badge pill bg="primary">{t.name}</Badge>
-          ))}
-      </div>
-      <div>
-        <OverlayTrigger overlay={<Tooltip id={`tooltip-top`}>Edit</Tooltip>}>
-          <button
-            onClick={handleEdit}
-            className="btn text-warning btn-act"
-            data-toggle="modal"
-          >
-            <i className="material-icons">&#xE254;</i>
-          </button>
-        </OverlayTrigger>
-      </div>
-      <div>
-        <OverlayTrigger overlay={<Tooltip id={`tooltip-top`}>Delete</Tooltip>}>
-          <button
-            onClick={() => handleDelete(quilt.id)}
-            className="btn text-danger btn-act"
-            data-toggle="modal"
-          >
-            <i className="material-icons">&#xE872;</i>
-          </button>
-        </OverlayTrigger>
-      </div>
-
-      <Modal show={showEdit} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Edit Quilt</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <QuiltForm quilt={editQuilt} show={props.show} updateQuilt={handleQuiltChange} saveQuilt={handleSubmitQuiltChanges} validQuilt={QuiltService.validateQuilt} cancelQuilt={handleClose} />
-        </Modal.Body>
-      </Modal>
-
-      <Prompt
-        show={showDeletePrompt}
-        message={`Are you sure you want to delete this quilt [${selectedDelete}]?`}
-        onYes={deleteSelectedQuilt}
-        onNo={handleCloseDelete}
-      />
-    </>
+    <div className="tr">
+      {columns.map(field =>
+        <div className={`td ${field}  ${rowClass || ''}`}>{render(field)}</div>
+      )}
+      {editHandler ? (
+        <div className={`td edit`}>
+          <OverlayTrigger overlay={<Tooltip id={`tooltip-top`}>Edit</Tooltip>}>
+            <button
+              onClick={() => editHandler(quilt)}
+              className="btn text-warning btn-act"
+              data-toggle="modal"
+            >
+              <i className="material-icons">&#xE254;</i>
+            </button>
+          </OverlayTrigger>
+        </div>
+      ) : (<></>)}
+      {deleteHandler ? (
+        <div className={`td delete`}>
+          <OverlayTrigger overlay={<Tooltip id={`tooltip-top`}>Delete</Tooltip>}>
+            <button
+              onClick={() => deleteHandler(quilt)}
+              className="btn text-danger btn-act"
+              data-toggle="modal"
+            >
+              <i className="material-icons">&#xE872;</i>
+            </button>
+          </OverlayTrigger>
+        </div>
+      ) : (<></>)}
+    </div>
   );
 }
 

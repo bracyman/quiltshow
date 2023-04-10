@@ -176,7 +176,7 @@ div.innerContainer {
 	margin: 0em 2em;
 }
 
-.report-preview-container .name {
+.report-preview-container div.name {
 	font-size: 2em;
 	font-weight: bold;
 }
@@ -220,50 +220,6 @@ div.report-info {
 	border-bottom: solid 2px #999;
 	padding: .3em 0;
 }
-
-div.report-info {
-	display: flex;
-	margin-bottom: 2em;
-	border: solid 2px darkgray;
-	border-radius: 10px;
-	background-color: #f5e964;
-	padding: 1em .5em;
-}
-
-div.report-info > div {
-	display: flex;
-	flex-direction: row;
-	flex-basis: 100%;
-}
-
-div.report-info div.form-label {
-	margin-right: 1em;
-	font-weight: bold;
-}
-div.report-info div.form-input {
-	flex-basis: 100%;
-}
-
-div.report-info  div.category > div.form-input {
-	display: flex;
-	flex-direction: column;
-}
-
-div.report-info div.operations {
-	display: flex;
-	flex-direction: column;
-}
-
-div.report-info div.operations button {
-	width: auto;
-	max-width: 8em;
-	margin: .25em 0;
-	font-weight: 500;
-	color: white;
-	background-color: #435d7d;
-	border-radius: 5px;
-}
-
 
 #searchFields div.header > div {
 	font-weight: bold;

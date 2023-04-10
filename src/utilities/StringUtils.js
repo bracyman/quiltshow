@@ -34,15 +34,28 @@ class StringUtils {
             case "category": return data.name;
             case "tag": return data.name;
             case "boolean": return data ? "Yes" : "No";
-            case "groupSize": return data.name;
+            case "groupSize": return this.upperFirstOnly(data);
             case "designSource": return `${data.designSourceType} (${data.name})`;
             case "date": return this.dateToString(data);
             case "award": return data.name;
             case "number": return `${numberFormat.format(data)}`;
             case "currency": return "$" + currencyFormat.format(data);
+            case "person": return `${data.firstName} ${data.lastName}`;
             default:
                 return `${data}`;
         }
+    }
+
+    upperFirstOnly(str) {
+        if (!str) {
+            return "";
+        }
+
+        const firstLetter = str.charAt(0);
+        const firstLetterCap = firstLetter.toUpperCase();
+        const remainingLetters = str.slice(1).toLowerCase();
+
+        return firstLetterCap + remainingLetters;
     }
 
     dateToString(date) {
@@ -51,6 +64,14 @@ class StringUtils {
         }
 
         return new Date(date).toDateString();
+    }
+
+    trimAfterLength(str) {
+        return str
+            ? (str.length > 30
+                ? `${str.substring(0, 30)}...`
+                : str)
+            : "";
     }
 
     numerize(str) {

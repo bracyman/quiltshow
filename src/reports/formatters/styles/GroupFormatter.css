@@ -1,0 +1,11 @@
+
+.report .group {
+    margin-bottom: 2.5em;
+}
+
+.group > .group-title
+{
+    font-size: 1.6em;
+    font-weight: bold;
+    margin-left: .6em;
+}

@@ -3,12 +3,14 @@ import { Modal, Button, Badge } from "react-bootstrap";
 import { useState } from "react";
 import QuiltService from "../../services/QuiltService";
 import { useQueryClient, useQuery, useMutation } from "react-query";
-import BasicRow from "../BasicRow";
+import QuiltRow from "./QuiltRow";
 import QuiltForm from "./QuiltForm";
 import Prompt from "../Prompt";
 import PaymentDisplay from "./forms/PaymentDisplay";
 import ObjectUtils from "../../utilities/ObjectUtils";
+import AuthService from "../../services/AuthService";
 import "../../styles/quiltList.css";
+import { QuiltFields, Sorters } from "./QuiltFields";
 
 const EMPTY_QUILT = {
   id: null,
@@ -28,6 +30,8 @@ const QuiltList = (props) => {
   const [editQuilt, setEditQuilt] = useState(EMPTY_QUILT);
   const [showDeletePrompt, setShowDeletePrompt] = useState(false);
   const [selectedDelete, setSelectedDelete] = useState(false);
+  const [sortField, setSortField] = useState(AuthService.userHasRole("admin") ? "enteredBy" : "hangingPreference");
+  const [sortDirection, setSortDirection] = useState(1);
   const queryClient = useQueryClient();
   const { data, isLoading, isError, isSuccess } = useQuery(
     "quiltList",
@@ -115,33 +119,34 @@ const QuiltList = (props) => {
     handleCloseDelete();
   };
 
-  const converters = {
-    category: (val) => val.name,
-    tags: (val) =>
-      val.map((t) => (
-        <Badge pill bg="primary">
-          {t.name}
-        </Badge>
-      )),
+
+  const changeSort = (field) => {
+    if (field === sortField) {
+      setSortDirection(sortDirection * -1);
+    }
+    else {
+      setSortField(field);
+    }
   };
 
+  const sortQuilts = (quilts) => {
+    let sorter = Sorters[sortField];
+    if (!sorter) {
+      sorter = Sorters.default;
+    }
+
+    quilts.sort((a, b) => (sorter(a, b) * sortDirection));
+  };
+
+
   let listClass = "pre-show-user";
-  let columns = [
-    { field: "name", name: "Name" },
-    {
-      field: "category",
-      name: "Category",
-      displayFunction: converters.category,
-    },
-    { field: "width", name: "Width", dataType: "number" },
-    { field: "length", name: "Height", dataType: "number" },
-    { field: "judged", name: "Judged", dataType: "boolean" },
-    { field: "tags", name: "Tags", displayFunction: converters.tags },
-  ];
+  let standardColumns = ["name", "category", "width", "length", "judged", "tags",];
+  let adminColumns = ["enteredBy", "name", "category", "hangingPreference", "width", "length", "judged",];
+
+  let columns = AuthService.userHasRole("admin") ? adminColumns : standardColumns;
 
   const rowProperties = {
     columns: columns,
-    name: "quilt",
     editHandler: handleEditQuilt,
     deleteHandler: handleDeleteQuilt,
     rowClass: listClass,
@@ -152,6 +157,7 @@ const QuiltList = (props) => {
   } else if (isError) {
     return <p>Failed to load quilts</p>;
   } else if (isSuccess) {
+    sortQuilts(data);
     return (
       <>
         <div className={`table table-striped table-hover ${listClass}`}>
@@ -168,8 +174,8 @@ const QuiltList = (props) => {
           </div>
 
           <div class="tr header">
-            {columns.map((col) => (
-              <div className={`td ${col.field}`}>{col.name}</div>
+            {columns.map((field) => (
+              <div className={`td ${field}`} onClick={() => changeSort(field)}>{QuiltFields[field].label}</div>
             ))}
             <div className="td edit">Edit</div>
             <div className="td delete">Delete</div>
@@ -179,7 +185,7 @@ const QuiltList = (props) => {
           {data &&
             data.length > 0 &&
             data.map((quilt) => (
-              <BasicRow {...rowProperties} key={quilt.id} data={quilt} />
+              <QuiltRow {...rowProperties} key={quilt.id} quilt={quilt} />
             ))}
         </div>
 

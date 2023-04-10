@@ -8,56 +8,79 @@ import ExpiringStorage from "./services/ExpiringStorage";
 import ReportService, { IN_PROGRESS_REPORT } from "./services/ReportService";
 
 const ReportRunner = (props) => {
-    const [searchParams] = useSearchParams();
     const [reportToPreview, setReportToPreview] = useState(null);
-    const reportId = searchParams.get("reportId");
-    const {data, status} = useQuery("runningReport", async () => { 
-        if(!reportId) {
-            return null;
-        }
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const reportId = urlSearchParams.get("reportId");
+    const { data, status } = useQuery(
+        reportId ? "runningReport" : "listReports",
+        reportId
+            ?  // run the report and display the results
+            async () => {
+                let results = null;
+                if (reportId === IN_PROGRESS_REPORT) {
+                    results = await ReportService.runReport(ExpiringStorage.getItem(IN_PROGRESS_REPORT));
+                }
+                else {
+                    results = await ReportService.runReport(reportId);
+                }
 
-        let results = null;
-        if(reportId === IN_PROGRESS_REPORT) {
-            results = await ReportService.runReport(ExpiringStorage.getItem(IN_PROGRESS_REPORT));
-        } 
-        else {
-            results = await ReportService.runReport(reportId); 
-        }
+                return results;
+            }
 
-        return results;
-    });
+            : // list the available reports
+            async () => {
+                let results = await ReportService.getReports();
+                let reports = {
+                    favorites: results.filter(r => r.favorite),
+                    quilts: results.filter(r => (r.reportCategory === `SHOW`)),
+                    awards: results.filter(r => (r.reportCategory === `AWARDS`)),
+                    other: results.filter(r => (r.reportCategory === `MISCELLANEOUS`)),
+                };
+
+                return reports;
+            }
+    );
 
     console.log(`Displaying report ${reportId || "none"}`);
 
-    const reports = {
-        favorites: [{ id: 1, name: "Check In", description: "The Checkin form", format: "table", columns: [{name: "Quilt Name", field: "name"}]}],
-        quilts: [],
-        awards: [],
-        other: []
-    };
 
     const runReport = (report) => {
         console.log(`Running report ${report}`);
-        window.open(`/reports?headless=1&reportId=${report.id}`);
+        if (report instanceof Object) {
+            window.open(`/?headless=1&reportId=${report.id}#/reports`);
+        }
+        else {
+            window.open(`/?headless=1&reportId=${report}#/reports`);
+        }
     };
 
     const previewReport = (report) => {
         setReportToPreview(report);
     };
 
-    if(reportId && (status === "success")) {
-        return (<ReportFormatter report={data.report} results={data.results}  />);
+    const createNewReport = () => {
+        window.location.href = '/#/reportBuilder';
+    };
+
+    if (reportId && (status === "success")) {
+        return (<ReportFormatter report={data.report} results={data.results} show={props.show} />);
     }
-    else if(reportId && (status === "loading")) {
+    else if (reportId && (status === "loading")) {
         return (<p>Loading report...</p>);
     }
     else {
-        return (
-            <>
-                <ReportList id="reportList" reports={reports} runReport={runReport} previewReport={previewReport} />
-                <ReportPreview id="reportPreview" report={reportToPreview} />
-            </>
-        );
+        if (status === "loading") {
+            <p>Loading reports...</p>
+        }
+        else {
+            return (
+                <>
+                    <button onClick={createNewReport}>Create Report</button>
+                    <ReportList id="reportList" reports={data || []} runReport={runReport} previewReport={previewReport} show={props.show} />
+                    <ReportPreview id="reportPreview" report={reportToPreview} runReport={runReport} show={props.show} />
+                </>
+            );
+        }
     }
 
 };
