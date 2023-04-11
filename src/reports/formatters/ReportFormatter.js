@@ -2,6 +2,7 @@ import TableFormatter from "./TableFormatter";
 import CardFormatter from "./CardFormatter";
 import CheckinFormatter from "./CheckInFormatter";
 import GroupingFormatter from "./GroupingFormatter";
+import PaymentStatusFormatter from "./PaymentStatusFormatter";
 import DateUtils from "../../utilities/DateUtils";
 import "./styles/Report.css";
 
@@ -17,9 +18,12 @@ const ReportFormatter = (props) => {
             case "card":
                 return (<CardFormatter report={report} results={results} preview={preview || false} show={show} />);
     
-            case "checkin":
-                return (<CheckinFormatter props />);
-        
+            case "payment_status":
+                return (<PaymentStatusFormatter report={report} results={results} preview={preview || false} show={show} />);
+
+                case "checkin":
+                    return (<CheckinFormatter props />);
+                    
             case "group":
                 return (<GroupingFormatter report={report} results={results} preview={preview || false} show={show} />);
             

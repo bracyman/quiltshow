@@ -1,0 +1,14 @@
+
+.report.payment-status tr {
+    height: 2.4em;
+    border-bottom: 1px solid gray;
+}
+
+.report.payment-status tr.paid {
+    background-color: #C8FBC8;
+}
+
+.report.payment-status td {
+
+    border-width: 0px !important;
+}
