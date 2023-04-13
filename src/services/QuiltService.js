@@ -140,6 +140,16 @@ class QuiltService {
       return null;
     });
   }
+
+  async markQuiltsAsPaid(quiltIds) {
+    return await ApiService.post(`quilts/external-pay`, quiltIds).then((response) => {
+      if(response.ok) {
+        return true;
+      }
+
+      return false;
+    });
+  }
 }
 
 export default new QuiltService();

@@ -11,6 +11,7 @@ import ObjectUtils from "../../utilities/ObjectUtils";
 import AuthService from "../../services/AuthService";
 import "../../styles/quiltList.css";
 import { QuiltFields, Sorters } from "./QuiltFields";
+import SubmitExternalPayment from "./forms/SubmitExternalPayment";
 
 const EMPTY_QUILT = {
   id: null,
@@ -30,6 +31,8 @@ const QuiltList = (props) => {
   const [editQuilt, setEditQuilt] = useState(EMPTY_QUILT);
   const [showDeletePrompt, setShowDeletePrompt] = useState(false);
   const [selectedDelete, setSelectedDelete] = useState(false);
+  const [quiltsToPay, setQuiltsToPay] = useState([]);
+  const [showMarkAsPaid, setShowMarkAsPaid] = useState(false);
   const [sortField, setSortField] = useState(AuthService.userHasRole("admin") ? "enteredBy" : "hangingPreference");
   const [sortDirection, setSortDirection] = useState(1);
   const queryClient = useQueryClient();
@@ -48,8 +51,17 @@ const QuiltList = (props) => {
       queryClient.invalidateQueries("quiltList");
       queryClient.invalidateQueries("quiltAmountDue");
     },
+    onError: (error, variables, context) => {
+      console.log(`Error updating quilts ${error}`);
+      alert("An error occured while updating the quilt(s)");
+    },
   });
 
+
+
+  /**********************************************************************/
+  /*     New Quilt Entry                                                */
+  /**********************************************************************/
   const handleShowNewQuilt = () => setShowNewQuiltForm(true);
   const handleCloseNewQuilt = () => setShowNewQuiltForm(false);
 
@@ -81,6 +93,12 @@ const QuiltList = (props) => {
     handleCloseNewQuilt();
   };
 
+
+  
+
+  /**********************************************************************/
+  /*     Edit Quilt Entry                                               */
+  /**********************************************************************/
   const handleEditQuilt = (quilt) => {
     setEditQuilt(quilt);
     setShowEditQuiltForm(true);
@@ -103,6 +121,12 @@ const QuiltList = (props) => {
     handleCloseEditQuilt();
   };
 
+
+  
+
+  /**********************************************************************/
+  /*     Delete Quilt                                                   */
+  /**********************************************************************/
   const handleDeleteQuilt = (quilt) => {
     setSelectedDelete(quilt);
     setShowDeletePrompt(true);
@@ -120,6 +144,42 @@ const QuiltList = (props) => {
   };
 
 
+  
+
+  /**********************************************************************/
+  /*     Mark as already Paid                                           */
+  /**********************************************************************/
+  const submitPayment = (quilt) => {
+    let filteredQuilts = (data || [])
+      .filter(q => q.enteredBy.email === quilt.enteredBy.email)
+      .filter(q => q.paymentData?.status != 'COMPLETED')
+      .map(q => { return { id: q.id, name: q.name }; });
+
+    setQuiltsToPay(filteredQuilts);
+    setShowMarkAsPaid(true);
+  };
+
+  const markAsPaid = (paidQuilts) => {
+    quiltMutator.mutate({
+      modifier: QuiltService.markQuiltsAsPaid,
+      params: paidQuilts.map(q => q.id),
+    });
+
+    closeMarkAsPaid();
+  };
+
+  const closeMarkAsPaid = () => {
+    setQuiltsToPay([]);
+    setShowMarkAsPaid(false);
+  };
+
+
+
+  
+
+  /**********************************************************************/
+  /*     Sort by columns                                                */
+  /**********************************************************************/
   const changeSort = (field) => {
     if (field === sortField) {
       setSortDirection(sortDirection * -1);
@@ -139,9 +199,15 @@ const QuiltList = (props) => {
   };
 
 
+
+  
+
+  /**********************************************************************/
+  /*     Configure list                                                 */
+  /**********************************************************************/
   let listClass = "pre-show-user";
   let standardColumns = ["name", "category", "width", "length", "judged", "tags",];
-  let adminColumns = ["enteredBy", "name", "category", "hangingPreference", "width", "length", "judged",];
+  let adminColumns = ["enteredBy", "name", "category", "hangingPreference", "width", "length", "judged", "Payment"];
 
   let columns = AuthService.userHasRole("admin") ? adminColumns : standardColumns;
 
@@ -149,9 +215,16 @@ const QuiltList = (props) => {
     columns: columns,
     editHandler: handleEditQuilt,
     deleteHandler: handleDeleteQuilt,
+    submitPayment: submitPayment,
     rowClass: listClass,
   };
 
+
+  
+
+  /**********************************************************************/
+  /*     Create Table                                                   */
+  /**********************************************************************/
   if (isLoading) {
     return <p>Loading quilts...</p>;
   } else if (isError) {
@@ -173,19 +246,21 @@ const QuiltList = (props) => {
             <PaymentDisplay {...props} />
           </div>
 
-          <div class="tr header">
-            {columns.map((field) => (
-              <div className={`td ${field}`} onClick={() => changeSort(field)}>{QuiltFields[field].label}</div>
-            ))}
-            <div className="td edit">Edit</div>
-            <div className="td delete">Delete</div>
+          <div className="tr header">
+            {columns.map((field) => 
+              (QuiltFields[field]) 
+                ? (<div className={`td ${field}`} onClick={() => changeSort(field)} key={`header_${field}`}>{QuiltFields[field].label}</div>)
+                : (<div className={`td ${field}`} key={`header_${field}`} >{field}</div>)
+            )}
+            <div className="td edit" key={`header_edit`}>Edit</div>
+            <div className="td delete" key={`header_delete`}>Delete</div>
           </div>
 
           {data && data.length === 0 && <p>No quilts entered yet</p>}
           {data &&
             data.length > 0 &&
             data.map((quilt) => (
-              <QuiltRow {...rowProperties} key={quilt.id} quilt={quilt} />
+              <QuiltRow {...rowProperties} quilt={quilt} key={`quiltRow${quilt.id}`} />
             ))}
         </div>
 
@@ -229,6 +304,11 @@ const QuiltList = (props) => {
           onYes={deleteSelectedQuilt}
           onNo={handleCloseDelete}
         />
+
+        { showMarkAsPaid
+          ? <SubmitExternalPayment show={showMarkAsPaid} quilts={quiltsToPay} markAsPaid={markAsPaid} cancelMarkAsPaid={closeMarkAsPaid} />
+          : <></>
+        }
       </>
     );
   }

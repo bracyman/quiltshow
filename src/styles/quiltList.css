@@ -306,6 +306,10 @@ table.table .avatar {
     font-weight: bold;
 }
 
+.modal-header {
+    font-size: 1.3em;
+}
+
 .payment-info div.modal-dialog, .payment-info div.modal-content {
     width: 40em;
 }
@@ -324,4 +328,16 @@ table.table .avatar {
 
 .required {
     color: #d90000 !important;
+}
+
+.submit-external-payment div {
+    display: flex;
+    flex-direction: row;
+    font-size: 1.2em;
+}
+
+.mark-as-paid {
+    border: 2px solid darkgray;
+    border-radius: .375rem;
+    cursor: pointer;
 }
