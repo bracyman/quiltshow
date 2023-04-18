@@ -50,6 +50,9 @@ const IntakePage1 = (props) => {
         <Row>
           <Col sm={3}>
             <Form.Label htmlFor="description">Description</Form.Label>
+            <Form.Text id={"groupSizeHelpBlock"} muted>
+              Description will be displayed with the quilt
+            </Form.Text>
           </Col>
           <Col>
             <Form.Control
