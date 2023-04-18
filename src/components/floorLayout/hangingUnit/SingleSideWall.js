@@ -27,7 +27,7 @@ export class SingleSideWall extends HangingUnit {
     buildForm(announcer) {
         return (<div className="hanging-unit-form SingleSideWall" aria-label="Single Side Wall">
             <div className="row" aria-label="Wall Name">
-                {super.inputCell("Name", (<input type="text" name="name" id="name" value={this.name} />))}
+                {super.inputCell("Name", (<input type="text" name="name" id="name" value={this.getName()} onChange={this.update(announcer)} />))}
             </div>
             <div className="row" aria-label="Wall Location">
                 {super.inputCell("Left Position", (<input type="text" name="location.left" id="location.left" value={this.getLocation().left} onChange={this.update(announcer)} />))}

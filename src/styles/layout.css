@@ -3,6 +3,7 @@
 
 canvas {
     border: 2px solid #555; 
+    padding: 0.75em;
 }
 
 .floor-layout-container {

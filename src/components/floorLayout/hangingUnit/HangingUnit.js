@@ -76,7 +76,6 @@ export class HangingUnit {
 
     updateUnit(id, evt, announcer) {
         let field = evt.target.name;
-        console.log(`Updating ${field} field on booth ${id} to ${evt.target.value}`);
 
         let changeType = null;
         if (field === "name") {

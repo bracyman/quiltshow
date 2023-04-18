@@ -12,6 +12,7 @@ import ShowService from "./services/ShowService";
 import Configuration from "./configuration/Configuration";
 import ReportBuilder from "./reports/ReportBuilder";
 import Layout from "./components/floorLayout/Layout";
+import QuiltHangingTool from "./components/hanging/QuiltHangingTool";
 
 
 
@@ -49,6 +50,7 @@ function App() {
             <Route path={"reportBuilder"} element={<ReportBuilder show={selectedShow} />} />
             <Route path={"configuration"} element={<Configuration show={selectedShow} />} />
             <Route path={"floorLayout"} element={<Layout show={selectedShow} />} />
+            <Route path={"hangingTool"} element={<QuiltHangingTool />} />
           </Route>
         </Routes>
       </HashRouter>
