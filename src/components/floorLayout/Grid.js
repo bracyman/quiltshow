@@ -84,7 +84,11 @@ export default class Grid {
         canvas.on('object:rotating', (options) => {
             if (options.target.data) {
                 let unitLocation = options.target.data.getLocation();
-                options.target.data.setLocation({ ...unitLocation, angle: options.target.angle });
+                options.target.data.setLocation({ ...unitLocation, 
+                    left: this.deconvert(options.target.left), 
+                    top: this.deconvert(options.target.top), 
+                    angle: options.target.angle 
+                });
                 this.announcer.announce(this, HANGING_UNIT_UPDATED, options.target.data);
             }
         });

@@ -7,7 +7,7 @@ import { Room } from './Room';
 import { SingleSideWall } from './hangingUnit/SingleSideWall';
 import { DoubleSideWall } from './hangingUnit/DoubleSideWall';
 import { Booth } from './hangingUnit/Booth';
-import Announcer from './Announcer';
+import Announcer from '../../utilities/Announcer';
 
 
 
