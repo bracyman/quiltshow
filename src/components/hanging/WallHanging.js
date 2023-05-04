@@ -59,10 +59,7 @@ export default class WallHanging {
             let hangingLocation = options.target.data;
 
             if(hangingLocation) {
-                hangingLocation.left = wallHanger.deconvert(options.target.left);
-                hangingLocation.top = wallHanger.deconvert(options.target.top);
-
-                wallHanger.updateQuilt(hangingLocation.quilt, hangingLocation);
+                wallHanger.updateQuilt(hangingLocation, wallHanger.deconvert(options.target.left), wallHanger.deconvert(options.target.top));
             }
         });  
 
@@ -90,7 +87,7 @@ export default class WallHanging {
         }
         else {
             // get the conversion factor from pixels to inches
-            if(this.wall.width > this.wall.height) {
+            if((elWidth / this.wall.width) <  (elHeight / this.wall.height)) {
                 this.grid.pixelsPerInch = elWidth / (this.wall.width * 12); 
             }
             else {
@@ -117,11 +114,30 @@ export default class WallHanging {
 
         if(this.wall) {
             // create grid
-            for (var i = 0; i < (this.grid.canvasWidth / this.grid.size); i++) {
+            for (let i = 0; i < (this.grid.canvasWidth / this.grid.size) + 1; i++) {
                 this.canvas.add(new fabric.Line([ i * this.grid.size, 0, i * this.grid.size, this.grid.canvasHeight], { type:'line', stroke: '#ccc', selectable: false }));
-                this.canvas.add(new fabric.Line([ 0, i * this.grid.size, this.grid.canvasWidth, i * this.grid.size], { type: 'line', stroke: '#ccc', selectable: false }))
+            }
+
+            for (let i = 0; i < (this.grid.canvasHeight / this.grid.size) + 1; i++) {
+                this.canvas.add(new fabric.Line([ 0, i * this.grid.size, this.grid.canvasWidth, i * this.grid.size], { type: 'line', stroke: '#ccc', selectable: false }));
             }
         } 
+    }
+
+    labelWall() {
+        if(this.wall) {
+            let label = new fabric.IText(this.wall.name || "", { 
+                fill: "#000",
+                selectable: false,
+                hasControls: false,
+                fontSize: this.grid.canvasHeight / 12,
+                top: 0
+            });
+
+            label.top = this.grid.canvasHeight - (label.height *1.1);
+            label.left = this.grid.canvasWidth / 2 - label.width / 2;
+            this.canvas.add(label);
+        }
     }
 
     clearCanvas() {
@@ -141,14 +157,22 @@ export default class WallHanging {
         this.calculateGridValues();
         this.drawGrid();
 
+        this.labelWall();
         (wall?.hangingLocations || []).forEach(loc => this.addHangingLocation(loc));
     }
 
     addQuilt(quilt) {
-        let newHangingLocation =  {left: 0, top: 0, quilt: quilt};
+        let newHangingLocation =  {left: 0, top: 0, quilt: quilt, wall: this.wall};
         this.addHangingLocation(newHangingLocation, true);
 
         return newHangingLocation;
+    }
+
+    selectQuilt(quilt) {
+        let matches = this.canvas.getObjects().filter(o => o.data?.quilt?.id === quilt.id);
+        if(matches.length > 0) {
+            this.canvas.setActiveObject(matches[0]);
+        }
     }
 
     removeQuilt(quilt) {
@@ -159,9 +183,9 @@ export default class WallHanging {
     }
 
     addHangingLocation(hangingLocation){
-		this.canvas.add(new fabric.Rect({ 
-			left: 0, 
-			top: 0, 
+		let newLocation = new fabric.Rect({ 
+			left: this.convert(hangingLocation.leftPosition || 0), 
+			top: this.convert(hangingLocation.topPosition || 0), 
 			width: this.convert(hangingLocation.quilt.width), 
 			height: this.convert(hangingLocation.quilt.length), 
 			type: 'rectangle',
@@ -170,7 +194,22 @@ export default class WallHanging {
 			originX: 'left', 
 			originY: 'top',
 			id: hangingLocation.quilt.id, 
-            selectable: true,
+            selectable: false,
+            data: hangingLocation,
+		});
+
+        let label = new fabric.IText(`${hangingLocation.quilt.number}\n${hangingLocation.quilt.name}`, {
+            fill: "#000",
+            selectable: false,
+            hasControls: false,
+            fontSize: 16,
+        });
+
+        label.left = newLocation.left + (newLocation.width / 2) - (label.width / 2);
+        label.top = newLocation.top + (newLocation.height / 2) - (label.height / 2);
+
+        let group = new fabric.Group([newLocation, label], {
+            data: hangingLocation,
             selectionBackgroundColor: "#00F",
             padding: 4,
             lockScalingX: true,
@@ -178,9 +217,10 @@ export default class WallHanging {
             lockRotation: true,
             cornerStyle: 'circle',
 			hasControls: true,		
-			centeredRotation: true,
-            data: hangingLocation
-		}));
+        });
+
+        this.canvas.add(group);
+        this.canvas.setActiveObject(group);
     }
 
 }

@@ -50,7 +50,7 @@ function App() {
             <Route path={"reportBuilder"} element={<ReportBuilder show={selectedShow} />} />
             <Route path={"configuration"} element={<Configuration show={selectedShow} />} />
             <Route path={"floorLayout"} element={<Layout show={selectedShow} />} />
-            <Route path={"hangingTool"} element={<QuiltHangingTool />} />
+            <Route path={"hangingTool"} element={<QuiltHangingTool show={selectedShow} />} />
           </Route>
         </Routes>
       </HashRouter>

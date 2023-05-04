@@ -107,8 +107,13 @@ const QuiltList = (props) => {
     setShowEditQuiltForm(false);
   };
 
-  const handleEditQuiltChange = (propertyName, updatedValue) => {
-    setEditQuilt({ ...editQuilt, [propertyName]: updatedValue });
+  const handleEditQuiltChange = (property, updatedValue) => {
+    if(property instanceof Object) {
+      setEditQuilt({ ...editQuilt, ...property });
+    }
+    else {
+      setEditQuilt({ ...editQuilt, [property]: updatedValue });
+    }
   };
 
   const handleSubmitEditQuiltChanges = () => {
@@ -244,6 +249,10 @@ const QuiltList = (props) => {
               <span>Add New Quilt</span>
             </Button>
             <PaymentDisplay {...props} />
+          </div>
+
+          <div className="tr header">
+            <div>{data.length} quilts entered</div>
           </div>
 
           <div className="tr header">

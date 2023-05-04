@@ -45,8 +45,8 @@ const IntakePage2 = (props) => {
         updateQuilt(propertyName, updatedValue);
     };
 
-    const updateQuilt = (propertyName, updatedValue) => {
-        props.updateQuilt(propertyName, updatedValue);
+    const updateQuilt = (property, updatedValue) => {
+        props.updateQuilt(property, updatedValue);
     };
 
     const sortCategory = (a, b) => {
@@ -79,6 +79,7 @@ const IntakePage2 = (props) => {
                             name="groupSize"
                             onChange={(e) => onInputChange(e)}
                             value={props.quilt.groupSize ? props.quilt.groupSize : ""}
+                            className={props.quilt.groupSize ? "" : "empty-data"}
                         >
                             <option value=""></option>
                             {efforts.map((e) => (
@@ -105,6 +106,7 @@ const IntakePage2 = (props) => {
                                     name="quiltedBy"
                                     value={props.quilt.quiltedBy || ""}
                                     onChange={(e) => onInputChange(e)}
+                                    className={props.quilt.quiltedBy ? "" : "empty-data"}
                                 />
                             </Col>
                         </Row>
@@ -121,6 +123,7 @@ const IntakePage2 = (props) => {
                                     name="additionalQuilters"
                                     value={props.quilt.additionalQuilters || ""}
                                     onChange={(e) => onInputChange(e)}
+                                    className={props.quilt.additionalQuilters ? "" : "empty-data"}
                                 />
                             </Col>
                         </Row>
@@ -175,6 +178,7 @@ const IntakePage2 = (props) => {
                             name="category"
                             onChange={(e) => onInputChange(e)}
                             value={props.quilt.category ? props.quilt.category.id : ""}
+                            className={props.quilt.category ? "" : "empty-data"}
                         >
                             <option value=""></option>
                             {props.show.categories.sort(sortCategory).map((c) => (
@@ -200,7 +204,7 @@ const IntakePage2 = (props) => {
                     <Col sm={3}>
                         <Form.Label htmlFor="judged">Judged?</Form.Label>
                     </Col>
-                    <Col>
+                    <Col className={((props.quilt.judged === undefined) || (props.quilt.judged === null)) ? "empty-data" : ""}>
                         <Form.Check
                             inline
                             type="radio"
@@ -229,7 +233,7 @@ const IntakePage2 = (props) => {
                     <Col sm={3}>
                         <Form.Label htmlFor="judged">First EIHQ Show entry?</Form.Label>
                     </Col>
-                    <Col>
+                    <Col className={((props.quilt.firstEntry === undefined) || (props.quilt.firstEntry === null)) ? "empty-data" : ""}>
                         <Form.Check
                             inline
                             type="radio"

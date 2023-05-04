@@ -1,14 +1,24 @@
 
 import { useState } from "react";
-import { Sorters } from "../quilts/QuiltFields";
+import { Sorters, alphaSort } from "../quilts/QuiltFields";
+import {Tab, Tabs} from "react-bootstrap";
+
+
+const SORT_WIDTH    = "Width";
+const SORT_CATEGORY = "Category";
+const SORT_NUMBER   = "Entry Number";
+const SORT_TAGS     = "Seasonal";
 
 
 const QuiltSelector = (props) => {
     const [startingWidth, setStartingWidth] = useState(null);
+    const [sortType, setSortType] = useState(SORT_WIDTH);
+    const [quilts, setQuilts] = useState((props.quilts || []).filter(q => startingWidth ? (q.width <= startingWidth) : true).sort((a, b) => Sorters.width(a,b) * -1));
 
-    const quilts = (props.quilts || []).filter(q => startingWidth ? (q.width <= startingWidth) : true).sort((a, b) => Sorters.width(a,b) * -1);
-    const selectedQuilt = props.selectedQuilt;
+    const show = props.show;
+    const goToQuiltLocation = props.selectQuilt;
     const activateQuilt = props.activateQuilt;
+    const unHang = props.removeQuilt;
 
 
     /* ******************************************************************** */
@@ -16,7 +26,7 @@ const QuiltSelector = (props) => {
     /* ******************************************************************** */
 
     /* ******************************************************************** */
-    /*    Starting Width Handlers                                           */
+    /*    List Action    Handlers                                           */
     /* ******************************************************************** */
     const updateStartingWidth = (evt) => {
         if(evt.target.value) {
@@ -28,6 +38,37 @@ const QuiltSelector = (props) => {
         }
     };
 
+    const sortQuilts = (evt) => {
+        setSortType(evt.target.value);
+        switch(evt.target.value) {
+            case SORT_WIDTH:
+                setQuilts(quilts.sort((a, b) => Sorters.width(a,b) * -1));
+                break;
+
+            case SORT_CATEGORY:
+                setQuilts(quilts.sort((a, b) => Sorters.category(a,b)));
+                break;
+
+            case SORT_NUMBER:
+                let newQuilts = quilts.sort((a, b) => Sorters.number(a,b));
+                setQuilts(newQuilts);
+                break;
+
+            case SORT_TAGS:
+                setQuilts(quilts.sort((a, b) => alphaSort(seasonalTags(a), seasonalTags(b)) ));
+                break;
+
+            default:
+                break;
+        }
+    };
+
+    const seasonalTags = (quilt) => {
+        let tc = show.tagCategories.filter(c => c.name === "Seasonal")[0];
+        let ids = tc.tags.map(t => t.id);
+        
+        (quilt.tags || []).filter(t => ids.includes(t.id)).sort().join(",");
+    };
 
     /* ******************************************************************** */
     /*    Quilt Action Handlers                                             */
@@ -38,61 +79,77 @@ const QuiltSelector = (props) => {
         }
     };
 
-    const buildQuiltList = () => {
+    const buildUnhungQuiltList = () => {
         return (
-            <div className="quilt-list">
-                {quilts.map(q => {
-                    if(((q.hangingLocation !== undefined) && (q.hangingLocation !== null))) {
-                        console.log(`Hiding quilt ${q.width}`);
-                    }
-                    return (
-                    <button 
-                        className={`quilt ${(q.id === selectedQuilt?.id) ? "selected" : ""}`} 
-                        hidden={((q.hangingLocation !== undefined) && (q.hangingLocation !== null)) ? true : false}
-                        key={`quilt${q.id}`} 
-                        onClick={(e) => selectQuilt(e, q)}
-                        >
-                            {`${q.width} X ${q.length}`}
-                    </button>
-                );})}
+            <div className="unhung-quilt-list">
+                {quilts
+                    .filter(q => (q.hangingLocation === undefined) || (q.hangingLocation === null))
+                    .map(q => 
+                        <div 
+                            className={`quilt`} 
+                            key={`quilt${q.id}`} 
+                            onDoubleClick={(e) => selectQuilt(e, q)}
+                            >
+                                <div className="name">{`${q.number} - ${q.name}`}</div>
+                                <div className="info">{`${q.width} X ${q.length} | ${q.category.name}`}</div>
+                                <div className="info">{`${q.mainColor || "no color provided"}`}</div>
+                        </div>
+                    )
+                }
             </div>
         );
     };
 
-    return (
-        <div className="quilt-selector">
-            <div className="navigation">
-                <div className="width-selector">
-                    <label htmlFor="startingWidth">Width</label>
-                    <input name="startingWidth" id="startingWith" className="width" value={startingWidth || ""} onChange={updateStartingWidth}/>
-                </div>
-            </div>
-            {buildQuiltList()}
-            <div className="selected-quilt">
-                <div className="name">{selectedQuilt?.name || ""}</div>
-                {selectedQuilt 
-                    ? (<div className="measurements">{`Width: ${selectedQuilt.width} X Height: ${selectedQuilt.length}`}</div>)
-                    : (<></>)
+    const buildHungQuiltList = () => {
+        return (
+            <div className="hung-quilt-list">
+                {quilts
+                    .filter(q => (q.hangingLocation !== undefined) && (q.hangingLocation !== null))
+                    .map(q => 
+                        <div 
+                            className={`quilt`} 
+                            key={`quilt${q.id}`} 
+                            >
+                                <div className="name">{`${q.number} - ${q.name}`}</div>
+                                <div className="info">{`${q.width} X ${q.length} | ${q.category.name}`}</div>
+                                <div className="info">{`${q.mainColor || "no color provided"}`}</div>
+                                <div className="buttons">
+                                    <button onClick={() => goToQuiltLocation(q)}>Locate</button>
+                                    <button onClick={() => unHang(q)}>Unhang</button>
+                                </div>
+                        </div>
+                    )
                 }
             </div>
-        </div>
+        );
+    };
+
+
+    return (
+        <Tabs defaultActiveKey="unhung" id="quilt-selector-tab-group">
+            <Tab eventKey={"unhung"} title="Unhung Quilts">
+                <div className="list-actions">
+                    <div className="width-selector">
+                        <label htmlFor="startingWidth">Width</label>
+                        <input name="startingWidth" id="startingWith" className="width" value={startingWidth || ""} onChange={updateStartingWidth}/>
+                    </div>
+                    <div className="sort-order">
+                        <label htmlFor="quiltSelectorSortOrder">Sort By</label>
+                        <select id="quiltSelectorSortOrder" onChange={sortQuilts}>
+                            <option key={SORT_WIDTH.replace(" ", "_")} value={SORT_WIDTH}>{SORT_WIDTH}</option>
+                            <option key={SORT_CATEGORY.replace(" ", "_")} value={SORT_CATEGORY}>{SORT_CATEGORY}</option>
+                            <option key={SORT_NUMBER.replace(" ", "_")} value={SORT_NUMBER}>{SORT_NUMBER}</option>
+                            <option key={SORT_TAGS.replace(" ", "_")} value={SORT_TAGS}>{SORT_TAGS}</option>
+                        </select>
+                    </div>
+                </div>
+                {buildUnhungQuiltList()}
+            </Tab>
+            <Tab eventKey={"hung"} title="Hung Quilts">
+                {buildHungQuiltList()}
+            </Tab>
+        </Tabs>
     );
 };
-
-
-/*
-                <div className="step-buttons">
-                    <button className="step-start" label="Widest" onClick={goToStart}>&lt;&lt;</button>
-                    <button className="step-left" label="Wider" onClick={stepLeft}>&lt;</button>
-                </div>
-                <div className="step-buttons">
-                    <button className="step-right" label="Narrower" onClick={stepRight}>&gt;</button>
-                    <button className="step-end" label="Narrowest" onClick={goToEnd}>&gt;&gt;</button>
-                </div>
-
-
-
-
-*/
 
 export default QuiltSelector;

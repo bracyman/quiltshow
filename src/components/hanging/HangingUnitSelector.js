@@ -27,7 +27,7 @@ const groupConfig = {
     selectable: true,
     lockMovementX: true,
     lockMovementY: true,
-    hasControls: false,
+    hasControls: true,
     selectionBackgroundColor: "#FFFF8F",
     hoverCursor: "pointer",
 };
@@ -151,6 +151,15 @@ export default class HangingUnitSelector {
 
 
         (room?.hangingUnits || []).forEach(unit => this.addHangingUnit(unit));
+        this.canvas.renderAll();
+    }
+
+    setHangingUnit(unit) {
+        let matches = this.canvas.getObjects()  .filter(o => o.data.id === unit.id);
+        if(matches.length > 0) {
+            this.canvas.setActiveObject(matches[0]);
+            this.canvas.requestRenderAll();
+        }
     }
 
     addHangingUnit(hangingUnit) {
@@ -194,24 +203,38 @@ export default class HangingUnitSelector {
         return (wall.top - (label.height + this.grid.wallWidth * 2)) >= 0;
     }
 
+    correctPosition(group) {
+        if(group.aCoords.tl.x < 0) {
+            group.left = 0;
+        }
+        if(group.aCoords.tl.y < 0) {
+            group.top = 0;
+        }
+
+        if(group.aCoords.br.x > this.grid.canvasWidth) {
+            group.left = this.grid.canvasWidth - group.width;
+        }        
+        if(group.aCoords.br.y > this.grid.canvasHeight) {
+            group.top = this.grid.canvasHeight - group.height;
+        }        
+    }
+
     buildSingleSideWall(hangingUnit) {
-        let width = Number(hangingUnit.measurements.width);
-        let left = this.convert(hangingUnit.leftPosition);
-        let top = this.convert(hangingUnit.topPosition);
-        let wall = new fabric.Rect({ ...lineConfig, 
-			left: left, 
-			top: top, 
-			width: this.convert(width), 
+        //let rect = getRectPosition(hangingUnit.leftPosition, hangingUnit.topPosition, Number(hangingUnit.measurements.width), hangingUnit.angle);
+
+        let wall = new fabric.Rect({ ...lineConfig,
+            left: 0, 
+			top: 0, 
+			width: this.convert(Number(hangingUnit.measurements.width)), 
 			height: this.grid.wallWidth,
-            angle: hangingUnit.angle,
-            id: hangingUnit.id
+            id: hangingUnit.id,
 		});
 
+        wall.rotate(hangingUnit.angle);
+        wall.left = this.convert(hangingUnit.leftPosition);
+        wall.top = this.convert(hangingUnit.topPosition);
         
-        let label = new fabric.IText(hangingUnit.name || "", { ...textConfig,
-            top: top + this.grid.wallWidth * 2,
-            left: left
-        });
+        let label = new fabric.IText(hangingUnit.name || "", textConfig);
 
         let labelLeft = 0, labelTop = 0;
         if(this.centerWidth(hangingUnit)) {
@@ -227,6 +250,7 @@ export default class HangingUnitSelector {
         label.top = labelTop;
 
         let group = new fabric.Group([wall, label], { ...groupConfig });
+        this.correctPosition(group);
 
         return group;
     }

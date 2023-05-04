@@ -1,42 +1,87 @@
+/* page layout */
 
-.navigation {
-    width: 45vw;
+.quilt-hanging-tool-container {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.quilt-hanging-tool {
+    flex: 1 1 auto;
+    display: grid;
+    grid-template-columns: minmax(24vw, 2fr) minmax(50vw, 6fr) minmax(24vw, 2fr);
+    grid-template-rows: repeat(10, minmax(7vh, 1fr));
+    max-height: 70vh;
+    column-gap: .5vw;
+    row-gap: .25em;
+}
+
+.quilt-hanging-tool > div {
+    border: 1px solid darkgray;
+}
+.quilt-hanging-tool canvas {
+    border: 0;
+}
+
+.hanging-unit-selector {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 1;
+    grid-row-end: 6;
+}
+
+.wall-selector {
+    grid-column-start: 1;
+    grid-column-end: 2;
+    grid-row-start: 6;
+    grid-row-end: 10;
+}
+
+.quilt-selector {
+    grid-column-start: 3;
+    grid-column-end: 4;
+    grid-row-start: 1;
+    grid-row-end: 10;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.wall-hanging {
+    grid-row-start: 1;
+    grid-row-end: 10;
+}
+
+
+
+/* quilt selector styles */
+.list-actions {
     display: flex;
     flex-wrap: wrap;
     align-content: space-between;
     justify-content: space-between;
     margin-bottom: .5em;
+    border-bottom: solid 1px black;
+    padding: .25em;
 }
 
-.navigation label {
+.list-actions label {
     margin-right: .5em;
 }
-.navigation input {
+.list-actions input {
     width: 4em;
 }
 
-.navigation button {
-    width: 4em;
+button.nav-link.active {
+    font-weight: bold;
 }
 
-.quilt-list {
-    border: 1px solid black;
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: scroll;
-    padding: .5em 0;
-    font-family: 'Courier New', Courier, monospace;
-}
 
-.quilt-list .quilt {
-    border: 1px solid blue;
-    text-align: center;
-    line-height: 5vh;
-    margin: 0 5px;
+.unhung-quilt-list .quilt {
+    border: 2px solid darkgray;
+    border-radius: 3px;
     white-space: nowrap;
-    padding: 0 .5ch;
-    width: 10ch;
     cursor: pointer;
+    margin: .25em;
 
     -webkit-user-select: none;
     -webkit-touch-callout: none;
@@ -49,45 +94,4 @@
     border: 2px solid black; 
     width: 150px; 
     height: 150px;
-}
-
-.quilt-hanging-tool-container {
-    display: flex;
-    flex-flow: column;
-    height: 100%;
-}
-
-.quilt-hanging-tool {
-    flex: 1 1 auto;
-    display: grid;
-    grid-template-columns: minmax(29vw, 3fr) minmax(69vw, 7fr);
-    grid-template-rows: repeat(10, minmax(7vh, 1fr));
-    padding: 0 .5em;
-
-    column-gap: .25em;
-    row-gap: .25em;
-}
-
-.quilt-hanging-tool div {
-    border: 1px solid green;
-}
-
-.hanging-unit-selector {
-    grid-row-start: 1;
-    grid-row-end: 6;
-}
-
-.wall-selector {
-    grid-row-start: 6;
-    grid-row-end: 10;
-}
-
-.quilt-selector {
-    grid-row-start: 8;
-    grid-row-end: 10;
-}
-
-.wall-hanging {
-    grid-row-start: 1;
-    grid-row-end: 8;
 }

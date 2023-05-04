@@ -42,6 +42,7 @@ const IntakePage1 = (props) => {
               value={props.quilt.name || ""}
               onChange={(e) => onInputChange(e)}
               required
+              className={props.quilt.name ? "" : "empty-data"}
             />
           </Col>
         </Row>
@@ -63,6 +64,7 @@ const IntakePage1 = (props) => {
               onChange={(e) => onInputChange(e)}
               style={{ height: "100px" }}
               required
+              className={props.quilt.description ? "" : "empty-data"}
             />
           </Col>
         </Row>
@@ -79,6 +81,7 @@ const IntakePage1 = (props) => {
               name="width"
               value={props.quilt.width || ""}
               onChange={(e) => onInputChange(e)}
+              className={props.quilt.width ? "" : "empty-data"}
             />
           </Col>
         </Row>
@@ -95,6 +98,7 @@ const IntakePage1 = (props) => {
               name="length"
               value={props.quilt.length || ""}
               onChange={(e) => onInputChange(e)}
+              className={props.quilt.length ? "" : "empty-data"}
             />
           </Col>
         </Row>

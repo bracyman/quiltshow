@@ -65,6 +65,7 @@ body {
 .modal .form-group {
 	padding-top: .5em;
 }
+
 .modal .form-control {
 	border-radius: 2px;
 	box-shadow: none;
@@ -73,6 +74,23 @@ body {
 .modal textarea.form-control {
 	resize: vertical;
 }
+
+.modal .form-control.empty-data {
+    border-color: red;
+}
+div.col.empty-data {
+    border: 1px solid red;
+}
+.modal .form-control.empty-data:focus {
+    border-color: #dddddd;
+}
+.modal .form-select.empty-data {
+    border-color: red;
+}
+.modal .form-select.empty-data:focus {
+    border-color: #dddddd;
+}
+
 .modal .btn {
 	border-radius: 2px;
 	min-width: 100px;

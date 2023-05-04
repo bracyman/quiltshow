@@ -130,13 +130,13 @@ export default class WallSelectionTool {
 
                 this.grid.canvasHeight = elHeight;
                 this.grid.canvasWidth = elWidth;
-                this.grid.wallWidth = Math.max(elWidth / 10, 8);
+                this.grid.wallWidth = Math.min(elWidth / 10, 10);
             }
-            else {
+            else if(["SINGLE_BOOTH"].includes(this.hangingUnit.type)) {
                 let width = this.isVertical(this.hangingUnit)  ? this.hangingUnit.measurements.depth * 2 : this.hangingUnit.measurements.width + 4;
                 let height = this.isVertical(this.hangingUnit) ? this.hangingUnit.measurements.width     : this.hangingUnit.measurements.depth * 2;
 
-                if(width > height) {
+                if((elWidth / width) < (elHeight / height)) {
                     this.grid.pixelsPerFoot = elWidth / width;
                 }
                 else {
@@ -145,7 +145,22 @@ export default class WallSelectionTool {
 
                 this.grid.canvasWidth = width * this.grid.pixelsPerFoot;
                 this.grid.canvasHeight = height * this.grid.pixelsPerFoot;
-                this.grid.wallWidth = Math.min(elWidth / 10, elHeight / 7, 8);
+                this.grid.wallWidth = Math.min(elWidth / 10, elHeight / 7, 10);
+            }
+            else if(["DOUBLE_BOOTH"].includes(this.hangingUnit.type)) {
+                let width = this.isVertical(this.hangingUnit)  ? this.hangingUnit.measurements.depth * 2 + 1  : this.hangingUnit.measurements.width * 2 + 8;
+                let height = this.isVertical(this.hangingUnit) ? this.hangingUnit.measurements.width * 2 + 8  : this.hangingUnit.measurements.depth * 2 + 1;
+
+                if((elWidth / width) < (elHeight / height)) {
+                    this.grid.pixelsPerFoot = elWidth / width;
+                }
+                else {
+                    this.grid.pixelsPerFoot = elHeight / height;
+                }
+
+                this.grid.canvasWidth = Math.max(width * this.grid.pixelsPerFoot, elWidth);
+                this.grid.canvasHeight = Math.max(height * this.grid.pixelsPerFoot, elHeight);
+                this.grid.wallWidth = Math.min(elWidth / 10, elHeight / 7, 10);
             }
 
             this.grid.wallLength = 20;
@@ -213,10 +228,16 @@ export default class WallSelectionTool {
 
 
     buildSingleSideWall(hangingUnit) {
-        this.canvas.add(this.isVertical(hangingUnit)
-            ? this.buildVerticalWall((this.grid.canvasWidth / 2) - (this.grid.wallWidth / 2), 0, hangingUnit.measurements.width, hangingUnit.walls[0])
-            : this.buildHorizontalWall(0, (this.grid.canvasHeight / 2) - (this.grid.wallWidth / 2), hangingUnit.measurements.width, hangingUnit.walls[0])
-        );
+        let wall = null;
+        if(this.isVertical(hangingUnit)) {
+            wall = this.verticalWall((this.grid.canvasWidth / 2) - (this.grid.wallWidth / 2), 0, this.convert(hangingUnit.measurements.width), hangingUnit.walls[0]);
+        } else {
+            wall = this.horizontalWall(0, (this.grid.canvasHeight / 2) - (this.grid.wallWidth / 2), this.convert(hangingUnit.measurements.width), hangingUnit.walls[0]);
+        }
+
+        this.canvas.add(wall);
+        this.canvas.setActiveObject(wall);
+        this.selectWall(hangingUnit.walls[0]);
     }
 
 
@@ -228,8 +249,10 @@ export default class WallSelectionTool {
         let wallShape = new fabric.Rect({ ...this.lineConfig(), 
             left: left, 
             top: top, 
-            width: this.convert(length), 
+            width: length, 
             height: this.grid.wallWidth,
+            selectionBackgroundColor: "#00F",
+            padding: this.grid.wallWidth / 2,
             id: wall.id,
             data: wall,
         });
@@ -242,7 +265,9 @@ export default class WallSelectionTool {
             left: left, 
             top: top, 
             width: this.grid.wallWidth, 
-            height: this.convert(length),
+            height: length,
+            selectionBackgroundColor: "#00F",
+            padding: this.grid.wallWidth / 2,
             id: wall.id,
             data: wall,
         });
@@ -257,7 +282,7 @@ export default class WallSelectionTool {
 
         let left = 0;
         let top = 0;
-/*
+
         this.canvas.add(this.verticalWall(left, top, height, hangingUnit.walls[SingleBoothWalls.OuterLeft]));
         
         left += this.grid.wallWidth * 2;
@@ -273,20 +298,78 @@ export default class WallSelectionTool {
         left -= this.grid.wallWidth;
         top += this.grid.wallWidth;
         this.canvas.add(this.verticalWall(left, top, depth, hangingUnit.walls[SingleBoothWalls.LowerLeft]));
-*/
+
         left += this.grid.wallWidth + width;
         top = 0;
         this.canvas.add(this.verticalWall(left, top, depth, hangingUnit.walls[SingleBoothWalls.UpperRight]));
-/*
+
         top += depth + this.grid.wallWidth * 3;
         this.canvas.add(this.verticalWall(left, top, depth, hangingUnit.walls[SingleBoothWalls.LowerRight]));
-/*
+
         left += this.grid.wallWidth * 2;
         top = 0;
-        this.canvas.add(this.verticalWall(left, top, height, hangingUnit.walls[SingleBoothWalls.UpperLeft]));
-//*/
+        this.canvas.add(this.verticalWall(left, top, height, hangingUnit.walls[SingleBoothWalls.OuterRight]));
+
     }
 
     buildDoubleBooth(hangingUnit) {
+        let width = this.convert(hangingUnit.measurements.width);
+        let depth = this.convert(hangingUnit.measurements.depth);
+        let height = depth * 2 + this.grid.wallWidth * 3;
+
+        let left = 0;
+        let top = 0;
+
+        this.canvas.add(this.verticalWall(left, top, height, hangingUnit.walls[DoubleBoothWalls.OuterLeft]));
+        
+        left += this.grid.wallWidth * 2;
+        this.canvas.add(this.verticalWall(left, top, depth, hangingUnit.walls[DoubleBoothWalls.UpperLeftLeft]));
+
+        left += this.grid.wallWidth;
+        top += depth;
+        this.canvas.add(this.horizontalWall(left, top, width, hangingUnit.walls[DoubleBoothWalls.UpperLeftMiddle]));
+
+        top += this.grid.wallWidth * 2;
+        this.canvas.add(this.horizontalWall(left, top, width, hangingUnit.walls[DoubleBoothWalls.LowerLeftMiddle]));
+
+        left -= this.grid.wallWidth;
+        top += this.grid.wallWidth;
+        this.canvas.add(this.verticalWall(left, top, depth, hangingUnit.walls[DoubleBoothWalls.LowerLeftLeft]));
+
+        left += this.grid.wallWidth + width;
+        top = 0;
+        this.canvas.add(this.verticalWall(left, top, depth, hangingUnit.walls[DoubleBoothWalls.UpperLeftRight]));
+
+        top += depth + this.grid.wallWidth * 3;
+        this.canvas.add(this.verticalWall(left, top, depth, hangingUnit.walls[DoubleBoothWalls.LowerLeftRight]));
+
+
+        left += this.grid.wallWidth * 2;
+        top = 0;
+        this.canvas.add(this.verticalWall(left, top, depth, hangingUnit.walls[DoubleBoothWalls.UpperRightLeft]));
+
+        left += this.grid.wallWidth;
+        top += depth;
+        this.canvas.add(this.horizontalWall(left, top, width, hangingUnit.walls[DoubleBoothWalls.UpperRightMiddle]));
+
+        top += this.grid.wallWidth * 2;
+        this.canvas.add(this.horizontalWall(left, top, width, hangingUnit.walls[DoubleBoothWalls.LowerRightMiddle]));
+
+        left -= this.grid.wallWidth;
+        top += this.grid.wallWidth;
+        this.canvas.add(this.verticalWall(left, top, depth, hangingUnit.walls[DoubleBoothWalls.LowerRightLeft]));
+
+        left += this.grid.wallWidth + width;
+        top = 0;
+        this.canvas.add(this.verticalWall(left, top, depth, hangingUnit.walls[DoubleBoothWalls.UpperRightRight]));
+
+        top += depth + this.grid.wallWidth * 3;
+        this.canvas.add(this.verticalWall(left, top, depth, hangingUnit.walls[DoubleBoothWalls.LowerRightRight]));
+
+
+
+        left += this.grid.wallWidth * 2;
+        top = 0;
+        this.canvas.add(this.verticalWall(left, top, height, hangingUnit.walls[DoubleBoothWalls.OuterRight]));
     }
 }

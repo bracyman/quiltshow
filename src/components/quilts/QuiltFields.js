@@ -180,7 +180,7 @@ export const Renderers = {
 };
 
 
-const alphaSort = (a, b) => {
+export const alphaSort = (a, b) => {
     if (!a && !b) return 0;
     if (!a) return -1;
     if (!b) return 1;
@@ -192,7 +192,7 @@ const alphaSort = (a, b) => {
             : 0;
 };
 
-const numericSort = (a, b) => {
+export const numericSort = (a, b) => {
     if (!a && !b) return 0;
     if (!a) return -1;
     if (!b) return 1;
@@ -204,7 +204,7 @@ const numericSort = (a, b) => {
             : 0;
 };
 
-const dateSort = (a, b) => {
+export const dateSort = (a, b) => {
     if (!a && !b) return 0;
     if (!a) return -1;
     if (!b) return 1;
@@ -216,7 +216,7 @@ const dateSort = (a, b) => {
             : 0;
 }
 
-const booleanSort = (a, b) => {
+export const booleanSort = (a, b) => {
     if (ObjectUtils.isNull(a) && ObjectUtils.isNull(b)) return 0;
     if (ObjectUtils.isNull(a)) return -1;
     if (ObjectUtils.isNull(b)) return 1;
@@ -230,7 +230,7 @@ const booleanSort = (a, b) => {
                 : 0;
 };
 
-const listSort = (a, b, field, sortFunction) => {
+export const listSort = (a, b, field, sortFunction) => {
     if (!a && !b) return 0;
     if (!a) return -1;
     if (!b) return 1;

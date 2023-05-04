@@ -68,6 +68,7 @@ const DesignSourceSelector = (props) => {
             name="designSourceType"
             onChange={(e) => onInputChange(e)}
             value={designSourceTypeSelected ? props.quilt.designSource.designSourceType : ""}
+            className={designSourceTypeSelected ? "" : "empty-data"}
           >
             <option value=""></option>
             {designSourceTypes.sort((a, b) => a.order - b.order).map((d) => (
@@ -85,7 +86,7 @@ const DesignSourceSelector = (props) => {
           <>
             {(getDesignFieldLabel("name") == null) ? (<></>) : (
               <Row>
-                <Col sm={2}><Form.Label htmlFor="designSource_name">{getDesignFieldLabel("name")}</Form.Label></Col>
+                <Col sm={3}><Form.Label htmlFor="designSource_name">{getDesignFieldLabel("name")}</Form.Label></Col>
                 <Col>
                   <Form.Control
                     type="text"
@@ -93,13 +94,14 @@ const DesignSourceSelector = (props) => {
                     name="designSource_name"
                     value={props.quilt.designSource.name || ""}
                     onChange={(e) => onInputChange(e)}
+                    className={props.quilt.designSource.name ? "" : "empty-data"}
                   />
                 </Col>
               </Row>
             )}
             {(getDesignFieldLabel("issueNumber") == null) ? (<></>) : (
               <Row>
-                <Col sm={2}><Form.Label htmlFor="designSource_issueNumber">{getDesignFieldLabel("issueNumber")}</Form.Label></Col>
+                <Col sm={3}><Form.Label htmlFor="designSource_issueNumber">{getDesignFieldLabel("issueNumber")}</Form.Label></Col>
                 <Col>
                   <Form.Control
                     type="text"
@@ -113,7 +115,7 @@ const DesignSourceSelector = (props) => {
             )}
             {(getDesignFieldLabel("author") == null) ? (<></>) : (
               <Row>
-                <Col sm={2}><Form.Label htmlFor="designSource_author">{getDesignFieldLabel("author")}</Form.Label></Col>
+                <Col sm={3}><Form.Label htmlFor="designSource_author">{getDesignFieldLabel("author")}</Form.Label></Col>
                 <Col>
                   <Form.Control
                     type="text"
@@ -127,7 +129,7 @@ const DesignSourceSelector = (props) => {
             )}
             {(getDesignFieldLabel("publishedYear") == null) ? (<></>) : (
               <Row>
-                <Col sm={2}><Form.Label htmlFor="designSource_publishedYear">{getDesignFieldLabel("publishedYear")}</Form.Label></Col>
+                <Col sm={3}><Form.Label htmlFor="designSource_publishedYear">{getDesignFieldLabel("publishedYear")}</Form.Label></Col>
                 <Col>
                   <Form.Control
                     type="text"
@@ -141,7 +143,7 @@ const DesignSourceSelector = (props) => {
             )}
             {(getDesignFieldLabel("title") == null) ? (<></>) : (
               <Row>
-                <Col sm={2}><Form.Label htmlFor="designSource_title">{getDesignFieldLabel("title")}</Form.Label></Col>
+                <Col sm={3}><Form.Label htmlFor="designSource_title">{getDesignFieldLabel("title")}</Form.Label></Col>
                 <Col>
                   <Form.Control
                     type="text"
@@ -155,7 +157,7 @@ const DesignSourceSelector = (props) => {
             )}
             {(getDesignFieldLabel("contactInfo") == null) ? (<></>) : (
               <Row>
-                <Col sm={2}><Form.Label htmlFor="designSource_contactInfo">{getDesignFieldLabel("contactInfo")}</Form.Label></Col>
+                <Col sm={3}><Form.Label htmlFor="designSource_contactInfo">{getDesignFieldLabel("contactInfo")}</Form.Label></Col>
                 <Col>
                   <Form.Control
                     type="text"
