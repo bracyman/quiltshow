@@ -1,6 +1,11 @@
 
 thead {
     font-weight: bold;
+    cursor: pointer;
+}
+
+.sort-column {
+    text-decoration: underline;
 }
 
 tbody > tr:nth-child(2n) {

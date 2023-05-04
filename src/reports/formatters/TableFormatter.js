@@ -1,11 +1,11 @@
-
-import { QuiltFields, Renderers } from "../../components/quilts/QuiltFields";
+import { useState } from "react";
+import { QuiltFields, Sorters, Renderers } from "../../components/quilts/QuiltFields";
 import "./styles/TableFormatter.css";
 
 
 const TableFormatter = (props) => {
     const { report, results, preview, show } = props;
-
+    const [sortColumn, setSortColumn] = useState(null);
 
     const buildHeader = () => {
         return (<tr key={"report_header"}>
@@ -15,18 +15,28 @@ const TableFormatter = (props) => {
                         return (<>
                             {report["tags"].categories.map(tcId => {
                                 let tagCategory = getTagCategory(tcId);
-                                return (<td>{tagCategory.name}</td>);
+                                let className = ((sortColumn?.type === "tagCategory") && (sortColumn.name === tagCategory.name)) ? "sort-column" : "";
+                                let sortValue = { type: "tagCategory", name: tagCategory.id };
+
+                                return (<td className={className} onClick={() => setSortColumn(sortValue)}>{tagCategory.name}</td>);
                             })}
                         </>);
                     }
                     else if(field === "designSource") {
+                        let patternClassName = ((sortColumn?.type === "designSource") && (sortColumn?.name === "pattern")) ? "sort-column" : "";
+                        let designerClassName = ((sortColumn?.type === "designSource") && (sortColumn?.name === "designer")) ? "sort-column" : "";
+                        let sortValue = { type: "designSource" };
+
                         return (<>
-                            <td>Pattern</td>
-                            <td>Designer</td>
+                            <td className={patternClassName} onClick={() => setSortColumn({ ...sortValue, name: "pattern" })}>Pattern</td>
+                            <td className={designerClassName} onClick={() => setSortColumn({ ...sortValue, name: "designer" })}>Designer</td>
                         </>);
                     }
                     else {
-                        return (<td>{QuiltFields[field]?.label || field}</td>);
+                        let className = ((sortColumn?.type === "field") && (sortColumn?.name === field)) ? "sort-column" : "";
+                        let sortValue = { type: "field", name: field };
+
+                        return (<td className={className} onClick={() => setSortColumn(sortValue)}>{QuiltFields[field]?.label || field}</td>);
                     }
                 })
             }
@@ -108,6 +118,37 @@ const TableFormatter = (props) => {
         );
     };
 
+
+    const sortResults = (results) => {
+        if(!results) {
+            return [];
+        }
+
+        if(!sortColumn) {
+            return results;
+        }
+
+        if(sortColumn.type === "field") {
+            return results.sort(Sorters[sortColumn.name]);
+        }
+
+        if(sortColumn.type === "tagCategory") {
+            return results.sort(Sorters.tagCategory(getTagCategory(sortColumn.name)));
+        }
+
+        if(sortColumn.type === "designSource") {
+            if(sortColumn.name === "pattern") {
+                return results.sort(Sorters.designSource("title"));
+            }
+            if(sortColumn.name === "designer") {
+                return results.sort(Sorters.designSource("author"));
+            }
+        }
+
+        return results;
+    };
+
+
     if (!report || !report.fields) {
         return (<p>Report details missing</p>)
     }
@@ -118,7 +159,7 @@ const TableFormatter = (props) => {
             <tbody>
                 {preview
                     ? buildPreview()
-                    : results?.map((d, i) =>
+                    : sortResults(results).map((d, i) =>
                         buildRow(d, i)
                     )
                 }
