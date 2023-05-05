@@ -253,6 +253,23 @@ export const listSort = (a, b, field, sortFunction) => {
             : 0;
 };
 
+const categoryTags = (tagCategory, quilt) => {
+    if(!tagCategory || !quilt) {
+        return [];
+    }
+
+    return (quilt.tags || [])
+        .filter(qt => 
+            tagCategory.tags.map(t => t.id).includes(qt.id))
+        .sort((a,b) => 
+            a.name > b.name 
+                ? 1 
+                : a.name === b.name 
+                    ? 0 
+                    : -1
+            );
+};
+
 export const Sorters = {
     id: (a, b) => numericSort(a?.id, b?.id),
     number: (a, b) => numericSort(a?.number, b?.number),
@@ -260,6 +277,7 @@ export const Sorters = {
     description: (a, b) => alphaSort(a?.description, b?.description),
     category: (a, b) => alphaSort(a?.category?.name, b?.category?.name),
     tags: (a, b) => listSort(a?.tags, b?.tags, "name", alphaSort),
+    tagCategory: (tc) => (a, b) => listSort(categoryTags(tc, a), categoryTags(tc, b), "name", alphaSort),
     judged: (a, b) => booleanSort(a?.judged, b?.judged),
     presidentsChallenge: (a, b) => booleanSort(a?.presidentsChallenge, b?.presidentsChallenge),
     length: (a, b) => numericSort(a?.length, b?.length),
@@ -267,7 +285,7 @@ export const Sorters = {
     firstShow: (a, b) => booleanSort(a?.firstShow, b?.firstShow),
     groupSize: (a, b) => numericSort(a?.groupSize, b?.groupSize),
     mainColor: (a, b) => alphaSort(a?.name, b?.name),
-    designSource: (a, b) => alphaSort(a?.designSource?.name, b?.designSource?.name),
+    designSource: (field) => (a, b) => alphaSort(a?.designSource[field || "name"], b?.designSource[field || "name"]),
     enteredBy: (a, b) => alphaSort(a?.enteredBy?.lastName, b?.enteredBy?.lastName),
     hangingPreference: (a, b) => numericSort(a?.hangingPreference, b?.hangingPreference),
     additionalQuilters: (a, b) => alphaSort(a?.additionalQuilters, b?.additionalQuilters),
