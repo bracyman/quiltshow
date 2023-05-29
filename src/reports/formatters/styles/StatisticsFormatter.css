@@ -1,0 +1,78 @@
+.report.statistics {
+    display: grid;
+    grid-template-columns: repeat(100, 1vw);
+}
+
+
+.entries {
+    grid-column-start: 1;
+    grid-column-end: 50;
+    border: 2px solid darkgray;
+    margin-left: .5em;
+} 
+
+.entrants {
+    grid-column-start: 51;
+    grid-column-end: 99;
+    border: 2px solid darkgray;
+} 
+
+.report div.title {
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
+    border-bottom: 2px solid darkgray;
+}
+
+.report div.values {
+    padding-left: .5em
+}
+
+.categories, .alpha-groups {
+    grid-column-start: 1;
+    grid-column-end: 33;
+    margin-top: .5em;
+    margin-left: .5em;
+}
+
+.tag-counts {
+    grid-column-start: 35;
+    grid-column-end: 68;
+    margin-top: .5em;
+}
+
+.judging-entries {
+    grid-column-start: 70;
+    grid-column-end: 99;
+    margin-top: .5em;
+    margin-right: .5em;
+}
+
+.report th {
+    background-color: lightgray;
+    border: 1px solid black;
+}
+
+table {
+    width: 100%;
+}
+
+.categories tr td:nth-child(1) {
+    width: 50%;
+}
+
+.categories tr td {
+    width: 25%;
+}
+
+.tag-counts table, .judging-entries table {
+    margin-bottom: 2em;
+}
+
+.tag-counts tr td:nth-child(1) {
+    width: 45%;
+}
+
+.alpha-groups td {
+    padding: 2px;
+}

@@ -1,0 +1,75 @@
+.report-header {
+    display: none !important;
+}
+
+.report  {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.report .page {
+    width: 8in;
+    page-break-after: always;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.report .header {
+    height: min-content;
+}
+
+.report .main {
+    flex: auto;
+}
+
+.report .main table {
+    margin-bottom: 1.5em;
+}
+
+.report .entrant {
+    font-weight: bold;
+}
+
+.report .footer {
+    height: min-content;
+}
+
+.report td {
+    font-size: 10pt;
+}
+
+td.initials {
+    width: 1in;
+    max-width: 1in;
+    min-width: 1in;
+}
+
+td.number {
+    width: 1in;
+    max-width: 1in;
+    min-width: 1in;
+}
+
+td.name {
+    width: 2in;
+    max-width: 2in;
+    min-width: 2in;
+}
+
+td.location {
+    width: 1.5in;
+    max-width: 1.5in;
+    min-width: 1.5in;
+}
+
+td.tags {
+    width: 1.5in;
+    max-width: 1.5in;
+    min-width: 1.5in;
+}
