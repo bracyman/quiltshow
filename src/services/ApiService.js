@@ -2,6 +2,26 @@ import Config from "./Config";
 import AuthService from "./AuthService";
 
 class ApiService {
+    stringify(obj) {
+        let cache = [];
+        let str = JSON.stringify(obj, function(key, value) {
+            if (typeof value === "object" && value !== null) {
+                if (cache.indexOf(value) !== -1) {
+                    // Circular reference found, discard key
+                    return;
+                }
+              
+                // Store value in our collection
+                cache.push(value);
+            }
+            
+            return value;
+        });   
+  
+        cache = null; // reset the cache
+        return str;
+    }
+
     async get(url) {
         return await fetch(`${Config.apiHost()}/${url}`, {
             method: "GET",
@@ -17,7 +37,7 @@ class ApiService {
         return await fetch(`${Config.apiHost()}/${url}`, {
             method: "POST",
             headers: headers,
-            body: JSON.stringify(bodyObj),
+            body: this.stringify(bodyObj),
         });
     }
 
@@ -29,7 +49,19 @@ class ApiService {
         return await fetch(`${Config.apiHost()}/${url}`, {
             method: "PUT",
             headers: headers,
-            body: JSON.stringify(bodyObj),
+            body: this.stringify(bodyObj),
+        });
+    }
+
+    async patch(url, bodyObj) {
+        var headers = {
+            ...(AuthService.authHeader()),
+            "Content-Type": "application/json"
+        };
+        return await fetch(`${Config.apiHost()}/${url}`, {
+            method: "PATCH",
+            headers: headers,
+            body: this.stringify(bodyObj),
         });
     }
 

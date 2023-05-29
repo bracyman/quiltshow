@@ -240,14 +240,27 @@ const QuiltList = (props) => {
       <>
         <div className={`table table-striped table-hover ${listClass}`}>
           <div className="tr operations">
-            <Button
-              onClick={handleShowNewQuilt}
-              className="btn btn-success"
-              data-toggle="modal"
-            >
-              <i className="material-icons">&#xE147;</i>{" "}
-              <span>Add New Quilt</span>
-            </Button>
+            { AuthService.userHasRole("admin")
+              ? (
+                  <Button
+                    onClick={handleShowNewQuilt}
+                    className="btn btn-success"
+                    data-toggle="modal"
+                  >
+                    <i className="material-icons">&#xE147;</i>{" "}
+                    <span>Add New Quilt</span>
+                  </Button>
+                )
+              : (
+                  <Button
+                    disabled={true}
+                    className="btn btn-secondary"
+                  >
+                    <i className="material-icons">&#xE147;</i>{" "}
+                    <span>Quilt Submission Closed</span>
+                  </Button>
+                )
+              }
             <PaymentDisplay {...props} />
           </div>
 

@@ -27,9 +27,33 @@ const groupConfig = {
     selectable: true,
     lockMovementX: true,
     lockMovementY: true,
-    hasControls: true,
+    hasControls: false,
     selectionBackgroundColor: "#FFFF8F",
     hoverCursor: "pointer",
+};
+
+const actualLeft = (unit) => {
+    return Math.min(unit.aCoords.bl.x, unit.aCoords.tr.x);
+};
+
+const actualTop = (unit) => {
+    return Math.min(unit.aCoords.tl.y, unit.aCoords.br.y);
+};
+
+const actualWidth = (unit) => {
+    return Math.abs(unit.aCoords.br.x - unit.aCoords.tl.x);
+};
+
+const actualHeight = (unit) => {
+    return Math.abs(unit.aCoords.bl.y - unit.aCoords.tr.y);
+};
+
+const sin = (degrees) => {
+    return Math.sin(degrees * Math.PI/180);
+};
+
+const cos = (degrees) => {
+    return Math.cos(degrees * Math.PI/180);
 };
 
 export default class HangingUnitSelector {
@@ -110,7 +134,7 @@ export default class HangingUnitSelector {
 
             this.grid.canvasWidth = this.room.width * this.grid.pixelsPerFoot;
             this.grid.canvasHeight = this.room.length * this.grid.pixelsPerFoot;
-            this.grid.wallWidth = this.grid.pixelsPerFoot * .2;
+            this.grid.wallWidth = Math.max(this.grid.pixelsPerFoot * .2, 2);
         }
     }
 
@@ -155,7 +179,7 @@ export default class HangingUnitSelector {
     }
 
     setHangingUnit(unit) {
-        let matches = this.canvas.getObjects()  .filter(o => o.data.id === unit.id);
+        let matches = this.canvas.getObjects().filter(o => o.data.id === unit.id);
         if(matches.length > 0) {
             this.canvas.setActiveObject(matches[0]);
             this.canvas.requestRenderAll();
@@ -169,17 +193,20 @@ export default class HangingUnitSelector {
     }
 
     buildUnitShape(hangingUnit) {
-        if(hangingUnit.type === "SINGLE_SIDE_WALL") {
-            return this.buildSingleSideWall(hangingUnit);
+        if(hangingUnit.unitType === "WALL") {
+            return this.buildWall(hangingUnit);
         }
-        else if(hangingUnit.type === "DOUBLE_SIDE_WALL") {
-            return this.buildDoubleSideWall(hangingUnit);
+        else if(hangingUnit.unitType === "UBOOTH") {
+            return this.buildUBooth(hangingUnit);
         }
-        else if(hangingUnit.type === "SINGLE_BOOTH") {
-            return this.buildSingleBooth(hangingUnit);
+        else if(hangingUnit.unitType === "HBOOTH") {
+            return this.buildHBooth(hangingUnit);
         }
-        else if(hangingUnit.type === "DOUBLE_BOOTH") {
-            return this.buildDoubleBooth(hangingUnit);
+        else if(hangingUnit.unitType === "DOOR") {
+            return this.buildDoor(hangingUnit);
+        }
+        else if(hangingUnit.unitType === "BLOCK") {
+            return this.buildBlock(hangingUnit);
         }
 
         return null;
@@ -219,20 +246,18 @@ export default class HangingUnitSelector {
         }        
     }
 
-    buildSingleSideWall(hangingUnit) {
-        //let rect = getRectPosition(hangingUnit.leftPosition, hangingUnit.topPosition, Number(hangingUnit.measurements.width), hangingUnit.angle);
-
+    buildWall(hangingUnit) {
         let wall = new fabric.Rect({ ...lineConfig,
             left: 0, 
 			top: 0, 
-			width: this.convert(Number(hangingUnit.measurements.width)), 
+			width: this.convert(Number(hangingUnit.size.length)), 
 			height: this.grid.wallWidth,
             id: hangingUnit.id,
 		});
 
-        wall.rotate(hangingUnit.angle);
-        wall.left = this.convert(hangingUnit.leftPosition);
-        wall.top = this.convert(hangingUnit.topPosition);
+        wall.rotate(hangingUnit.location.angle || 0);
+        wall.left = this.convert(hangingUnit.location.left);
+        wall.top = this.convert(hangingUnit.location.top);
         
         let label = new fabric.IText(hangingUnit.name || "", textConfig);
 
@@ -255,23 +280,24 @@ export default class HangingUnitSelector {
         return group;
     }
 
-    buildDoubleSideWall(hangingUnit) {
-        return this.buildSingleSideWall(hangingUnit);
-    }
+    buildUBooth(hangingUnit) {
+        let width = this.convert(Number(hangingUnit.size.width));
+        let depth = this.convert(Number(hangingUnit.size.depth));
+        let left = this.convert(hangingUnit.location.left);
+        let top = this.convert(hangingUnit.location.top);
 
-    createBoothUnit(left, top, width, depth) {
         let leftWall = new fabric.Rect({ ...lineConfig, 
 			left: left, 
 			top: top, 
 			width: this.grid.wallWidth, 
-			height: depth * 2,
+			height: depth,
 		});
 
         let rightWall = new fabric.Rect({ ...lineConfig, 
 			left: left + width, 
 			top: top, 
 			width: this.grid.wallWidth, 
-			height: depth * 2,
+			height: depth,
 		});
 
         let middleWall = new fabric.Rect({ ...lineConfig, 
@@ -281,51 +307,101 @@ export default class HangingUnitSelector {
 			height: this.grid.wallWidth,
 		});
 
-        return [leftWall, middleWall, rightWall];
-    }
+        let group = new fabric.Group([leftWall, middleWall, rightWall], { ...groupConfig,
+            angle: hangingUnit.location.angle || 0.0
+        });
 
-    buildSingleBooth(hangingUnit) {
-        let width = this.convert(Number(hangingUnit.measurements.width));
-        let depth = this.convert(Number(hangingUnit.measurements.depth));
-        let left = this.convert(hangingUnit.leftPosition);
-        let top = this.convert(hangingUnit.topPosition);
-
-        let boothWalls = this.createBoothUnit(left, top, width, depth);        
 
         let label = new fabric.IText(hangingUnit.name || "", { ...textConfig,
-            top: top + this.grid.wallWidth * 2,
-            left: left
+            angle: (hangingUnit.location.angle || 0.0) % 180
         });
 
-        label.left = left + ((width / 2) - (label.width / 2));
+        label.left = actualLeft(group) + (sin(hangingUnit.location.angle % 180) * actualWidth(label)) + ((actualWidth(group) / 2) - (actualWidth(label) / 2));
+//        label.left = actualLeft(group) + ((actualWidth(group) / 2) - (actualWidth(label) / 2));
+        label.top = actualTop(group) + (actualHeight(group) / 2) - (actualHeight(label) / 2);
+        group.addWithUpdate(label);
+ 
+        return group;
+    }
 
-        let group = new fabric.Group([...boothWalls, label], { ...groupConfig,
-            angle: hangingUnit.angle || 0.0
+    buildHBooth(hangingUnit) {
+        let width = this.convert(Number(hangingUnit.size.width));
+        let upperDepth = this.convert(Number(hangingUnit.size.upperDepth));
+        let lowerDepth = this.convert(Number(hangingUnit.size.lowerDepth));
+        let left = this.convert(hangingUnit.location.left);
+        let top = this.convert(hangingUnit.location.top);
+
+        let leftWall = new fabric.Rect({ ...lineConfig, 
+			left: left, 
+			top: top, 
+			width: this.grid.wallWidth, 
+			height: upperDepth + lowerDepth,
+		});
+
+        let rightWall = new fabric.Rect({ ...lineConfig, 
+			left: left + width, 
+			top: top, 
+			width: this.grid.wallWidth, 
+			height: upperDepth + lowerDepth,
+		});
+
+        let middleWall = new fabric.Rect({ ...lineConfig, 
+			left: left, 
+			top: top + upperDepth, 
+			width: width, 
+			height: this.grid.wallWidth,
+		});
+
+        let group = new fabric.Group([leftWall, middleWall, rightWall], { ...groupConfig,
+            angle: hangingUnit.location.angle || 0.0,
         });
+
+
+        let label = new fabric.IText(hangingUnit.name || "", { ...textConfig,
+            angle: (hangingUnit.location.angle || 0.0) % 180
+        });
+
+        label.left = actualLeft(group) + ((actualWidth(group) / 2) - (actualWidth(label) / 2));
+        label.top = actualTop(group) + (cos(hangingUnit.location.angle % 180) * actualHeight(label)) + (actualHeight(group) / 2) - (actualHeight(label) / 2);
+        group.addWithUpdate(label);
 
         return group;
     }
 
-    buildDoubleBooth(hangingUnit) {
-        let width = this.convert(Number(hangingUnit.measurements.width));
-        let depth = this.convert(Number(hangingUnit.measurements.depth));
-        let left = this.convert(hangingUnit.leftPosition);
-        let top = this.convert(hangingUnit.topPosition);
+    buildBlock(hangingUnit) {
+        let block = new fabric.Rect({ ...lineConfig,
+            left: 0, 
+			top: 0, 
+			width: this.convert(Number(hangingUnit.size.width)), 
+			height: this.convert(Number(hangingUnit.size.length)), 
+            id: hangingUnit.id,
+            selectable: false,
+            fill: 'red'
+		});
 
-        let booth1Walls = this.createBoothUnit(left, top, width, depth);        
-        let booth2Walls = this.createBoothUnit(left + width, top, width, depth);        
-
-        let label = new fabric.IText(hangingUnit.name || "", { ...textConfig,
-            top: top + this.grid.wallWidth * 2,
-            left: left
-        });
-
-        label.left = left + ((width / 2) - (label.width / 2));
-
-        let group = new fabric.Group([...booth1Walls, ...booth2Walls, label], { ...groupConfig,
-            angle: hangingUnit.angle || 0.0,
-        });
-
-        return group;
+        block.rotate(hangingUnit.location.angle || 0);
+        block.left = this.convert(hangingUnit.location.left);
+        block.top = this.convert(hangingUnit.location.top);
+        
+        return block;
     }
+
+    buildDoor(hangingUnit) {
+        let door = new fabric.Rect({ ...lineConfig,
+            left: 0, 
+			top: 0, 
+			width: this.convert(Number(hangingUnit.size.width)), 
+			height: this.grid.wallWidth, 
+            id: hangingUnit.id,
+            selectable: false,
+            fill: 'red'
+		});
+
+        door.rotate(hangingUnit.location.angle || 0);
+        door.left = this.convert(hangingUnit.location.left);
+        door.top = this.convert(hangingUnit.location.top);
+        
+        return door;
+    }
+
 }

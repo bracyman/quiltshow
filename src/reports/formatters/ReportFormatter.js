@@ -1,8 +1,9 @@
 import TableFormatter from "./TableFormatter";
 import CardFormatter from "./CardFormatter";
-import CheckinFormatter from "./CheckInFormatter";
+import CheckInOutFormatter from "./CheckInOutFormatter";
 import GroupingFormatter from "./GroupingFormatter";
 import PaymentStatusFormatter from "./PaymentStatusFormatter";
+import StatisticsFormatter from "./StatisticsFormatter";
 import DateUtils from "../../utilities/DateUtils";
 import "./styles/Report.css";
 
@@ -14,15 +15,19 @@ const ReportFormatter = (props) => {
 
 
     const selectFormatter = () => {
-        switch (report.format?.toLowerCase()) {
+        return (<CheckInOutFormatter report={report} results={results} preview={preview || false} show={show} />);
+/*        switch (report.format?.toLowerCase()) {
             case "card":
                 return (<CardFormatter report={report} results={results} preview={preview || false} show={show} />);
     
             case "payment_status":
                 return (<PaymentStatusFormatter report={report} results={results} preview={preview || false} show={show} />);
 
-                case "checkin":
-                    return (<CheckinFormatter props />);
+            case "statistics":
+                return (<StatisticsFormatter report={report} results={results} preview={preview || false} show={show} />);
+        
+            case "checkin":
+                return (<CheckInOutFormatter report={report} results={results} preview={preview || false} show={show} />);
                     
             case "group":
                 return (<GroupingFormatter report={report} results={results} preview={preview || false} show={show} />);
@@ -31,6 +36,7 @@ const ReportFormatter = (props) => {
             default:
                 return (<TableFormatter report={report} results={results} preview={preview || false} show={show} />);
         }
+//*/
     };
 
     if (!report) {

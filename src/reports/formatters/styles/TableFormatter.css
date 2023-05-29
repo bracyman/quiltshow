@@ -17,3 +17,8 @@ tbody > tr:nth-child(2n) {
     border: 1px solid black !important;
     max-width: 50ch;
 }
+
+.row-count {
+    font-weight: bold;
+    margin-left: 1em;
+}

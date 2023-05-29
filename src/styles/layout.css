@@ -6,9 +6,11 @@ canvas {
 }
 
 .floor-layout-container {
-    padding: 1em;
-    display: flex;
-    flex-direction: row;
+    margin-left: .5em;
+    margin-right: 5em;
+    margin-top: .5em;
+    display: grid;
+    grid-template-columns: auto .75fr 3fr;
 }
 
 .room-values {
@@ -26,6 +28,7 @@ canvas {
 
 .grid-controls {
     margin-left: 1.5em;
+    margin-top: 1.5em;
     width: 100%;
 }
 
@@ -76,11 +79,16 @@ canvas {
     width: 50vw;
 }
     
-.floor-layout-operations .add-units {
+.floor-layout-operations {
     display: flex;
-    margin-bottom: 2em;;
+    flex-direction: column;
+    padding: 1em .5em;
 }
 
-.floor-layout-operations .add-units button {
-    margin-left: 2.5em;
+.floor-layout-operations > div {    
+    margin-top: 1em;
+}
+
+.floor-layout-operations button {
+    width: 90%;
 }

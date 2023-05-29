@@ -9,3 +9,10 @@
     font-weight: bold;
     margin-left: .6em;
 }
+
+@media print {
+    .pagebreak {
+        clear: both;
+        page-break-after: always;
+    }
+}

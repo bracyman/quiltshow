@@ -86,22 +86,25 @@ const TableFormatter = (props) => {
         else if(field === "designSource") {
             let source = data[field];
             if(data[field].designSourceType?.toUpperCase() === "MAGAZINE") {
-                return (<><td>{source.title}</td><td>{`${source.name} - ${source.issueNumber} - ${source.publishedYear}`}</td></>)
+                return (<><td>{source.title}</td><td>{`${source.name || ""} - ${source.issueNumber || ""} - ${source.publishedYear || ""}`}</td></>)
             }
             if(data[field].designSourceType?.toUpperCase() === "BOOK") {
-                return (<><td>{source.title}</td><td>{`${source.name} - ${source.author} - ${source.publishedYear}`}</td></>)
+                return (<><td>{source.title}</td><td>{`${source.name || ""} - ${source.author || ""} - ${source.publishedYear || ""}`}</td></>)
             }
             if(data[field].designSourceType?.toUpperCase() === "WORKSHOP") {
-                return (<><td>{`Workshop - ${source.name}`}</td><td>{`${source.author}`}</td></>)
+                return (<><td>{`Workshop - ${source.name || ""}`}</td><td>{`${source.author || ""}`}</td></>)
             }
             if(data[field].designSourceType?.toUpperCase() === "ORIGINAL") {
                 return (<><td>Original Design</td><td>Original Design</td></>)
             }
             if(data[field].designSourceType?.toUpperCase() === "OTHER") {
-                return (<><td>{source.name}</td><td></td></>)
+                return (<><td>{source.name || ""}</td><td></td></>)
             }
 
             return (<><td></td><td></td></>);
+        }
+        else if(field === "perimeter") {
+            return (<td className={field} key={`report_${field}_${index}`}>{render(field, data)}</td>);
         }
         else {
             return (<td className={field} key={`report_${field}_${index}`}>{render(field, data[field])}</td>);
@@ -154,17 +157,20 @@ const TableFormatter = (props) => {
     }
 
     return (
-        <table className="report">
-            <thead>{buildHeader()}</thead>
-            <tbody>
-                {preview
-                    ? buildPreview()
-                    : sortResults(results).map((d, i) =>
-                        buildRow(d, i)
-                    )
-                }
-            </tbody>
-        </table>
+        <>
+            <div className="row-count">{results.length} rows</div>
+            <table className="report">
+                <thead>{buildHeader()}</thead>
+                <tbody>
+                    {preview
+                        ? buildPreview()
+                        : sortResults(results).map((d, i) =>
+                            buildRow(d, i)
+                        )
+                    }
+                </tbody>
+            </table>
+        </>
     );
 };
 

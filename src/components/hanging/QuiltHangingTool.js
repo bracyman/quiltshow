@@ -4,77 +4,31 @@ import "../../styles/hangingTool.css"
 import WallHanging from "./WallHanging";
 import HangingUnitSelector from "./HangingUnitSelector";
 import WallSelectionTool from "./WallSelectionTool";
-import Announcer from "../../utilities/Announcer";
 import { useState, useEffect } from "react";
-import { fabric } from 'fabric';
-import { withAuthHeader } from "react-auth-kit";
-
-
-const testQuilts = Array.from(Array(50).keys()).map(i => { return {id: i, number: 1000 + i, name: `Quilt #${i}`, category: { name: 'President\'s Challenge - Not Judged' }, width: 8 + i, length: 40 + i }});
-const testWall = { id: 43, name: "TR1-A", width: 10, height: 10 };
-testWall.hangingLocations = [
-    {left: 12, top: 6, quilt: testQuilts[1], hangingUnit: testWall},
-    {left: 24, top: 12, quilt: testQuilts[2], hangingUnit: testWall},
-    {left: 36, top: 18, quilt: testQuilts[3], hangingUnit: testWall},
-];
-const testRoom = { width: 80, length: 60, hangingUnits: [] };
-    testRoom.hangingUnits.push({ id: 1, name: "TR1", type: "SINGLE_SIDE_WALL", leftPosition: 0, topPosition: 0, measurements: {width: 40}, walls: []});
-    testRoom.hangingUnits[testRoom.hangingUnits.length-1].walls = [
-        { id: 44, name: "TR1-A", width: 40, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1]}
-    ];
-
-    testRoom.hangingUnits.push({ id: 2, name: "BO1", type: "SINGLE_BOOTH", leftPosition: 10, topPosition: 10, measurements: {width: 10, depth: 5}, walls: [] });
-    testRoom.hangingUnits[testRoom.hangingUnits.length-1].walls = [
-        { id: 44, name: "BO1-A", width: 5, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 45, name: "BO1-B", width: 10, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 46, name: "BO1-C", width: 5, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 47, name: "BO1-D", width: 5, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 48, name: "BO1-E", width: 10, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 49, name: "BO1-F", width: 5, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 50, name: "BO1-G", width: 10, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 51, name: "BO1-H", width: 10, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-    ];
-
-    testRoom.hangingUnits.push({ id: 3, name: "DB1", type: "DOUBLE_BOOTH", leftPosition: 25, topPosition: 10, measurements: {width: 10, depth: 5}, walls: [] });
-    testRoom.hangingUnits[testRoom.hangingUnits.length-1].walls = [
-        { id: 44, name: "BO1-A", width: 5, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 45, name: "BO1-B", width: 10, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 46, name: "BO1-C", width: 5, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 47, name: "BO1-D", width: 5, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 48, name: "BO1-E", width: 10, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 49, name: "BO1-F", width: 5, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 44, name: "BO1-G", width: 5, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 45, name: "BO1-H", width: 10, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 46, name: "BO1-I", width: 5, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 47, name: "BO1-J", width: 5, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 48, name: "BO1-K", width: 10, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 49, name: "BO1-L", width: 5, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 50, name: "BO1-M", width: 10, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-        { id: 51, name: "BO1-N", width: 10, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-    ];
-    testRoom.hangingUnits.push({ id: 4, name: "TR8", type: "SINGLE_SIDE_WALL", leftPosition: 1, topPosition: 0, angle: 90, measurements: {width: 40}, walls: [testWall] });
-    testRoom.hangingUnits.push({ id: 4, name: "TR12", type: "SINGLE_SIDE_WALL", leftPosition: 80, topPosition: 0, angle: 90, measurements: {width: 40}, walls: [] });
-    testRoom.hangingUnits[testRoom.hangingUnits.length-1].walls = [
-        { id: 44, name: "TR12-A", width: 40, height: 10, hangingLocations: [], hangingUnit: testRoom.hangingUnits[testRoom.hangingUnits.length-1] },
-    ];
-    testRoom.hangingUnits.push({ id: 6, name: "TR18", type: "SINGLE_SIDE_WALL", leftPosition: 0, topPosition: 60, angle: 0, measurements: {width: 20}, walls: [testWall] });
-
+import RoomSelector from "../floorLayout/RoomSelector";
+import RoomService from "../../services/RoomService";
 
 var hangingUnitSelector = null;
 var wallSelectionTool = null;
 var wallHanger = null;
 
-const QuiltHangingTool = (props) => {
 
-    const [quilts, setQuilts] = useState(testQuilts);
+const QuiltHangingTool = (props) => {
+    const [rooms, setRooms] = useState([]);
+    const [room, setRoom] = useState(null);
+    const [saveMessage, setSaveMessage] = useState("");
+    const [selectedRoomId, setSelectedRoomId] = useState(null);
+    const [hangedQuilts, setHangedQuilts] = useState([]);
+    const [updateFlag, setUpdateFlag] = useState(0);
+    const [breadcrumb, setBreadcrumb] = useState({});
     const show = props.show;
 
 
     useEffect(() => {
+
         if(!wallHanger) {
             console.log("Creating wallHanger");
             hangingUnitSelector = new HangingUnitSelector("hangingUnitSelector", {select: setSelectedHangingUnit});
-            hangingUnitSelector.setRoom(testRoom);
 
             wallSelectionTool = new WallSelectionTool("wallSelector", {select: setSelectedWall});
 
@@ -83,64 +37,204 @@ const QuiltHangingTool = (props) => {
                 remove: removeQuiltFromWall,
             });
 
-            hangingUnitSelector.setHangingUnit(testRoom.hangingUnits[0]);
         }
+
+        RoomService.getRoomsPromise()
+            .then(response => response.json())
+            .then(fetchedRooms => {
+                console.log(`Loaded ${fetchedRooms.length} rooms`);
+                setRooms(fetchedRooms)
+                let activeRoom = null;
+    
+                if(fetchedRooms.length === 1) {
+                    activeRoom = fetchedRooms[0];
+                }
+                else if(fetchedRooms.filter(r => r.active).length > 0) {
+                    activeRoom = fetchedRooms.filter(r => r.active)[0];
+                }
+    
+                if(activeRoom) {
+                    hangingUnitSelector.setRoom(activeRoom);
+                    setRoom(activeRoom);
+                    setSelectedRoomId(activeRoom.id);
+                }
+            });
     }, []);
     
+    
+    /* ********************************************************************* */
+    /* Hanging Display actions                                               */
+    /* ********************************************************************* */
+    const showRoom = (roomToShow) => {
+        // hide the wall selector and hanging display
+        document.getElementById("wallSelector").classList.add("hidden");
+        document.getElementById("wallHanging").classList.add("hidden");
+
+        // show the room
+        document.getElementById("hangingUnitSelector").classList.remove("hidden");
+
+        wallSelectionTool.setHangingUnit(null);
+        wallHanger.setWall(null);
+
+        setBreadcrumb({ room: roomToShow });
+    };
+
+    const showWallSelector = (unitToShow) => {
+        // hide the wall selector and hanging display
+        document.getElementById("hangingUnitSelector").classList.add("hidden");
+        document.getElementById("wallHanging").classList.add("hidden");
+
+        // show the room
+        document.getElementById("wallSelector").classList.remove("hidden");
+
+        wallHanger.setWall(null);
+ 
+        setBreadcrumb({ ...breadcrumb, unit: unitToShow, wall: null });
+    };
+
+    const showWallHanger = (wallToShow) => {
+        // hide the wall selector and hanging display
+        document.getElementById("hangingUnitSelector").classList.add("hidden");
+        document.getElementById("wallSelector").classList.add("hidden");
+
+        // show the room
+        document.getElementById("wallHanging").classList.remove("hidden");
+
+        setBreadcrumb({ ...breadcrumb, wall: wallToShow });
+    };
+
 
     /* ********************************************************************* */
     /* Quilt actions                                                         */
     /* ********************************************************************* */
     const setSelectedHangingUnit = (unit) => {
         wallHanger.setWall(null);
+        showWallSelector(unit);
         wallSelectionTool.setHangingUnit(unit);
     };
 
     const setSelectedWall = (wall) => {
+        showWallHanger(wall);
         wallHanger.setWall(wall);
     };
 
+    const getQuiltLocation = (quilt) => {
+        let quiltLocation = null;
+        if(room) {
+            room.hangingUnits.forEach(unit => {
+                unit.walls.forEach(w => {
+                    if(w.hangingLocations) {
+                        w.hangingLocations.forEach(location => {
+                            if(location.quilt.id === quilt.id) {
+                                quiltLocation = location;
+                            }
+                        });
+                    }
+                });              
+            });
+        }
+
+        return quiltLocation;
+    };
+
     const goToQuilt = (quilt) => {
-        if(quilt.hangingLocation) {
-            hangingUnitSelector.setHangingUnit(quilt.hangingLocation.wall.hangingUnit);
-            wallSelectionTool.setHangingUnit(quilt.hangingLocation.wall.hangingUnit);
-            wallHanger.setWall(quilt.hangingLocation.wall);
-            wallHanger.selectQuilt(quilt);
+        if(room) {
+            room.hangingUnits.forEach(unit => {
+                unit.walls.forEach(w => {
+                    if(w.hangingLocations) {
+                        w.hangingLocations.forEach(location => {
+                            if(location.quilt.id === quilt.id) {
+                                hangingUnitSelector.setHangingUnit(unit);
+                                wallSelectionTool.setHangingUnit(unit);
+                                showWallHanger(w);
+                                wallHanger.setWall(w);
+                                wallHanger.selectQuilt(quilt);
+                                return;
+                            }
+                        });
+                    }
+                });              
+            });
         }
     };
 
-    const addQuiltToWall = (quilt) => {
-        console.log(`Adding quilt ${quilt.id} to wall`);
-        let hangingLocation = wallHanger.addQuilt(quilt);
-        quilt.hangingLocation = hangingLocation;
-        hangingLocation.wall.hangingLocations.push(hangingLocation);
-        let newQuilts = [...quilts.filter(q => q.id !== quilt.id), quilt];
-        setQuilts(newQuilts);
+    const addQuiltToWall = async (quilt) => {
+        if(wallHanger.showingWall()) {
+            console.log(`Adding quilt ${quilt.id} to wall`);
+            let location = wallHanger.addQuilt(quilt);
+            let wallId = location.wall;
+
+            if(wallId instanceof Object) {
+                wallId = wallId.id;
+            }
+            let submission = {...location, quilt: {id: quilt.id}, wall: { id: wallId} };
+
+            let savedLocation = await RoomService.hangQuilt(wallId, submission);
+            setUpdateFlag(updateFlag => updateFlag + 1);
+            location.id = savedLocation.id;
+        }
     };
 
-    const removeQuiltFromWall = (quilt) => {
+    const removeQuiltFromWall = async (quilt) => {
         wallHanger.removeQuilt(quilt);
-        quilt.hangingLocation.wall.hangingLocations = quilt.hangingLocation.wall.hangingLocations.filter(loc => loc.quilt.id !== quilt.id);
-        quilt.hangingLocation = null;
-        let newQuilts = [...quilts.filter(q => q.id !== quilt.id), quilt];
-        setQuilts(newQuilts);
+        let location = getQuiltLocation(quilt);
+        if(location) {
+            location.quilt = null;
+            location.wall.hangingLocations = location.wall.hangingLocations.filter(l => l.id !== location.id);
+        }
+        await RoomService.unhangQuilt(quilt.id);
+
+        setUpdateFlag(updateFlag => updateFlag - 1);
         return true;
     };
 
-    const updateQuiltLocation = (hangingLocation, x, y) => {
-        hangingLocation.leftPosition = x;
-        hangingLocation.topPosition = y;
+    const updateQuiltLocation = async (hangingLocation, x, y) => {
+        hangingLocation.location.left = x;
+        hangingLocation.location.top = y;
+
+        let submission = {id: hangingLocation.id, location: hangingLocation.location};
+
+        await RoomService.updateQuiltLocation(hangingLocation.quilt.id, submission);
+    };
+
+    const loadRoom = async () => {
+        if(selectedRoomId) {
+            let loadedRoom = await RoomService.getRoom(selectedRoomId);
+            setRoom(loadedRoom);
+            hangingUnitSelector.setRoom(loadedRoom);
+            showRoom(loadedRoom);
+        }
     };
 
     return (
-    <div className="quilt-hanging-tool-container">
-        <div className="quilt-hanging-tool">
-            <div id="hangingUnitSelector" className="hanging-unit-selector"></div>
-            <div id="wallSelector" className="wall-selector"></div>
-            <div id="quiltSelector" className="quilt-selector"><QuiltSelector quilts={quilts} selectQuilt={goToQuilt} activateQuilt={addQuiltToWall} removeQuilt={removeQuiltFromWall} show={show} /></div>
-            <div id="wallHanging" className="wall-hanging"> </div>
+        <div className="quilt-hanging-tool-container">
+            <div className="quilt-hanging-tool">
+                <div id="hangingToolActions" className="hanging-tool-actions">
+                    <RoomSelector rooms={rooms} currentRoom={selectedRoomId} selectRoom={setSelectedRoomId} />
+                    <button id="load" onClick={loadRoom}>Load</button>
+                </div>
+                <div className="hanging-display-breadcrumb">
+                    { hangingUnitSelector?.room ? <div className="breadcrumb"><a onClick={() => showRoom(hangingUnitSelector.room)} >{hangingUnitSelector.room.name}</a></div>: <></>}
+                    { wallSelectionTool?.hangingUnit ? <div className="breadcrumb"><a onClick={() => showWallSelector(wallSelectionTool.hangingUnit)} >{wallSelectionTool.hangingUnit.name}</a></div>: <></>}
+                    { wallHanger?.wall ? <div className="breadcrumb"><a onClick={() => showWallHanger(wallHanger.wall)} >{wallHanger.wall.name}</a></div>: <></>}
+                </div>
+                <div className="hanging-display-container">
+                    <div id="hangingUnitSelector" className="hanging-unit-selector"></div>
+                    <div id="wallSelector" className="wall-selector hidden"></div>
+                    <div id="wallHanging" className="wall-hanging hidden"></div>
+                </div>
+                <div id="quiltSelector" className="quilt-selector">
+                    <QuiltSelector updateFlag={updateFlag} selectQuilt={goToQuilt} getLocation={getQuiltLocation} activateQuilt={addQuiltToWall} removeQuilt={removeQuiltFromWall} show={show} />
+                </div>
+            </div>
+            <dialog id="saveMessage">
+                <p>{saveMessage}</p>
+                <form method="dialog">
+                    <button>OK</button>
+                </form>
+            </dialog>
         </div>
-    </div>);
+    );
 };
 
 

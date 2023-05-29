@@ -14,6 +14,7 @@ const reportCategories = {
 
 const ReportBuilder = (props) => {
     const [report, setReport] = useState({ fields: [], order: [] });
+    const [saveResult, setSaveResult] = useState([]);
     const { show } = props;
 
     const updateSearch = (newSearch) => {
@@ -26,7 +27,27 @@ const ReportBuilder = (props) => {
     };
 
     const saveReport = () => {
-        ReportService.saveReport(report);
+
+        // validate
+        let errors = [];
+        if(!report.reportName) { errors.push("Report must have a name");}
+        if(!report.reportDescription) { errors.push("Report must have a description");}
+        if(!report.fields || report.fields.length === 0) { errors.push("You must select at least one field for the report")};
+
+        if(errors.length > 0) {
+            setSaveResult(errors);
+        }
+        else {
+            let result = ReportService.saveReport(report);
+
+            if(result) {
+                setSaveResult(["Report saved"]);
+            }
+            else {
+                setSaveResult(["Unable to save report"]);
+            }
+        }
+        document.getElementById("saveResult").showModal();
     };
 
     return (
@@ -86,6 +107,14 @@ const ReportBuilder = (props) => {
                 </div>
             </div>
             <SearchQuilts show={show} search={report} updateSearch={updateSearch} />
+            <dialog id="saveResult">
+                <p>{saveResult.map(msg => 
+                    <div>{msg}</div>
+                )}</p>
+                <form method="dialog">
+                    <button>OK</button>
+                </form>
+            </dialog>
         </>
     );
 

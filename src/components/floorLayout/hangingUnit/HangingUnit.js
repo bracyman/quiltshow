@@ -8,6 +8,12 @@ export const Facing = {
     SOUTH: 180,
 };
 
+export const WALL   = "WALL";
+export const UBOOTH = "UBOOTH";
+export const HBOOTH = "HBOOTH";
+export const BLOCK  = "BLOCK";
+export const DOOR   = "DOOR";
+
 export const WallWidth = 0.25;
 
 export const HANGING_UNIT_UPDATED = "hangingUnit:updated";
@@ -18,11 +24,14 @@ export const HANGING_UNIT_DELETED = "hangingUnit:deleted";
 
 export class HangingUnit {
 
-    constructor(id, name, location, size) {
+    constructor(id, name, location, size, unitType, walls, canHang) {
         this.id = id;
         this.name = name;
         this.location = location;
         this.size = size;
+        this.unitType = unitType;
+        this.canHang = canHang;
+        this.walls = walls || [];
     }
 
     /* Properties */
@@ -54,6 +63,13 @@ export class HangingUnit {
 
     getAddresses() { return []; }
 
+    getUnitType() { return this.unitType; }
+
+    getCanHang() { return this.canHang; }
+    setCanHang(canHang) { this.canHang = canHang; }
+
+    getWalls() { return this.walls;}
+    setWalls(walls) { this.walls = walls; }
 
     /* Interface functions */
     getLines() { }
@@ -92,11 +108,12 @@ export class HangingUnit {
         else if (field.startsWith("size")) {
             field = field.substring("size.".length);
             let size = this.getSize();
-            size[field] = StringUtils.numerize(evt.target.value);
+            size[field] = Number(StringUtils.numerize(evt.target.value));
             this.setSize(size);
             changeType = HANGING_UNIT_DIMENSIONS_UPDATED;
         }
 
         announcer.announce(this, [HANGING_UNIT_UPDATED, changeType], this);
     }
+
 }

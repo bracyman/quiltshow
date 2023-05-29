@@ -25,11 +25,11 @@ const SearchQuilts = (props) => {
             <SearchField {...params} field="number" />
             <SearchField {...params} field="name" />
             <SearchField {...params} field="category" options={show?.categories} />
+            <SearchField {...params} field="enteredBy" />
             <SearchField {...params} field="groupSize" />
             <SearchField {...params} field="width" />
-            <SearchField {...params} field="enteredBy" />
             <SearchField {...params} field="length" />
-            <SearchField {...params} field="width" />
+            <SearchField {...params} field="perimeter" />
             <SearchField {...params} field="judged" />
             <SearchField {...params} field="presidentsChallenge" />
             <SearchField {...params} field="mainColor" />

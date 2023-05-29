@@ -1,6 +1,8 @@
 
 import { fabric } from 'fabric';
 
+const DEFAULT_HEIGHT = 10.0;
+
 export default class WallHanging {
     constructor(elementId, actions) {
         this.elementId = elementId;
@@ -87,16 +89,16 @@ export default class WallHanging {
         }
         else {
             // get the conversion factor from pixels to inches
-            if((elWidth / this.wall.width) <  (elHeight / this.wall.height)) {
+            if((elWidth / this.wall.width) <  (elHeight / (this.wall.height || DEFAULT_HEIGHT))) {
                 this.grid.pixelsPerInch = elWidth / (this.wall.width * 12); 
             }
             else {
-                this.grid.pixelsPerInch = elHeight / (this.wall.height * 12); 
+                this.grid.pixelsPerInch = elHeight / ((this.wall.height || DEFAULT_HEIGHT) * 12); 
             }
 
             this.grid.size = 4 * this.grid.pixelsPerInch;
             this.grid.canvasWidth = this.wall.width * 12 * this.grid.pixelsPerInch;
-            this.grid.canvasHeight = this.wall.height * 12 * this.grid.pixelsPerInch;
+            this.grid.canvasHeight = (this.wall.height || DEFAULT_HEIGHT) * 12 * this.grid.pixelsPerInch;
         }
     }
 
@@ -124,22 +126,6 @@ export default class WallHanging {
         } 
     }
 
-    labelWall() {
-        if(this.wall) {
-            let label = new fabric.IText(this.wall.name || "", { 
-                fill: "#000",
-                selectable: false,
-                hasControls: false,
-                fontSize: this.grid.canvasHeight / 12,
-                top: 0
-            });
-
-            label.top = this.grid.canvasHeight - (label.height *1.1);
-            label.left = this.grid.canvasWidth / 2 - label.width / 2;
-            this.canvas.add(label);
-        }
-    }
-
     clearCanvas() {
         if(this.canvas) {
             this.canvas.clear();
@@ -150,6 +136,10 @@ export default class WallHanging {
     /* ********************************************************************* */
     /*   Wall operations                                                     */
     /* ********************************************************************* */
+    showingWall() {
+        return (this.wall !== null) && (this.wall !== undefined);
+    }
+
     setWall(wall) {
         this.wall = wall;
 
@@ -157,13 +147,22 @@ export default class WallHanging {
         this.calculateGridValues();
         this.drawGrid();
 
-        this.labelWall();
         (wall?.hangingLocations || []).forEach(loc => this.addHangingLocation(loc));
     }
 
     addQuilt(quilt) {
-        let newHangingLocation =  {left: 0, top: 0, quilt: quilt, wall: this.wall};
+        let rightMost = 0;
+        this.canvas.getObjects().filter(o => o.data).forEach(o => {
+            rightMost = Math.max(rightMost, o.oCoords.tr.x);
+        });
+
+        rightMost = this.deconvert(rightMost) + 1;
+
+        let newHangingLocation =  {location: { left: rightMost, top: 0}, quilt: quilt, wall: this.wall};
         this.addHangingLocation(newHangingLocation, true);
+
+        this.wall.hangingLocations.push(newHangingLocation);
+
 
         return newHangingLocation;
     }
@@ -179,13 +178,14 @@ export default class WallHanging {
         let matches = this.canvas.getObjects().filter(o => o.data?.quilt?.id === quilt.id);
         if(matches.length > 0) {
             matches.forEach(m => this.canvas.remove(m));
+            this.wall.hangingLocations = this.wall.hangingLocations.filter(loc => loc.quilt.id !== quilt.id);
         }
     }
 
     addHangingLocation(hangingLocation){
 		let newLocation = new fabric.Rect({ 
-			left: this.convert(hangingLocation.leftPosition || 0), 
-			top: this.convert(hangingLocation.topPosition || 0), 
+			left: this.convert(hangingLocation.location.left || 0), 
+			top: this.convert(hangingLocation.location.top || 0), 
 			width: this.convert(hangingLocation.quilt.width), 
 			height: this.convert(hangingLocation.quilt.length), 
 			type: 'rectangle',

@@ -69,6 +69,10 @@ export const QuiltFields = {
             quilts: []
         }
     },
+
+    /* psuedo-fields */
+    perimeter: { label: "Perimeter", type: "number", example: 212.5, },
+
     count: { label: "Count", type: "number", example: 3, },
 };
 
@@ -81,103 +85,6 @@ export const CategoryFields = [
     { field: "fun", name: "Fun", dataType: "boolean" },
     { field: "strange", name: "Strange", dataType: "string", displayFunction: (v) => v.toUpperCase() },
 ];
-
-
-export const Renderers = {
-    id: {
-        default: (val) => val,
-    },
-    number: {
-        default: (val) => val,
-    },
-    name: {
-        default: (val) => val,
-    },
-    description: {
-        default: (val) => val,
-        list: (val) => StringUtils.trimAfterLength(val, 30),
-        report: (val) => StringUtils.trimAfterLength(val, 30),
-        long: (val) => val,
-    },
-    category: {
-        default: (val) => val.name,
-        long: (val) => `${val.name} - ${val.description}`,
-    },
-    tags: {
-        default: (val) => val.map((t) => t.name).join(", "),
-        list: (val) =>
-            val.map((t) => (
-                <Badge pill bg="primary">
-                    {t.name}
-                </Badge>
-            )),
-        report: (val) => val.map((t) => t.name).join(", "),
-    },
-    judged: {
-        default: (val) => StringUtils.toString(val, "boolean"),
-    },
-    presidentsChallenge: {
-        default: (val) => StringUtils.toString(val, "boolean"),
-    },
-    length: {
-        default: (val) => StringUtils.toString(val, "number"),
-    },
-    width: {
-        default: (val) => StringUtils.toString(val, "number"),
-    },
-    firstShow: {
-        default: (val) => StringUtils.toString(val, "boolean"),
-    },
-    groupSize: {
-        default: (val) => StringUtils.upperFirstOnly(val),
-    },
-    mainColor: {
-        default: (val) => StringUtils.upperFirstOnly(val || ""),
-    },
-    designSource: {
-        default: (val) => StringUtils.upperFirstOnly(val?.name || ""),
-        list: (val) => StringUtils.upperFirstOnly(val?.name || ""),
-        report: (val) => StringUtils.upperFirstOnly(val?.name || ""),
-        long: (val) => val ? `${StringUtils.upperFirstOnly(val.designSourceType)}: ${val.name}` : '',
-    },
-    enteredBy: {
-        default: (val) => val ? `${val.firstName} ${val.lastName}` : '',
-        list: (val) => val ? `${val.firstName} ${val.lastName}` : '',
-        report: (val) => val ? ` ${val.lastName}, ${val.firstName}` : '',
-        long: (val) => val
-            ? (
-                <div className="entrant">
-                    <span className="name">{val.firstName} {val.lastName}</span>
-                    <span className="email">{val.email}</span>
-                    <span className="phone">{val.phone}</span>
-                    <span className="address">{`${val.address1}`}</span>
-                    {val.address2 ? (<span className="address">{`${val.address2}`}</span>) : (<></>)}
-                    <span className="address">{`${val.city}, ${val.state}  ${val.zip}`}</span>
-                </div>
-            )
-            : '',
-    },
-    hangingPreference: {
-        default: (val) => StringUtils.toString(val, "number"),
-    },
-    additionalQuilters: {
-        default: (val) => val,
-    },
-    submittedOn: {
-        default: (val) => StringUtils.toString(val, "date"),
-    },
-    awards: {
-        default: (val) => val || "",
-    },
-    hangingLocation: {
-        default: (val) => val?.name || "",
-    },
-    count: {
-        default: (val) => StringUtils.toString(val, "number"),
-    },
-
-    default: (val) => val ? val : '',
-};
 
 
 export const alphaSort = (a, b) => {
@@ -293,6 +200,113 @@ export const Sorters = {
     awards: (a, b) => listSort(a, b, "name", alphaSort),
     hangingLocation: (a, b) => alphaSort(a?.hangingLocation, b?.hangingLocation),
     count: (a, b) => numericSort(a?.count, b?.count),
+
+    /* psuedo-fields */
+    perimeter: (a, b) => numericSort((a.width * a.length), (b.width * b.length)),
+
     default: (a, b) => alphaSort(a, b),
 };
 
+
+
+export const Renderers = {
+    id: {
+        default: (val) => val,
+    },
+    number: {
+        default: (val) => val,
+    },
+    name: {
+        default: (val) => val,
+    },
+    description: {
+        default: (val) => val,
+        list: (val) => StringUtils.trimAfterLength(val, 30),
+        report: (val) => StringUtils.trimAfterLength(val, 30),
+        long: (val) => val,
+    },
+    category: {
+        default: (val) => val.name,
+        long: (val) => `${val.name} - ${val.description}`,
+    },
+    tags: {
+        default: (val) => val.map((t) => t.name).join(", "),
+        list: (val) =>
+            val.map((t) => (
+                <Badge pill bg="primary">
+                    {t.name}
+                </Badge>
+            )),
+        report: (val) => val.map((t) => t.name).join(", "),
+        forCategory: (tc, q) => categoryTags(tc, q).map(t => t.name).join(", ")
+    },
+    judged: {
+        default: (val) => StringUtils.toString(val, "boolean"),
+    },
+    presidentsChallenge: {
+        default: (val) => StringUtils.toString(val, "boolean"),
+    },
+    length: {
+        default: (val) => StringUtils.toString(val, "number"),
+    },
+    width: {
+        default: (val) => StringUtils.toString(val, "number"),
+    },
+    firstShow: {
+        default: (val) => StringUtils.toString(val, "boolean"),
+    },
+    groupSize: {
+        default: (val) => StringUtils.upperFirstOnly(val),
+    },
+    mainColor: {
+        default: (val) => StringUtils.upperFirstOnly(val || ""),
+    },
+    designSource: {
+        default: (val) => StringUtils.upperFirstOnly(val?.name || ""),
+        list: (val) => StringUtils.upperFirstOnly(val?.name || ""),
+        report: (val) => StringUtils.upperFirstOnly(val?.name || ""),
+        long: (val) => val ? `${StringUtils.upperFirstOnly(val.designSourceType)}: ${val.name}` : '',
+    },
+    enteredBy: {
+        default: (val) => val ? `${val.firstName} ${val.lastName}` : '',
+        list: (val) => val ? `${val.firstName} ${val.lastName}` : '',
+        report: (val) => val ? ` ${val.lastName}, ${val.firstName}` : '',
+        long: (val) => val
+            ? (
+                <div className="entrant">
+                    <span className="name">{val.firstName} {val.lastName}</span>
+                    <span className="email">{val.email}</span>
+                    <span className="phone">{val.phone}</span>
+                    <span className="address">{`${val.address1}`}</span>
+                    {val.address2 ? (<span className="address">{`${val.address2}`}</span>) : (<></>)}
+                    <span className="address">{`${val.city}, ${val.state}  ${val.zip}`}</span>
+                </div>
+            )
+            : '',
+    },
+    hangingPreference: {
+        default: (val) => StringUtils.toString(val, "number"),
+    },
+    additionalQuilters: {
+        default: (val) => val,
+    },
+    submittedOn: {
+        default: (val) => StringUtils.toString(val, "date"),
+    },
+    awards: {
+        default: (val) => val || "",
+    },
+    hangingLocation: {
+        default: (val) => val?.name || "",
+    },
+    count: {
+        default: (val) => StringUtils.toString(val, "number"),
+    },
+
+    /* psuedo-fields */
+    perimeter: {
+        default: (val) => val ? StringUtils.toString(val.width * 2 + val.length * 2, "number") : "",
+    },
+
+    default: (val) => val ? val : '',
+};

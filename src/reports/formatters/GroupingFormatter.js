@@ -56,12 +56,13 @@ const GroupingFormatter = (props) => {
                 {
                     getDistinctGroups().map(group => {
                         let groupResults = getGroupRows(group, results);
-                        return (
+                        return (<>
                             <div className="group">
                                 <div className="group-title">{`${group} | ${groupResults.length} item(s)`}</div>
                                 <TableFormatter report={report} results={groupResults} preview={false} show={show} />
                             </div>
-                        );
+                            <div className="pagebreak"> </div>
+                        </>);
                     })
                 }
             </div>
