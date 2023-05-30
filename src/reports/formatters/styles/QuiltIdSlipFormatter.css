@@ -1,0 +1,21 @@
+.quilt-id-slips {
+    width: 8in;
+    display: flex;
+    flex-direction: column;
+}
+
+div.quilt-slip {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 2em;
+    width: 100%;
+    break-inside: avoid;
+}
+
+div.quilt-slip>div {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    flex-grow: 1;
+    padding: 0 0.2em;
+}
+

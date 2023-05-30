@@ -1,6 +1,7 @@
 import TableFormatter from "./TableFormatter";
 import CardFormatter from "./CardFormatter";
 import CheckInOutFormatter from "./CheckInOutFormatter";
+import QuiltIdSlipFormatter from "./QuiltIdSlipFormatter";
 import GroupingFormatter from "./GroupingFormatter";
 import PaymentStatusFormatter from "./PaymentStatusFormatter";
 import StatisticsFormatter from "./StatisticsFormatter";
@@ -15,8 +16,7 @@ const ReportFormatter = (props) => {
 
 
     const selectFormatter = () => {
-        return (<CheckInOutFormatter report={report} results={results} preview={preview || false} show={show} />);
-/*        switch (report.format?.toLowerCase()) {
+        switch (report.format?.toLowerCase()) {
             case "card":
                 return (<CardFormatter report={report} results={results} preview={preview || false} show={show} />);
     
@@ -26,8 +26,11 @@ const ReportFormatter = (props) => {
             case "statistics":
                 return (<StatisticsFormatter report={report} results={results} preview={preview || false} show={show} />);
         
-            case "checkin":
+            case "checkinout":
                 return (<CheckInOutFormatter report={report} results={results} preview={preview || false} show={show} />);
+
+            case "idslip":
+                return (<QuiltIdSlipFormatter report={report} results={results} preview={preview || false} show={show} />);
                     
             case "group":
                 return (<GroupingFormatter report={report} results={results} preview={preview || false} show={show} />);
@@ -36,7 +39,6 @@ const ReportFormatter = (props) => {
             default:
                 return (<TableFormatter report={report} results={results} preview={preview || false} show={show} />);
         }
-//*/
     };
 
     if (!report) {
