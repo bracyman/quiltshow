@@ -7,6 +7,7 @@ import WallSelectionTool from "./WallSelectionTool";
 import { useState, useEffect } from "react";
 import RoomSelector from "../floorLayout/RoomSelector";
 import RoomService from "../../services/RoomService";
+import LoadingButton from "../LoadingButton";
 
 var hangingUnitSelector = null;
 var wallSelectionTool = null;
@@ -211,7 +212,7 @@ const QuiltHangingTool = (props) => {
             <div className="quilt-hanging-tool">
                 <div id="hangingToolActions" className="hanging-tool-actions">
                     <RoomSelector rooms={rooms} currentRoom={selectedRoomId} selectRoom={setSelectedRoomId} />
-                    <button id="load" onClick={loadRoom}>Load</button>
+                    <LoadingButton id="load" loadingLabel="Loading..." method={loadRoom}>Load</LoadingButton>
                 </div>
                 <div className="hanging-display-breadcrumb">
                     { hangingUnitSelector?.room ? <div className="breadcrumb"><a onClick={() => showRoom(hangingUnitSelector.room)} >{hangingUnitSelector.room.name}</a></div>: <></>}

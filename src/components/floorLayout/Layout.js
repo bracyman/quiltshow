@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import LoadingButton from '../LoadingButton';
 import "../../styles/layout.css";
 import RoomService from "../../services/RoomService";
 import HangingUnitFactory from "./hangingUnit/HangingUnitFactory";
@@ -140,6 +141,17 @@ const Layout = (props) => {
         document.getElementById("saveResult").showModal();
     };
 
+    const deleteRoom = async () => {
+        if(room.id) {
+            RoomService.deleteRoom(room.id);
+        }
+
+        setRoom(null);
+        grid.updateRoom(null);
+        setSaveResult("Room deleted");
+        document.getElementById("saveResult").showModal();
+};
+
 
     const addSingleWall = () => {
         let id = RoomService.getTempId();
@@ -231,23 +243,24 @@ const Layout = (props) => {
         <div className="floor-layout-container">
             <div className='grid-container'>
                 <div className="room-values">
-                    <div><label htmlFor="room-width">Room Width (ft) &#8596;</label><input id="room-width" value={room.width} onChange={updateRoomWidth} /></div>
-                    <div><label htmlFor="room-length">Room Length (ft)  &#8597;</label><input id="room-length" value={room.length} onChange={updateRoomLength} /></div>
+                    <div><label htmlFor="room-width">Room Width (ft) &#8596;</label><input id="room-width" value={room?.width || ""} onChange={updateRoomWidth} /></div>
+                    <div><label htmlFor="room-length">Room Length (ft)  &#8597;</label><input id="room-length" value={room?.length || ""} onChange={updateRoomLength} /></div>
                     <div><label htmlFor="grid-size">Grid size (ft)</label><input id="grid-size" value={gridSize} onChange={updateGridSize} /></div>
                     <div><button id="update-grid" onClick={updateGrid}>Update Room</button></div>
                 </div>
                 <canvas id="floorCanvas" />
             </div>
             <div className="floor-layout-operations">
-                <div><button id="new-room" onClick={newRoom}>New Room</button></div>
-                <div><button id="load-room" onClick={loadRoom}>Load Room</button></div>
-                <div><button id="save-room" onClick={saveRoom}>Save Room</button></div>
-                <div><button id="add-single-wall" onClick={addSingleWall}>Add Wall</button></div>
-                <div><button id="add-booth" onClick={addUBooth}>Add "U" Booth</button></div>
-                <div><button id="add-booth" onClick={addHBooth}>Add "H" Booth</button></div>
-                <div><button id="add-door" onClick={addDoor}>Add Door</button></div>
-                <div><button id="add-block" onClick={addBlock}>Add Block</button></div>
-                <div><button id="print-room" onClick={printRoom}>Download Image</button></div>
+                <div><LoadingButton id="new-room" loadingLabel="Creating..." method={newRoom}>New Room</LoadingButton></div>
+                <div><LoadingButton id="load-room" loadingLabel="Loading..." method={loadRoom}>Load Room</LoadingButton></div>
+                <div><LoadingButton id="save-room" loadingLabel="Saving..." method={saveRoom} disabled={room === null}>Save Room</LoadingButton></div>
+                <div><LoadingButton id="delete-room" loadingLabel="Deleting..." method={deleteRoom} disabled={room === null}>Delete Room</LoadingButton></div>
+                <div><LoadingButton id="add-single-wall" method={addSingleWall}>Add Wall</LoadingButton></div>
+                <div><LoadingButton id="add-booth" method={addUBooth}>Add "U" Booth</LoadingButton></div>
+                <div><LoadingButton id="add-booth" method={addHBooth}>Add "H" Booth</LoadingButton></div>
+                <div><LoadingButton id="add-door" method={addDoor}>Add Door</LoadingButton></div>
+                <div><LoadingButton id="add-block" method={addBlock}>Add Block</LoadingButton></div>
+                <div><LoadingButton id="print-room" loadingLabel="Converting..." method={printRoom}>Download Image</LoadingButton></div>
             </div>
             <div className='grid-controls'>
                 {selection?.unit ? selection.unit.buildForm(announcer) : (<></>)}
@@ -272,21 +285,21 @@ const Layout = (props) => {
             <dialog id="selectRoom">
                 <RoomSelector rooms={rooms} currentRoom={roomSelection} selectRoom={setRoomSelection} />
                 <div>
-                    <button onClick={selectRoom}>Ok</button>
+                    <LoadingButton id="load-selected-room" loadingLabel="Loading..." method={selectRoom}>Ok</LoadingButton>
                     <button onClick={() => document.getElementById("selectRoom").close()}>Cancel</button>
                 </div>
             </dialog>
             <dialog id="newRoomDialog">
                 <div>
                     <label htmlFor="room.name">Room Name</label>
-                    <input type="text" value={room.name} onChange={(evt) => setRoom({...room, name: evt.target.value})} />
+                    <input type="text" value={room?.name || ""} onChange={(evt) => setRoom({...(room || {}), name: evt.target.value})} />
                 </div>
                 <div>
                     <label htmlFor="room.description">Description</label>
-                    <input type="textarea" value={room.description} onChange={(evt) => setRoom({...room, description: evt.target.value})} />
+                    <input type="textarea" value={room?.description || ""} onChange={(evt) => setRoom({...(room || {}), description: evt.target.value})} />
                 </div>
                 <div>
-                    <button onClick={saveNewRoom}>Ok</button>
+                    <LoadingButton id="create-new-room" loadingLabel="Creating..." method={saveNewRoom}>Ok</LoadingButton>
                     <button onClick={() => document.getElementById("newRoomDialog").close()}>Cancel</button>
                 </div>
             </dialog>

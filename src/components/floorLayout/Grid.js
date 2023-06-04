@@ -121,7 +121,13 @@ export default class Grid {
     updateRoom(room, gridSize) {
         this.room = room;
         this.gridSize = gridSize || this.gridSize;
-        this.createCanvas();
+
+        if(room != null) {
+            this.createCanvas();
+        }
+        else {
+            canvas.clear();
+        }
     }
 
     getUnitShape(id) {
