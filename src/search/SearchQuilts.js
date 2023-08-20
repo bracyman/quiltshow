@@ -24,19 +24,25 @@ const SearchQuilts = (props) => {
             </div>
             <SearchField {...params} field="number" />
             <SearchField {...params} field="name" />
+            <SearchField {...params} field="description" />
             <SearchField {...params} field="category" options={show?.categories} />
             <SearchField {...params} field="enteredBy" />
+            <SearchField {...params} field="quiltedBy" />
+            <SearchField {...params} field="additionalQuilters" />
             <SearchField {...params} field="groupSize" />
             <SearchField {...params} field="width" />
             <SearchField {...params} field="length" />
             <SearchField {...params} field="perimeter" />
+            <SearchField {...params} field="hangingLocation" />
             <SearchField {...params} field="judged" />
+            <SearchField {...params} field="firstShow" />
+            <SearchField {...params} field="firstEntry" />
             <SearchField {...params} field="presidentsChallenge" />
             <SearchField {...params} field="mainColor" />
             <SearchField {...params} field="hangingPreference" />
-            <SearchField {...params} field="additionalQuilters" />
             <SearchField {...params} field="designSource" />
             <TagSearchField {...params} field="tags" />
+            <SearchField {...params} field="judgeComment" />
             <SearchField {...params} field="count" dataType="number" />
         </div>
     );

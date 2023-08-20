@@ -258,12 +258,15 @@ export default class HangingUnitSelector {
         wall.rotate(hangingUnit.location.angle || 0);
         wall.left = this.convert(hangingUnit.location.left);
         wall.top = this.convert(hangingUnit.location.top);
-        
-        let label = new fabric.IText(hangingUnit.name || "", textConfig);
+
+        let group = new fabric.Group([wall], { ...groupConfig });
+        this.correctPosition(group);
+
+/*        let label = new fabric.IText(hangingUnit.name || "", textConfig);
 
         let labelLeft = 0, labelTop = 0;
         if(this.centerWidth(hangingUnit)) {
-            labelLeft = wall.left + (this.centerDirection(hangingUnit) * (wall.width / 2)) - (label.width / 2);
+            labelLeft = group.left + (this.centerDirection(hangingUnit) * (wall.width / 2)) - (label.width / 2);
             labelTop = this.labelAbove(wall, label) ? wall.top - (label.height + this.grid.wallWidth * 2) : wall.top + this.grid.wallWidth * 2;
         }
         else {
@@ -273,9 +276,16 @@ export default class HangingUnitSelector {
 
         label.left = labelLeft;
         label.top = labelTop;
+*/
+        let label = new fabric.IText(hangingUnit.name || "", { ...textConfig,
+            angle: (hangingUnit.location.angle || 0.0) % 180
+        });
 
-        let group = new fabric.Group([wall, label], { ...groupConfig });
-        this.correctPosition(group);
+        label.left = actualLeft(group) + (sin(hangingUnit.location.angle % 180) * 1.2 * actualWidth(label));
+        //        label.left = actualLeft(group) + ((actualWidth(group) / 2) - (actualWidth(label) / 2));
+        label.top = actualTop(group) + (cos(hangingUnit.location.angle % 180) * 0.5 * actualHeight(label));
+        group.addWithUpdate(label);
+
 
         return group;
     }

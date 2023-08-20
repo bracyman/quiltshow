@@ -1,5 +1,5 @@
 
-import { QuiltFields, Renderers, } from "../../components/quilts/QuiltFields";
+import { QuiltFields, ReportRenderers, } from "../../components/quilts/QuiltFields";
 import "./styles/CheckInOutFormatter.css";
 
 const CheckInOutFormatter = (props) => {
@@ -9,13 +9,13 @@ const CheckInOutFormatter = (props) => {
 
     const groupResults = () => {
         let people = { entrants: [] };
-        results.forEach(q => {
-            if(people[q.enteredBy.id]) {
-                people[q.enteredBy.id].push(q);
+        results.forEach(qsd => {
+            if(people[qsd.quilt.enteredBy.id]) {
+                people[qsd.quilt.enteredBy.id].push(qsd);
             }
             else {
-                people.entrants.push(q.enteredBy);
-                people[q.enteredBy.id] = [q];
+                people.entrants.push(qsd.quilt.enteredBy);
+                people[qsd.quilt.enteredBy.id] = [qsd];
             }
         });
 
@@ -33,54 +33,47 @@ const CheckInOutFormatter = (props) => {
 
     const render = (field, data) => {
         if(field === "piecingType") {
-            return Renderers.tags.forCategory(piecingCategory, data);
+            return ReportRenderers.tags.forCategory(piecingCategory, data);
         }
         else if(field === "quiltingStyle") {
-            return Renderers.tags.forCategory(quiltingCategory, data);
+            return ReportRenderers.tags.forCategory(quiltingCategory, data);
         }
 
-        if(field === "groupSize") {
-            field = field;
-        }
+        let renderers = ReportRenderers[field];
+        let renderer = renderers.report || renderers.default;
 
-        let renderers = Renderers[field];
-        let renderer = Renderers.default;
-        if (renderers) {
-            renderer = renderers.report || renderers.default;
-        }
-
-        return renderer(data[field]);
+        return renderer(data);
     };
     
     const buildPreview = () => {
  
     };
 
-    const buildPage = (person, quilts) => {
+    const buildPage = (person, qsds) => {
         return (
             <div className="page">
                 <div className="header">
                     <div className="title">{show.name}</div>
-                    <div className="entrant">{`${person.firstName} ${person.lastName} - ${quilts.length} entries`}</div>
+                    <div className="entrant">{`${person.firstName} ${person.lastName} - ${qsds.length} entries`}</div>
                 </div>
                 <div className="main">
-                    {quilts.map(q => (
+                    {qsds.map(qsd => (
                         <table>
                             <tr>
-                                <td className="initials">Drop Off Initials</td>
-                                <td className="number">#{render("number", q)}</td>
-                                <td className="name">{render("name", q)}</td>
-                                <td className="location"></td>
-                                <td className="tags">{q ? "Judged" : "" }</td>
-                                <td className="initials">Pick Up Initials</td>
+                                <td className="initial-label">Drop Off Initials</td>
+                                <td className="number">#{render("number", qsd)}</td>
+                                <td className="name">{render("name", qsd)}</td>
+                                <td className="location">{render("hangingLocation", qsd)}</td>
+                                <td className="tags">{qsd.quilt.judged ? "Judged" : "" }</td>
+                                <td className="initial-label">Pick Up Initials</td>
                             </tr>
                             <tr>
-                                <td></td>
-                                <td>{render("groupSize", q)}</td>
-                                <td>{render("quiltingStyle", q)}</td>
-                                <td>{render("category", q)}</td>
-                                <td>{render("piecingType", q)}</td>
-                                <td></td>
+                                <td className="initial-box"></td>
+                                <td>{render("groupSize", qsd)}</td>
+                                <td>{render("quiltingStyle", qsd)}</td>
+                                <td>{render("category", qsd)}</td>
+                                <td>{render("piecingType", qsd)}</td>
+                                <td className="initial-box"></td>
                             </tr>
                         </table>
                     ))}

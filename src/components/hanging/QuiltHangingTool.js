@@ -1,4 +1,4 @@
-
+import React from "react";
 import QuiltSelector from "./QuiltSelector";
 import "../../styles/hangingTool.css"
 import WallHanging from "./WallHanging";
@@ -8,6 +8,9 @@ import { useState, useEffect } from "react";
 import RoomSelector from "../floorLayout/RoomSelector";
 import RoomService from "../../services/RoomService";
 import LoadingButton from "../LoadingButton";
+import UnitSelector from "./UnitSelector";
+import QuiltLocationForm from "./QuiltLocationForm";
+import PrintRoom from "./PrintRoom";
 
 var hangingUnitSelector = null;
 var wallSelectionTool = null;
@@ -22,6 +25,9 @@ const QuiltHangingTool = (props) => {
     const [hangedQuilts, setHangedQuilts] = useState([]);
     const [updateFlag, setUpdateFlag] = useState(0);
     const [breadcrumb, setBreadcrumb] = useState({});
+    const [selectedUnit, setSelectedUnit] = useState(null);
+    const [selectedQuilt, setSelectedQuilt] = useState(null);
+    const [showPrintForm, setShowPrintForm] = useState(false);
     const show = props.show;
 
 
@@ -36,6 +42,8 @@ const QuiltHangingTool = (props) => {
             wallHanger = new WallHanging("wallHanging", {
                 update: updateQuiltLocation, 
                 remove: removeQuiltFromWall,
+                select: setSelectedQuilt,
+                context: this,
             });
 
         }
@@ -112,6 +120,7 @@ const QuiltHangingTool = (props) => {
         wallHanger.setWall(null);
         showWallSelector(unit);
         wallSelectionTool.setHangingUnit(unit);
+        setSelectedUnit(unit);
     };
 
     const setSelectedWall = (wall) => {
@@ -150,6 +159,7 @@ const QuiltHangingTool = (props) => {
                                 showWallHanger(w);
                                 wallHanger.setWall(w);
                                 wallHanger.selectQuilt(quilt);
+                                setSelectedQuilt(location);
                                 return;
                             }
                         });
@@ -172,6 +182,7 @@ const QuiltHangingTool = (props) => {
 
             let savedLocation = await RoomService.hangQuilt(wallId, submission);
             setUpdateFlag(updateFlag => updateFlag + 1);
+            setSelectedQuilt({...submission});
             location.id = savedLocation.id;
         }
     };
@@ -195,7 +206,12 @@ const QuiltHangingTool = (props) => {
 
         let submission = {id: hangingLocation.id, location: hangingLocation.location};
 
+        if(hangingLocation.id === selectedQuilt?.id) {
+            setSelectedQuilt({...submission});
+        }
+
         await RoomService.updateQuiltLocation(hangingLocation.quilt.id, submission);
+        wallHanger.moveQuiltLocation(submission, x, y);
     };
 
     const loadRoom = async () => {
@@ -207,12 +223,30 @@ const QuiltHangingTool = (props) => {
         }
     };
 
+
+    /* ********************************************************************* */
+    /* Print Room actions                                                    */
+    /* ********************************************************************* */
+    const openPrintForm = () => {
+        window.open(`/?headless=1&roomId=${selectedRoomId}#/printRoom`, `_blank`);
+    };
+
+
+    /* ********************************************************************* */
+    /* ********************************************************************* */
     return (
         <div className="quilt-hanging-tool-container">
             <div className="quilt-hanging-tool">
                 <div id="hangingToolActions" className="hanging-tool-actions">
                     <RoomSelector rooms={rooms} currentRoom={selectedRoomId} selectRoom={setSelectedRoomId} />
                     <LoadingButton id="load" loadingLabel="Loading..." method={loadRoom}>Load</LoadingButton>
+                    {room && 
+                        <button id="print" onClick={openPrintForm} disabled={room === null}>Print Room</button>
+                    }
+                    <UnitSelector rooms={rooms} currentRoom={room} selectUnit={setSelectedHangingUnit} currentUnit={selectedUnit} selectQuilt={goToQuilt} currentQuilt={selectedQuilt}/>
+                    {selectedQuilt && 
+                        <QuiltLocationForm currentQuilt={selectedQuilt} updateQuiltLocation={updateQuiltLocation} />
+                    }
                 </div>
                 <div className="hanging-display-breadcrumb">
                     { hangingUnitSelector?.room ? <div className="breadcrumb"><a onClick={() => showRoom(hangingUnitSelector.room)} >{hangingUnitSelector.room.name}</a></div>: <></>}

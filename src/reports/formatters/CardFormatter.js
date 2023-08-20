@@ -1,5 +1,5 @@
 
-import { QuiltFields, Renderers } from "../../components/quilts/QuiltFields";
+import { QuiltFields, ReportRenderers } from "../../components/quilts/QuiltFields";
 import "./styles/CardFormatter.css";
 
 
@@ -8,13 +8,13 @@ const CardFormatter = (props) => {
 
 
     const render = (field, data) => {
-        let renderers = Renderers[field];
-        let renderer = Renderers.default;
+        let renderers = ReportRenderers[field];
+        let renderer = ReportRenderers.default;
         if (renderers) {
             renderer = renderers.report || renderers.default;
         }
 
-        return renderer(data[field]);
+        return renderer(data);
     }
 
 
@@ -35,8 +35,11 @@ const CardFormatter = (props) => {
 
 
     const buildPreview = () => {
-        let previewEntry = {};
-        report.fields.map(field => previewEntry[field] = QuiltFields[field].example);
+        let previewEntry = {
+            quilt: {},
+            hangingLocation: { wall: { name: "Booth 10A" } },
+        };
+        report.fields.map(field => previewEntry.quilt[field] = QuiltFields[field].example);
 
         return buildCard(previewEntry);
     };

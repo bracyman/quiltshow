@@ -31,6 +31,7 @@ export const QuiltFields = {
     length: { label: "Height", type: "number", example: 84, },
     width: { label: "Width", type: "number", example: 45, },
     firstShow: { label: "First Show", type: "boolean", example: false, },
+    firstEntry: { label: "First Entry", type: "boolean", example: false, },
     groupSize: { label: "Group Size", type: "groupSize", example: "DUET", },
     mainColor: { label: "Main Color", type: "string", example: "Blue", },
     designSource: { label: "Design Source", type: "designSource", 
@@ -59,6 +60,7 @@ export const QuiltFields = {
 		}
     },
     hangingPreference: { label: "Hanging Preference", type: "number", example: 1, },
+    quiltedBy: { label: "Quilted By", type: "string", example: "Joan Jett", },
     additionalQuilters: { label: "Additional Quilters", type: "string", example: "Libby Masters, Beth Anne", },
     submittedOn: { label: "Submitted", type: "date", example: "02/15/23", },
     awards: { label: "Awards", type: "list(award)", example: "2nd Place - Hand Quilted, Judge's Choice", },
@@ -68,6 +70,10 @@ export const QuiltFields = {
             name: "14C",
             quilts: []
         }
+    },
+
+    judgeComment: { label: "Judge's Comments", type: "judgeComment", 
+        example: {}
     },
 
     /* psuedo-fields */
@@ -160,6 +166,25 @@ export const listSort = (a, b, field, sortFunction) => {
             : 0;
 };
 
+export const awardSort = (a, b, awardName) => {
+    let aAward = (a.awards || []).filter(award => (award.category === awardName) || ((awardName === "Specialty") && award.category === null));
+    let bAward = (b.awards || []).filter(award => (award.category === awardName) || ((awardName === "Specialty") && award.category === null));
+
+    if(aAward === null) {
+        return (bAward === null) ? 0 : 1;
+    }
+
+    if(bAward === null) {
+        return -1;
+    }
+
+    return (aAward.displayOrder > bAward.displayOrder) 
+                ? 1 
+                : (aAward.displayOrder < bAward.displayOrder) 
+                    ? -1
+                    : 0;
+};
+
 const categoryTags = (tagCategory, quilt) => {
     if(!tagCategory || !quilt) {
         return [];
@@ -190,10 +215,12 @@ export const Sorters = {
     length: (a, b) => numericSort(a?.length, b?.length),
     width: (a, b) => numericSort(a?.width, b?.width),
     firstShow: (a, b) => booleanSort(a?.firstShow, b?.firstShow),
+    firstEntry: (a, b) => booleanSort(a?.firstEntry, b?.firstEntry),
     groupSize: (a, b) => numericSort(a?.groupSize, b?.groupSize),
     mainColor: (a, b) => alphaSort(a?.name, b?.name),
     designSource: (field) => (a, b) => alphaSort(a?.designSource[field || "name"], b?.designSource[field || "name"]),
     enteredBy: (a, b) => alphaSort(a?.enteredBy?.lastName, b?.enteredBy?.lastName),
+    quiltedBy: (a, b) => alphaSort(a?.quiltedBy, b?.quiltedBy),
     hangingPreference: (a, b) => numericSort(a?.hangingPreference, b?.hangingPreference),
     additionalQuilters: (a, b) => alphaSort(a?.additionalQuilters, b?.additionalQuilters),
     submittedOn: (a, b) => dateSort(a?.submittedOn, b?.submittedOn),
@@ -206,6 +233,38 @@ export const Sorters = {
 
     default: (a, b) => alphaSort(a, b),
 };
+
+
+export const ReportSorters = {
+    id: (a, b) => numericSort(a?.quilt?.id, b?.quilt?.id),
+    number: (a, b) => numericSort(a?.quilt?.number, b?.quilt?.number),
+    name: (a, b) => alphaSort(a?.quilt?.name, b?.quilt?.name),
+    description: (a, b) => alphaSort(a?.quilt?.description, b?.quilt?.description),
+    category: (a, b) => alphaSort(a?.quilt?.category?.name, b?.quilt?.category?.name),
+    tags: (a, b) => listSort(a?.quilt?.tags, b?.quilt?.tags, "name", alphaSort),
+    tagCategory: (tc) => (a, b) => listSort(categoryTags(tc, a), categoryTags(tc, b), "name", alphaSort),
+    judged: (a, b) => booleanSort(a?.quilt?.judged, b?.quilt?.judged),
+    presidentsChallenge: (a, b) => booleanSort(a?.quilt?.presidentsChallenge, b?.quilt?.presidentsChallenge),
+    length: (a, b) => numericSort(a?.quilt?.length, b?.quilt?.length),
+    width: (a, b) => numericSort(a?.quilt?.width, b?.quilt?.width),
+    firstShow: (a, b) => booleanSort(a?.quilt?.firstShow, b?.quilt?.firstShow),
+    firstEntry: (a, b) => booleanSort(a?.quilt?.firstEntry, b?.quilt?.firstEntry),
+    groupSize: (a, b) => numericSort(a?.quilt?.groupSize, b?.quilt?.groupSize),
+    mainColor: (a, b) => alphaSort(a?.quilt?.name, b?.quilt?.name),
+    designSource: (field) => (a, b) => alphaSort(a?.quilt?.designSource[field || "name"], b?.quilt?.designSource[field || "name"]),
+    enteredBy: (a, b) => alphaSort(a?.quilt?.enteredBy?.lastName, b?.quilt?.enteredBy?.lastName),
+    hangingPreference: (a, b) => numericSort(a?.quilt?.hangingPreference, b?.quilt?.hangingPreference),
+    quiltedBy: (a, b) => alphaSort(a?.quilt?.quiltedBy, b?.quilt?.quiltedBy),
+    additionalQuilters: (a, b) => alphaSort(a?.quilt?.additionalQuilters, b?.quilt?.additionalQuilters),
+    submittedOn: (a, b) => dateSort(a?.quilt?.submittedOn, b?.quilt?.submittedOn),
+    awards: (category) => (a,b) => awardSort(a.quilt, b.quilt, category),
+    hangingLocation: (a, b) => alphaSort(a?.hangingLocation?.wall?.name, b?.hangingLocation?.wall?.name),
+    count: (a, b) => numericSort(a?.count, b?.count),
+
+    /* psuedo-fields */
+    perimeter: (a, b) => numericSort((a?.quilt?.width * a?.quilt?.length), (b?.quilt?.width * b?.quilt?.length)),
+};
+
 
 
 
@@ -222,12 +281,12 @@ export const Renderers = {
     description: {
         default: (val) => val,
         list: (val) => StringUtils.trimAfterLength(val, 30),
-        report: (val) => StringUtils.trimAfterLength(val, 30),
+        report: (val) => val,
         long: (val) => val,
     },
     category: {
-        default: (val) => val.name,
-        long: (val) => `${val.name} - ${val.description}`,
+        default: (val) => val?.name || "---",
+        long: (val) => `${val?.name | "---"} - ${val?.description}`,
     },
     tags: {
         default: (val) => val.map((t) => t.name).join(", "),
@@ -253,6 +312,9 @@ export const Renderers = {
         default: (val) => StringUtils.toString(val, "number"),
     },
     firstShow: {
+        default: (val) => StringUtils.toString(val, "boolean"),
+    },
+    firstEntry: {
         default: (val) => StringUtils.toString(val, "boolean"),
     },
     groupSize: {
@@ -287,6 +349,9 @@ export const Renderers = {
     hangingPreference: {
         default: (val) => StringUtils.toString(val, "number"),
     },
+    quiltedBy:  {
+        default: (val) => val,
+    },
     additionalQuilters: {
         default: (val) => val,
     },
@@ -309,4 +374,172 @@ export const Renderers = {
     },
 
     default: (val) => val ? val : '',
+};
+
+
+
+
+export const ReportRenderers = {
+    id: {
+        default: (qsd) => qsd?.quilt?.id || "",
+    },
+    number: {
+        default: (qsd) => qsd?.quilt?.number || "",
+    },
+    name: {
+        default: (qsd) => qsd?.quilt?.name || "",
+        report:  (qsd) => qsd?.quilt?.name ? qsd?.quilt?.name : "",
+        long:  (qsd) => qsd?.quilt?.judged ? (qsd?.quilt?.name + " *") : (qsd?.quilt?.name ? qsd?.quilt?.name : ""),
+    },
+    description: {
+        default: (qsd) => qsd?.quilt?.description || "",
+        list: (qsd) => StringUtils.trimAfterLength(qsd?.quilt?.description || "", 30),
+        report: (qsd) => qsd?.quilt?.description || "",
+        long: (qsd) => qsd?.quilt?.description || "",
+    },
+    category: {
+        default: (qsd) => qsd?.quilt?.category?.name || "---",
+        report:  (qsd) => qsd?.quilt?.category?.name || "",
+        long: (qsd) => `${qsd?.quilt?.category?.name | "---"} - ${qsd?.quilt?.category?.description}`,
+    },
+    tags: {
+        default: (qsd) => (qsd?.quilt?.tags || []).map((t) => t.name).join(", "),
+        list: (qsd) =>
+            (qsd?.quilt?.tags || []).map((t) => (
+                <Badge pill bg="primary">
+                    {t.name}
+                </Badge>
+            )),
+        report: (qsd) => (qsd?.quilt?.tags || []).map((t) => t.name).join(", "),
+        forCategory: (tc, qsd) => categoryTags(tc, qsd?.quilt).map(t => t.name).join(", ")
+    },
+    judged: {
+        default: (qsd) => StringUtils.toString(qsd?.quilt?.judged, "boolean"),
+        long: (qsd) => qsd?.quilt?.judged ? "Judged" : ""
+    },
+    presidentsChallenge: {
+        default: (qsd) => StringUtils.toString(qsd?.quilt?.presidentsChallenge, "boolean"),
+    },
+    length: {
+        default: (qsd) => StringUtils.toString(qsd?.quilt?.length, "number"),
+    },
+    width: {
+        default: (qsd) => StringUtils.toString(qsd?.quilt?.width, "number"),
+    },
+    firstShow: {
+        default: (qsd) => StringUtils.toString(qsd?.quilt?.firstShow, "boolean"),
+    },
+    firstEntry: {
+        default: (qsd) => StringUtils.toString(qsd?.quilt?.firstEntry, "boolean"),
+    },
+    groupSize: {
+        default: (qsd) => StringUtils.upperFirstOnly(qsd?.quilt?.groupSize),
+    },
+    mainColor: {
+        default: (qsd) => StringUtils.upperFirstOnly(qsd?.quilt?.mainColor || ""),
+    },
+    designSource: {
+        default: (qsd) => StringUtils.upperFirstOnly(qsd?.quilt?.designSource?.name || ""),
+        list: (qsd) => StringUtils.upperFirstOnly(qsd?.quilt?.designSource?.name || ""),
+        report: (qsd) => StringUtils.upperFirstOnly(qsd?.quilt?.designSource?.name || ""),
+        long: (qsd) => { return qsd?.quilt?.designSource ? 
+                        (qsd.quilt.designSource.designSourceType === "MAGAZINE") ? designSourceTypeMagazine(qsd.quilt.designSource)
+                        : (qsd.quilt.designSource.designSourceType === "BOOK") ? designSourceTypeBook(qsd.quilt.designSource)
+                        : (qsd.quilt.designSource.designSourceType === "WORKSHOP") ? designSourceTypeWorkshop(qsd.quilt.designSource)
+                        : (qsd.quilt.designSource.designSourceType === "ORIGINAL") ? designSourceTypeOriginal(qsd.quilt.designSource)
+                        : (qsd.quilt.designSource.designSourceType === "OTHER") ? designSourceTypeOther(qsd.quilt.designSource)
+                        : ""
+                    : ""
+            }
+
+    },
+    enteredBy: {
+        default: (qsd) => qsd ? `${StringUtils.upperFirstOnly(qsd?.quilt?.enteredBy?.firstName)} ${StringUtils.upperFirstOnly(qsd?.quilt?.enteredBy?.lastName)}` : '',
+        list: (qsd) => qsd ? `${qsd?.quilt?.enteredBy?.firstName} ${StringUtils.upperFirstOnly(qsd?.quilt?.enteredBy?.lastName)}` : '',
+        report: (qsd) => qsd ? ` ${StringUtils.upperFirstOnly(qsd?.quilt?.enteredBy?.firstName)} ${StringUtils.upperFirstOnly(qsd?.quilt?.enteredBy?.lastName)}` : '',
+        long: (qsd) => qsd
+            ? (
+                <div className="entrant">
+                    <span className="name">{StringUtils.upperFirstOnly(qsd?.quilt?.enteredBy?.firstName)} {StringUtils.upperFirstOnly(qsd?.quilt?.enteredBy?.lastName)}</span>
+                    <span className="email">{qsd?.quilt?.enteredBy?.email}</span>
+                    <span className="phone">{qsd?.quilt?.enteredBy?.phone}</span>
+                    <span className="address">{`${qsd?.quilt?.enteredBy?.address1}`}</span>
+                    {qsd.address2 ? (<span className="address">{`${qsd?.quilt?.enteredBy?.address2}`}</span>) : (<></>)}
+                    <span className="address">{`${StringUtils.upperFirstOnly(qsd?.quilt?.enteredBy?.city)}, ${qsd?.quilt?.enteredBy?.state}  ${qsd?.quilt?.enteredBy?.zip}`}</span>
+                </div>
+            )
+            : '',
+    },
+    hangingPreference: {
+        default: (qsd) => StringUtils.toString(qsd?.quilt?.hangingPreference, "number"),
+    },
+    quiltedBy: {
+        default: (qsd) => qsd?.quilt?.quiltedBy ? qsd?.quilt?.quiltedBy : `${StringUtils.upperFirstOnly(qsd?.quilt?.enteredBy?.firstName)} ${StringUtils.upperFirstOnly(qsd?.quilt?.enteredBy?.lastName)}`
+    },
+    additionalQuilters: {
+        default: (qsd) => qsd?.quilt?.additionalQuilters,
+        long: (qsd) => (qsd?.quilt?.additionalQuilters || "").split(",").map(q => (
+            <span className="additional-quilter">{q}</span>
+        ))
+    },
+    submittedOn: {
+        default: (qsd) => StringUtils.toString(qsd?.quilt?.submittedOn, "date"),
+    },
+    awards: {
+        default: (qsd) => (qsd?.quilt?.awards || []).map(a => `${a.name}${a.color ? ("/" + a.color) : ""} ${a.category?.name || "Specialty"}`).join(", "),
+    },
+    hangingLocation: {
+        default: (qsd) => qsd?.hangingLocation 
+                    ? (qsd.hangingLocation?.wall?.hangingUnit?.name || "") + "-" + getWallSection(qsd.hangingLocation?.wall)
+                    : "",
+    },
+    count: {
+        default: (qsd) => StringUtils.toString(qsd?.count || 0, "number"),
+    },
+
+    /* psuedo-fields */
+    perimeter: {
+        default: (qsd) => qsd?.quilt ? StringUtils.toString(qsd.quilt.width * 2 + qsd.quilt.length * 2, "number") : "",
+    },
+};
+
+const designSourceTypeMagazine = (ds) => {
+    return ds.name 
+        ? ds.name + ((ds.issueNumber || ds.year) 
+            ? " [" + (ds.issueNumber || "") + 
+                    (ds.year ? (ds.issueNumber ? ", " : "") + ds.year : "")
+                + "]"
+            : "")
+        :  "Unknown magazine";
+}
+
+const designSourceTypeBook = (ds) => {
+    return (ds.title || (ds.name || "")) + ((ds.author || ds.year) 
+        ? " [" + (ds.author || "") + (ds.year ? ", " + ds.year : "") + "]"
+        : "");
+}
+
+const designSourceTypeWorkshop = (ds) => {
+    return (ds.name || "") + ", " + (ds.author || "");
+}
+
+const designSourceTypeOriginal = (ds) => {
+    return `Original design`;
+}
+
+const designSourceTypeOther = (ds) => {
+    return (ds.name || "");
+}
+
+const getWallSection = (wall) => {
+    let name = wall?.name || "";
+
+    if(name.endsWith("OA")) return "OA";
+    if(name.endsWith("OB")) return "OB";
+    if(name.endsWith("OC")) return "OC";
+    if(name.endsWith("A")) return "A";
+    if(name.endsWith("B")) return "B";
+    if(name.endsWith("C")) return "C";
+
+    return name;
 };

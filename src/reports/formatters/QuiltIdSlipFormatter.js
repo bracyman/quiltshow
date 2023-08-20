@@ -1,29 +1,25 @@
 import { useState } from "react";
-import { QuiltFields, Sorters, Renderers } from "../../components/quilts/QuiltFields";
+import { QuiltFields, ReportSorters, ReportRenderers } from "../../components/quilts/QuiltFields";
 import "./styles/QuiltIdSlipFormatter.css";
 
 
 const QuiltIdSlipFormatter = (props) => {
     const { report, results, preview, show } = props;
-    const piecingCategory = show.tagCategories.filter(tc => tc.name === "Piecing Type")[0];
-    const quiltingCategory = show.tagCategories.filter(tc => tc.name === "Quilting Style")[0];
 
-
-    const buildRow = (quilt) => {
-        return (<div className="quilt-slip" key={`id_slip${quilt.id}`}>
-            <div className="name">{`${quilt.enteredBy.lastName}, ${quilt.enteredBy.firstName}`}</div>
-            <div className="location"></div>
-            <div className="name">{quilt.name}</div>
-            <div className="tags">
-                {Renderers.tags.forCategory(piecingCategory, quilt)}<br/>
-                {Renderers.tags.forCategory(quiltingCategory, quilt)}
+    const buildRow = (qsd) => {
+        return (<div className="quilt-slip" key={`id_slip${qsd?.quilt?.id || "0"}`}>
+            <div className="name">{`${qsd?.quilt?.enteredBy.lastName}, ${qsd?.quilt?.enteredBy.firstName}`}</div>
+            <div className="location">{ReportRenderers.hangingLocation.default(qsd)}</div>
+            <div className="name">{ReportRenderers.name.default(qsd)}</div>
+            <div className="category">
+                {ReportRenderers.category.default(qsd)}
             </div>
             <div className="size">
-                W: {Renderers.width.default(quilt.width)}<br/>
-                L: {Renderers.length.default(quilt.length)}
+                W: {ReportRenderers.width.default(qsd)}<br/>
+                L: {ReportRenderers.length.default(qsd)}
             </div>
-            <div className="number">#{quilt.number}</div>
-            <div className="judged">{quilt.judged ? "Judged": ""}</div>
+            <div className="number">#{ReportRenderers.number.default(qsd)}</div>
+            <div className="judged">{qsd?.quilt?.judged ? "Judged": ""}</div>
         </div>);
     };
 
@@ -36,7 +32,7 @@ const QuiltIdSlipFormatter = (props) => {
             return [];
         }
 
-        return results.sort(Sorters["enteredBy"]);
+        return results.sort(ReportSorters["enteredBy"]);
     };
 
 

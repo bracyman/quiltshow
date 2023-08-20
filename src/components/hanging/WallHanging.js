@@ -8,6 +8,8 @@ export default class WallHanging {
         this.elementId = elementId;
         this.updateQuilt = actions?.update;
         this.deleteQuilt = actions?.remove;
+        this.select = actions?.select;
+        this.actionContext = actions?.context;
 
         this.wall = null;
 
@@ -35,6 +37,26 @@ export default class WallHanging {
             selection: false,
             data: this
         });
+
+        this.canvas.on('selection:created', function(options) {
+            if(options.selected.length === 1) {
+                let hangingLocation = options.selected[0].data;
+                let wallHanger = this.data;
+                if(hangingLocation) {
+                    wallHanger.select(hangingLocation);
+                }
+            }
+        });
+
+        this.canvas.on('selection:updated', function(options) {
+            if(options.selected.length === 1) {
+                let hangingLocation = options.selected[0].data;
+                let wallHanger = this.data;
+                if(hangingLocation) {
+                    wallHanger.select(hangingLocation);
+                }
+            }
+       });
 
         this.canvas.on('object:moving', function(options) {
             let hanger = this.data;
@@ -163,7 +185,7 @@ export default class WallHanging {
 
         this.wall.hangingLocations.push(newHangingLocation);
 
-
+        this.select(quilt);
         return newHangingLocation;
     }
 
@@ -171,6 +193,16 @@ export default class WallHanging {
         let matches = this.canvas.getObjects().filter(o => o.data?.quilt?.id === quilt.id);
         if(matches.length > 0) {
             this.canvas.setActiveObject(matches[0]);
+            this.select(matches[0]);
+        }
+    }
+
+    moveQuiltLocation(location, left, top) {
+        let matches = this.canvas.getObjects().filter(o => o.data?.id === location.id);
+        if(matches.length > 0) {
+            matches[0].left = this.convert(left);
+            matches[0].top = this.convert(top);
+            this.canvas.renderAll();
         }
     }
 
@@ -182,6 +214,11 @@ export default class WallHanging {
         }
     }
 
+    getQuilts() {
+        let quilts = this.canvas.getObjects().filter(o => o.data?.quilt != null).map(o => o.data.quilt);
+        return quilts;
+    }
+
     addHangingLocation(hangingLocation){
 		let newLocation = new fabric.Rect({ 
 			left: this.convert(hangingLocation.location.left || 0), 
@@ -190,7 +227,8 @@ export default class WallHanging {
 			height: this.convert(hangingLocation.quilt.length), 
 			type: 'rectangle',
 			fill: '#fab', 
-			stroke:'',
+			stroke:'gray',
+            strokeWidth: 3,
 			originX: 'left', 
 			originY: 'top',
 			id: hangingLocation.quilt.id, 
@@ -198,10 +236,11 @@ export default class WallHanging {
             data: hangingLocation,
 		});
 
-        let label = new fabric.IText(`${hangingLocation.quilt.number}\n${hangingLocation.quilt.name}`, {
+        let label = new fabric.Textbox(`${hangingLocation.quilt.number}\n${hangingLocation.quilt.name}`, {
             fill: "#000",
             selectable: false,
             hasControls: false,
+			width: this.convert(hangingLocation.quilt.width), 
             fontSize: 16,
         });
 

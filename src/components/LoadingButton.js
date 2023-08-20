@@ -18,7 +18,7 @@ const LoadingButton = (props) => {
     };
 
     return (
-        <button id={id} className={className} onClick={execute} disabled={disabled}>{loading ? loadingLabel : props.children}</button>
+        <button id={id} className={className} onClick={execute} disabled={disabled || loading}>{loading ? loadingLabel : props.children}</button>
     );
 };
 

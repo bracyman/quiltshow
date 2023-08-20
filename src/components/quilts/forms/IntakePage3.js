@@ -21,7 +21,7 @@ const IntakePage3 = (props) => {
                             <Form.Label htmlFor="tags">{tc.name}</Form.Label>
                         </Col>
                         <Col>
-                            <TagSelector tagCategory={tc} list={props.quilt.tags} update={updateQuilt} />
+                            <TagSelector tagCategory={tc} list={props.quilt.tags} readOnly={props.readOnly} update={updateQuilt} />
                         </Col>
                     </Row>
                 </>))}

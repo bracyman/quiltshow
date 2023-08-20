@@ -4,6 +4,7 @@ import SearchQuilts from "../search/SearchQuilts";
 import ReportService, { IN_PROGRESS_REPORT } from "../services/ReportService";
 import ExpiringStorage from "../services/ExpiringStorage";
 import { Formatters } from "./formatters/ReportFormatter";
+import { QuiltFields } from "../components/quilts/QuiltFields";
 
 
 const reportCategories = {
@@ -89,17 +90,24 @@ const ReportBuilder = (props) => {
                     <div className="form-label"><label htmlFor="format">Format</label></div>
                     <div className="form-input">
                         {Formatters.map(f => (
-                            <label htmlFor={`format_${f}`} >
+                            <label htmlFor={`format_${f.format}`} >
                                 <input type="radio"
-                                    id={`format_${f}`}
+                                    id={`format_${f.format}`}
                                     name="format"
-                                    value={f}
-                                    checked={(f === report.format) || ((f === "Table") && !report.format)}
-                                    onChange={(e) => updateSearch({ ...report, format: f })} />
-                                {f}
+                                    value={f.format}
+                                    checked={(f.format === report.format) || ((f.name === "Table") && !report.format)}
+                                    onChange={(e) => updateSearch({ ...report, format: f.format })} />
+                                {f.name}
                             </label>
                         ))}
                     </div>
+                    <select id="groupField" value={report.groupField} onChange={(e) => updateSearch({...report, groupField: e.target.value})}>
+                        {
+                            Object.keys(QuiltFields).filter(f => !(["id","tags","designSource","hangingLocation","submittedOn","additionalQuilters"].includes(f))).map(f => 
+                                <option value={f}>{QuiltFields[f].label}</option>
+                            )
+                        }
+                    </select>
                 </div>
                 <div className="operations">
                     <button id="runReport" onClick={runReport}>Run</button>

@@ -69,6 +69,7 @@ const DesignSourceSelector = (props) => {
             onChange={(e) => onInputChange(e)}
             value={designSourceTypeSelected ? props.quilt.designSource.designSourceType : ""}
             className={designSourceTypeSelected ? "" : "empty-data"}
+            disabled={props.readOnly || false}
           >
             <option value=""></option>
             {designSourceTypes.sort((a, b) => a.order - b.order).map((d) => (
@@ -95,6 +96,7 @@ const DesignSourceSelector = (props) => {
                     value={props.quilt.designSource.name || ""}
                     onChange={(e) => onInputChange(e)}
                     className={props.quilt.designSource.name ? "" : "empty-data"}
+                    disabled={props.readOnly || false}
                   />
                 </Col>
               </Row>
@@ -109,6 +111,7 @@ const DesignSourceSelector = (props) => {
                     name="designSource_issueNumber"
                     value={props.quilt.designSource.issueNumber || ""}
                     onChange={(e) => onInputChange(e)}
+                    disabled={props.readOnly || false}
                   />
                 </Col>
               </Row>
@@ -123,6 +126,7 @@ const DesignSourceSelector = (props) => {
                     name="designSource_author"
                     value={props.quilt.designSource.author || ""}
                     onChange={(e) => onInputChange(e)}
+                    disabled={props.readOnly || false}
                   />
                 </Col>
               </Row>
@@ -137,6 +141,7 @@ const DesignSourceSelector = (props) => {
                     name="designSource_publishedYear"
                     value={props.quilt.designSource.publishedYear || ""}
                     onChange={(e) => onInputChange(e)}
+                    disabled={props.readOnly || false}
                   />
                 </Col>
               </Row>
@@ -151,6 +156,7 @@ const DesignSourceSelector = (props) => {
                     name="designSource_title"
                     value={props.quilt.designSource.title || ""}
                     onChange={(e) => onInputChange(e)}
+                    disabled={props.readOnly || false}
                   />
                 </Col>
               </Row>
@@ -165,6 +171,7 @@ const DesignSourceSelector = (props) => {
                     name="designSource_contactInfo"
                     value={props.quilt.designSource.contactInfo || ""}
                     onChange={(e) => onInputChange(e)}
+                    disabled={props.readOnly || false}
                   />
                 </Col>
               </Row>

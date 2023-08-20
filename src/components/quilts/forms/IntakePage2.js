@@ -80,6 +80,7 @@ const IntakePage2 = (props) => {
                             onChange={(e) => onInputChange(e)}
                             value={props.quilt.groupSize ? props.quilt.groupSize : ""}
                             className={props.quilt.groupSize ? "" : "empty-data"}
+                            disabled={props.readOnly || false}
                         >
                             <option value=""></option>
                             {efforts.map((e) => (
@@ -107,6 +108,7 @@ const IntakePage2 = (props) => {
                                     value={props.quilt.quiltedBy || ""}
                                     onChange={(e) => onInputChange(e)}
                                     className={props.quilt.quiltedBy ? "" : "empty-data"}
+                                    disabled={props.readOnly || false}
                                 />
                             </Col>
                         </Row>
@@ -124,6 +126,7 @@ const IntakePage2 = (props) => {
                                     value={props.quilt.additionalQuilters || ""}
                                     onChange={(e) => onInputChange(e)}
                                     className={props.quilt.additionalQuilters ? "" : "empty-data"}
+                                    disabled={props.readOnly || false}
                                 />
                             </Col>
                         </Row>
@@ -153,6 +156,7 @@ const IntakePage2 = (props) => {
                             label="Yes"
                             checked={props.quilt.presidentsChallenge}
                             onChange={(e) => onInputChange(e)}
+                            disabled={props.readOnly || false}
                         />
                         <Form.Check
                             inline
@@ -163,6 +167,7 @@ const IntakePage2 = (props) => {
                             label="No"
                             checked={!props.quilt.presidentsChallenge}
                             onChange={(e) => onInputChange(e)}
+                            disabled={props.readOnly || false}
                         />
                     </Col>
                 </Row>
@@ -179,6 +184,7 @@ const IntakePage2 = (props) => {
                             onChange={(e) => onInputChange(e)}
                             value={props.quilt.category ? props.quilt.category.id : ""}
                             className={props.quilt.category ? "" : "empty-data"}
+                            disabled={props.readOnly || false}
                         >
                             <option value=""></option>
                             {props.show.categories.sort(sortCategory).map((c) => (
@@ -214,6 +220,7 @@ const IntakePage2 = (props) => {
                             label="Yes"
                             checked={props.quilt.judged}
                             onChange={(e) => onInputChange(e)}
+                            disabled={props.readOnly || false}
                         />
                         <Form.Check
                             inline
@@ -224,6 +231,7 @@ const IntakePage2 = (props) => {
                             label="No"
                             checked={props.quilt.judged === false}
                             onChange={(e) => onInputChange(e)}
+                            disabled={props.readOnly || false}
                         />
                     </Col>
                 </Row>
@@ -243,6 +251,7 @@ const IntakePage2 = (props) => {
                             label="Yes"
                             checked={props.quilt.firstEntry}
                             onChange={(e) => onInputChange(e)}
+                            disabled={props.readOnly || false}
                         />
                         <Form.Check
                             inline
@@ -253,6 +262,7 @@ const IntakePage2 = (props) => {
                             label="No"
                             checked={props.quilt.firstEntry === false}
                             onChange={(e) => onInputChange(e)}
+                            disabled={props.readOnly || false}
                         />
                     </Col>
                 </Row>

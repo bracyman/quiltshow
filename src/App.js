@@ -13,6 +13,9 @@ import Configuration from "./configuration/Configuration";
 import ReportBuilder from "./reports/ReportBuilder";
 import Layout from "./components/floorLayout/Layout";
 import QuiltHangingTool from "./components/hanging/QuiltHangingTool";
+import PrintRoom from "./components/hanging/PrintRoom";
+import JudgeCommentsForm from "./components/quilts/forms/JudgeCommentsForm";
+import AwardAssignment from "./components/awards/AwardAssignment";
 
 
 
@@ -51,6 +54,9 @@ function App() {
             <Route path={"configuration"} element={<Configuration show={selectedShow} />} />
             <Route path={"floorLayout"} element={<Layout show={selectedShow} />} />
             <Route path={"hangingTool"} element={<QuiltHangingTool show={selectedShow} />} />
+            <Route path={"awards"} element={<AwardAssignment show={selectedShow} />} />
+            <Route path={"printRoom"} element={<PrintRoom show={selectedShow} />} />
+            <Route path={"judgeComments"} element={<JudgeCommentsForm show={selectedShow} />} />
           </Route>
         </Routes>
       </HashRouter>

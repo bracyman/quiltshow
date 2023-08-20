@@ -1,9 +1,9 @@
 
-.report .group {
+.group-formatter .group {
     margin-bottom: 2.5em;
 }
 
-.group > .group-title
+.group-formatter .group > .group-title
 {
     font-size: 1.6em;
     font-weight: bold;
@@ -11,8 +11,9 @@
 }
 
 @media print {
-    .pagebreak {
-        clear: both;
+
+    .group-formatter .group {
         page-break-after: always;
     }
+    
 }

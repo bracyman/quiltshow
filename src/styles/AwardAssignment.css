@@ -1,0 +1,36 @@
+
+
+.award-assignment-container div.award-category-selection {
+    margin-bottom: 1em;
+    margin-left: 1em;
+}
+
+.award-assignment-container .award-assignment {
+    display: flex;
+    flex-direction: row;
+    margin-left: 1.5em;
+    margin-bottom: 3px;
+    border: 1px solid gray;
+    width: min-content;
+    padding: 3px;
+    border-radius: 3px;
+}
+
+.award-assignment-container .award-assignment:nth-of-type(2n+1) {
+    background-color: lightgrey;
+} 
+
+.award-assignment-container .award-name {
+    width: 30ch;
+    font-weight: 600;
+    padding-left: .5ch;
+}
+
+#select-award {
+    margin-left: .5em;
+}
+
+.submit-changes {
+    margin-top: .5em;
+    margin-left: .5em;
+}

@@ -65,7 +65,7 @@ class ReportService {
     async runReport(report) {
         // if they've passed in an object, run the report passed in
         if(ObjectUtils.isObject(report)) {
-            return await ApiService.post(`reports/run`, report)
+            return await ApiService.post(`reports/trial/search`, report)
                 .then(response => {
                     if(response.ok) {
                         return response.json();
@@ -84,7 +84,7 @@ class ReportService {
 
         // otherwise, run the report by ID
         else {
-            return await ApiService.get(`reports/report/${report}/run`)
+            return await ApiService.get(`reports/trial/report/${report}/run`)
                 .then(response => {
                     if(response.ok) {
                         return response.json();
@@ -124,7 +124,7 @@ class ReportService {
 
         // otherwise, run the report by ID
         else {
-            return await ApiService.get(`reports/report/${report}/demo`)
+            return await ApiService.get(`reports/trial/report/${report}/demo`)
                 .then(response => {
                     if(response.ok) {
                         return response.json();

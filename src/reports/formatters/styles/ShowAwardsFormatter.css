@@ -1,0 +1,65 @@
+
+.show-awards-formatter {
+    
+}
+
+.show-awards-formatter .award-container {
+    page-break-inside: avoid;
+}
+
+.show-awards-formatter div.award-name {
+    font-size: 2em;
+    font-weight: bold;
+    width: 100%;
+    color: blue;
+}
+
+.show-awards-formatter table {
+    border: 2px solid black;
+    page-break-inside: avoid;
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 2em;
+}
+
+.show-awards-formatter thead {
+    font-weight: bold;
+}
+
+.show-awards-formatter th {
+    text-align: center;
+    border: 2px solid black;
+}
+
+.show-awards-formatter th.award {
+    width: 15%;
+}
+
+.show-awards-formatter th.enteredBy, .show-awards-formatter th.quiltedBy {
+    width: 15%;
+}
+
+.show-awards-formatter th.number {
+    width: 10%;
+}
+
+.show-awards-formatter th.name {
+    width: auto;
+}
+
+.show-awards-formatter td {
+    padding: 0 1em;
+    border: 1px solid black !important;
+    page-break-inside: avoid;
+}
+
+@media print {
+    .show-awards-formatter table {
+        font-size: 12pt;
+    }
+
+    .show-awards-formatter th.award {
+        width: 28ch;
+    }
+    
+}

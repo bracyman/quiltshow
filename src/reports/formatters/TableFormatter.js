@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { QuiltFields, Sorters, Renderers } from "../../components/quilts/QuiltFields";
+import { QuiltFields, ReportSorters, ReportRenderers } from "../../components/quilts/QuiltFields";
 import "./styles/TableFormatter.css";
 
 
@@ -44,7 +44,11 @@ const TableFormatter = (props) => {
     };
 
     const buildPreview = () => {
-        let preview ={};
+        let preview ={
+            quilt: {},
+            hangingLocation: { wall: { name: "Wall 4C" } },
+            count: 4
+        };
         report.fields.forEach(field => preview[field] = QuiltFields[field].example);
         return (
             <tr key={"report_preview"}>
@@ -62,8 +66,8 @@ const TableFormatter = (props) => {
 
 
     const render = (field, data) => {
-        let renderers = Renderers[field];
-        let renderer = Renderers.default;
+        let renderers = ReportRenderers[field];
+        let renderer = renderers.default;
         if (renderers) {
             renderer = renderers.report || renderers.default;
         }
@@ -76,29 +80,27 @@ const TableFormatter = (props) => {
             return (<>
                 {
                     report["tags"].categories.map(tcId => {
-                        let categoryTags = getTagCategory(tcId).tags.map(tc => tc.id);
-                        let filteredTags = data["tags"].filter(t => categoryTags.includes(t.id));
-                        return(<td className={field} key={`report_${field}_${index}`}>{render(field, filteredTags)}</td>);
+                        return(<td className={field} key={`report_${field}_${index}`}>{ReportRenderers.tags.forCategory(getTagCategory(tcId), data)}</td>);
                     })
                 }
             </>);
         }
         else if(field === "designSource") {
-            let source = data[field];
-            if(data[field].designSourceType?.toUpperCase() === "MAGAZINE") {
-                return (<><td>{source.title}</td><td>{`${source.name || ""} - ${source.issueNumber || ""} - ${source.publishedYear || ""}`}</td></>)
+            let designSource = data.quilt.designSource;
+            if(designSource.designSourceType?.toUpperCase() === "MAGAZINE") {
+                return (<><td>{designSource.title}</td><td>{`${designSource.name || ""} - ${designSource.issueNumber || ""} - ${designSource.publishedYear || ""}`}</td></>)
             }
-            if(data[field].designSourceType?.toUpperCase() === "BOOK") {
-                return (<><td>{source.title}</td><td>{`${source.name || ""} - ${source.author || ""} - ${source.publishedYear || ""}`}</td></>)
+            if(designSource.designSourceType?.toUpperCase() === "BOOK") {
+                return (<><td>{designSource.title}</td><td>{`${designSource.name || ""} - ${designSource.author || ""} - ${designSource.publishedYear || ""}`}</td></>)
             }
-            if(data[field].designSourceType?.toUpperCase() === "WORKSHOP") {
-                return (<><td>{`Workshop - ${source.name || ""}`}</td><td>{`${source.author || ""}`}</td></>)
+            if(designSource.designSourceType?.toUpperCase() === "WORKSHOP") {
+                return (<><td>{`Workshop - ${designSource.name || ""}`}</td><td>{`${designSource.author || ""}`}</td></>)
             }
-            if(data[field].designSourceType?.toUpperCase() === "ORIGINAL") {
+            if(designSource.designSourceType?.toUpperCase() === "ORIGINAL") {
                 return (<><td>Original Design</td><td>Original Design</td></>)
             }
-            if(data[field].designSourceType?.toUpperCase() === "OTHER") {
-                return (<><td>{source.name || ""}</td><td></td></>)
+            if(designSource.designSourceType?.toUpperCase() === "OTHER") {
+                return (<><td>{designSource.name || ""}</td><td></td></>)
             }
 
             return (<><td></td><td></td></>);
@@ -107,7 +109,7 @@ const TableFormatter = (props) => {
             return (<td className={field} key={`report_${field}_${index}`}>{render(field, data)}</td>);
         }
         else {
-            return (<td className={field} key={`report_${field}_${index}`}>{render(field, data[field])}</td>);
+            return (<td className={field} key={`report_${field}_${index}`}>{render(field, data)}</td>);
         }
     };
 
@@ -132,19 +134,19 @@ const TableFormatter = (props) => {
         }
 
         if(sortColumn.type === "field") {
-            return results.sort(Sorters[sortColumn.name]);
+            return results.sort(ReportSorters[sortColumn.name]);
         }
 
         if(sortColumn.type === "tagCategory") {
-            return results.sort(Sorters.tagCategory(getTagCategory(sortColumn.name)));
+            return results.sort(ReportSorters.tagCategory(getTagCategory(sortColumn.name)));
         }
 
         if(sortColumn.type === "designSource") {
             if(sortColumn.name === "pattern") {
-                return results.sort(Sorters.designSource("title"));
+                return results.sort(ReportSorters.designSource("title"));
             }
             if(sortColumn.name === "designer") {
-                return results.sort(Sorters.designSource("author"));
+                return results.sort(ReportSorters.designSource("author"));
             }
         }
 
@@ -159,7 +161,7 @@ const TableFormatter = (props) => {
     return (
         <>
             <div className="row-count">{results.length} rows</div>
-            <table className="report">
+            <table className="report table-formatter">
                 <thead>{buildHeader()}</thead>
                 <tbody>
                     {preview

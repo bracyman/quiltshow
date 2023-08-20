@@ -1,24 +1,28 @@
 
-thead {
+.table-formatter {
+    
+}
+
+.table-formatter thead {
     font-weight: bold;
     cursor: pointer;
 }
 
-.sort-column {
+.table-formatter .sort-column {
     text-decoration: underline;
 }
 
-tbody > tr:nth-child(2n) {
+.table-formatter tbody > tr:nth-child(2n) {
     background-color: lightgray;
 }
 
-.report td {
+.table-formatter td {
     padding: 0 1em;
     border: 1px solid black !important;
-    max-width: 50ch;
+    page-break-inside: avoid;
 }
 
-.row-count {
+.table-formatter .row-count {
     font-weight: bold;
     margin-left: 1em;
 }

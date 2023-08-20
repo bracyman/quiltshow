@@ -1,0 +1,124 @@
+
+.description-card {
+    page-break-inside: avoid;
+    width: 8.25in;
+    height: 5in;
+    font-size: 18pt;
+    margin-left: .0in;
+    margin-bottom: .5in;
+    display: flex;
+    flex-flow: column;
+}
+
+.description-card .hole-punch {
+    flex: 0 0 .5in;
+    display: flex;
+    align-items: center;
+    width: 8.25in;
+    padding-left: 45%;
+}
+
+div.quilt-card {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+table.header {
+    flex: 0 1 content;
+    margin-bottom: 1em;
+}
+
+table.quilt-info {
+    flex: 1 1 auto;
+}
+
+table.details {
+    align-self: flex-end;
+    flex: 0 1 content;
+}
+
+.description-card:nth-of-type(2n+1) {
+    page-break-after: always;
+    margin-bottom: 0px;
+}
+
+.description-card .page-label div {
+    width: 100%;
+}
+
+.description-card table {
+    border-top-width: 0px;
+    border-bottom-width: 0px;
+    border-left-width: 0px;
+    border-right-width: 0px;
+    height: 100%;
+    width: 100%;
+    font-size: 14pt;
+}
+
+.description-card td.title {
+    width: 80%;
+    font-size: 22pt;
+    height: 45px;
+    font-weight: bold;
+}
+
+.description-card td.title:before {
+    content: url("/public/img/logo-small.png");
+    margin-right: .4em;
+}
+
+.description-card td.quilt-name {
+    font-weight: bold;
+}
+
+.description-card td.number {
+    width: 20%;
+    font-size: 22pt;
+}
+
+.description-card td.label {
+    vertical-align: top;
+    font-size: 12pt;
+    width: 1in;
+    padding-top: 5px;
+}
+
+.description-card td.quilt-name {
+    font-size: 20pt;
+}
+
+.description-card td.value {
+    font-size: 16pt;
+    width: 38%;
+    vertical-align: top;
+}
+
+.description-card td.judged {
+    font-size: 20pt;
+    font-weight: bold;
+}
+
+.description-card td.details {
+    font-size: 16pt;
+    width: min-content;
+}
+
+@media print {
+    .description-card td.details {
+        font-size: 16pt;
+        width: min-content;
+    }
+
+    .description-card td.long {
+        font-size: 12pt;
+        width: min-content;
+    }
+
+    .description-card td.extra-long {
+        font-size: 10pt;
+        width: min-content;
+    }
+
+}
