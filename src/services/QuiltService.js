@@ -4,6 +4,40 @@ import ObjectUtils from "../utilities/ObjectUtils";
 
 class QuiltService {
   /**
+   * Fetches the quilt with the specified ID
+   * @returns
+   */
+  async fetchQuilt(id) {
+    return await ApiService.get(`quilts/${id}`, {
+      method: "GET",
+      headers: AuthService.authHeader(),
+    }).then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+
+      return null;
+    });
+  }
+
+  /**
+   * Fetches the quilt with the specified number
+   * @returns
+   */
+  async fetchQuiltByNumber(number) {
+    return await ApiService.get(`quilts/number/${number}`, {
+      method: "GET",
+      headers: AuthService.authHeader(),
+    }).then((response) => {
+      if (response.ok) {
+        return response.json();
+      }
+
+      return null;
+    });
+  }
+
+  /**
    * Fetches the quilts that were submitted by the current user (or all quilts if the user is an administrator)
    * @returns
    */
@@ -139,6 +173,24 @@ class QuiltService {
 
       return null;
     });
+  }
+
+  async markQuiltsAsPaid(quiltIds) {
+    return await ApiService.post(`quilts/external-pay`, quiltIds).then((response) => {
+      if(response.ok) {
+        return true;
+      }
+
+      return false;
+    });
+  }
+
+  async saveJudgeComment(quiltId, judgeComment) {
+    return await ApiService.post(`quilts/${quiltId}/judges-comment`, judgeComment)
+      .then((response) => response.json())
+      .then((response) => {
+        return response;
+      });
   }
 }
 

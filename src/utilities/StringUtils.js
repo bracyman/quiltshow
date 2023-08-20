@@ -21,6 +21,10 @@ class StringUtils {
         return str ? str.replaceAll(/[^a-zA-Z0-9]/ig, '_') : str;
     }
 
+    hasText(str) {
+        return (str && (str !== ""));
+    }
+
     toString(data, type) {
         if ((data === undefined) || (data === null)) {
             return "";

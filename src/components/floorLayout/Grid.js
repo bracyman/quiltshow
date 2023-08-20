@@ -15,6 +15,7 @@ export default class Grid {
         this.gridSize = gridSize || 2;
         this.room = room;
         this.width = width || 800;
+        this.copyTarget = null;
 
         this.announcer = announcer;
         announcer.registerListener(this, this.announcementHandler);
@@ -84,7 +85,11 @@ export default class Grid {
         canvas.on('object:rotating', (options) => {
             if (options.target.data) {
                 let unitLocation = options.target.data.getLocation();
-                options.target.data.setLocation({ ...unitLocation, angle: options.target.angle });
+                options.target.data.setLocation({ ...unitLocation, 
+                    left: this.deconvert(options.target.left), 
+                    top: this.deconvert(options.target.top), 
+                    angle: options.target.angle 
+                });
                 this.announcer.announce(this, HANGING_UNIT_UPDATED, options.target.data);
             }
         });
@@ -110,16 +115,23 @@ export default class Grid {
             }
             options.selected.forEach(s => s.set({ 'borderColor': 'blue', 'cornerColor': 'blue' }));
         });
+
     }
 
     updateRoom(room, gridSize) {
         this.room = room;
         this.gridSize = gridSize || this.gridSize;
-        this.createCanvas();
+
+        if(room != null) {
+            this.createCanvas();
+        }
+        else {
+            canvas.clear();
+        }
     }
 
     getUnitShape(id) {
-        let shapes = canvas._objects.filter(o => o.data?.id === id);
+        let shapes = canvas.getObjects().filter(o => o.data?.id === id);
         return (shapes?.length > 0) ? shapes[0] : null;
     }
 
@@ -154,7 +166,7 @@ export default class Grid {
                 width: this.convert(line.length),
                 height: this.convert(WallWidth),
                 angle: line.angle,
-                fill: '#000',
+                fill: this.getFillColor(hangingUnit),
                 originX: 'left',
                 originY: 'top',
                 centeredRotation: true,
@@ -183,6 +195,10 @@ export default class Grid {
         return group;
     }
 
+    getFillColor(hangingUnit) {
+        return hangingUnit.getCanHang() ? '#000' : 'red';
+    }
+
     addHangingUnit(hangingUnit, selectWhenDone) {
         let unitShape = this.createUnitShape(hangingUnit);
 
@@ -194,6 +210,38 @@ export default class Grid {
         }
     }
 
+    removeHangingUnit(hangingUnit) {
+        let match = canvas.getObjects().find(o => o.data === hangingUnit);
+        if(match) {
+            canvas.remove(match);
+        }
+    }
+
+    clearHangingUnits() {
+        let matches = canvas.getObjects().find(o => o.data);
+        if(matches.length > 0) {
+            canvas.remove(matches);
+        }
+    }
+
+    highlightUnit(hangingUnit) {
+        if(hangingUnit) {
+            this.highlightedShape = this.getUnitShape(hangingUnit.id);
+            this.highlightedShape.forEachObject(o => o.set("fill", "aqua"));
+            this.highlightedShape.forEachObject(o => o.set("fill", "aqua"));
+            canvas.renderAll();
+        }
+        else {
+            let color = this.getFillColor(this.highlightedShape.data);
+            this.highlightedShape.forEachObject(o => o.set("fill", color));
+            this.highlightedShape = null;
+            canvas.renderAll();
+        }
+    }
+
+    getHangingUnits() {
+        return canvas.getObjects().map(o => o.data).filter(d => d);
+    }
 
     convert(roomValue) {
         return Number(roomValue) * this.conversionFactor;
@@ -201,5 +249,12 @@ export default class Grid {
 
     deconvert(gridValue) {
         return Number(gridValue) / this.conversionFactor;
+    }
+
+    getDataUrl() {
+        return canvas.toDataURL({
+            format: "png",
+            quality: 0.8,
+        });
     }
 }

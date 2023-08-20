@@ -1,0 +1,181 @@
+/*****************************************************************************/
+/* Judge Remarks styling */
+.report.judge-remarks {
+    width: 100%;
+    max-width: 1024px;
+    margin-left: 0px;
+    margin-top: 0px;
+    margin-bottom: 2em;
+    display: flex;
+    flex-direction: column;
+}
+
+
+/*****************************************************************************/
+/* Judge Remarks header */
+.report.judge-remarks header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.report.judge-remarks .label {
+    font-weight: bold;
+    width: 10ch;
+}
+
+.report.judge-remarks .category {
+    display: flex;
+    flex-direction: row;
+}
+
+.report.judge-remarks .quilt-info {
+    display: flex;
+    flex-direction: row;
+}
+
+.report.judge-remarks .quilt-info .value {
+    border-bottom: 1px solid black;
+}
+
+.report.judge-remarks .quilt-info div:nth-of-type(2) {
+    width: 60%;
+    max-width: 60%;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.report.judge-remarks .quilt-info div:nth-of-type(3) {
+    width: 6ch;
+    margin-left: auto;
+}
+
+.report.judge-remarks .quilt-info div:nth-of-type(4) {
+    width: 10ch;
+}
+
+
+.report.judge-remarks .scoring-info {
+    font-weight: bold;
+}
+
+.report.judge-remarks .scoring-info ul {
+    margin-top: 1em;
+    padding-left: 0px;
+}
+
+.report.judge-remarks .scoring-info ul li {
+    display: inline;
+    margin-left: 1.5em;
+    font-size: 10pt;
+}
+
+.report.judge-remarks .scoring-info ul li:nth-of-type(1) {
+    margin-left: 1em;
+}
+
+
+/*****************************************************************************/
+/* Judge Remarks Scoring Group */
+.report.judge-remarks .scoring-group {
+    width: 100%;
+    display: table;
+    margin-bottom: 1.1em;
+}
+
+/*******************************************************************/
+/* Judge Remarks Scoring Group header */
+.report.judge-remarks .scoring-group>div {
+    display: table-row;
+}
+
+.report.judge-remarks .scoring-group>div>div {
+    display: table-cell;
+    border: 1px solid black;
+}
+
+.report.judge-remarks .scoring-group .scoring-header {
+    font-weight: bold;
+    font-size: 11pt;
+}
+
+.report.judge-remarks .scoring-group .scoring-header .scoring-name {
+    padding-left: .5em;
+}
+
+.report.judge-remarks .scoring-group .scoring-header .score-column {
+    width: 4em;
+    text-align: center;
+}
+
+/*******************************************************************/
+/* Judge Remarks Scoring Group row */
+.report.judge-remarks .scoring-group .scoring-row {
+    font-size: 10pt;
+}
+
+.report.judge-remarks .scoring-group .scoring-row .scoring-name {   
+    padding-left: 1.5em;
+}
+
+.report.judge-remarks .scoring-group .scoring-row .score-column {
+    text-align: center;
+    font-weight: 600;
+}
+
+
+/*****************************************************************************/
+/* Judge Remarks Comments */
+.report.judge-remarks .comments {
+    width: 100%;
+    border: 1px solid black;
+    font-size: 10pt;
+    padding-left: .5em;
+}
+
+
+.report.judge-remarks .comments .title {
+    font-weight: bold;
+    margin-right: 1em;
+}
+
+.report.judge-remarks .signature {
+    width: 100%;
+    margin-top: 1em;;
+}
+
+.report.judge-remarks .signature .award {
+    text-align: right;
+    font-weight: bold;
+}
+
+.report.judge-remarks .signature .signature-line {
+    width: 55%;
+    border-top: 2px solid black;
+}
+
+
+@media print {
+    .report.judge-remarks {
+        width: 8.5in;
+        height: 11in;
+        padding: .25in;
+        page-break-inside: avoid;
+        page-break-after: always;
+    }
+    
+    .report.judge-remarks .scoring-info ul li {
+        display: inline;
+        margin-left: 1em;
+        font-size: 10pt;
+    }
+    
+    .report.judge-remarks .comments {
+        width: 100%;
+        border: 1px solid black;
+        font-size: 10pt;
+        padding-left: .5em;
+        height: 11em;
+        overflow: hidden;
+    }
+}

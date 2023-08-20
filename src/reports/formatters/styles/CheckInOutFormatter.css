@@ -1,0 +1,90 @@
+.report-header {
+    display: none !important;
+}
+
+.report.CheckInOut  {
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.report.CheckInOut .page {
+    width: 8in;
+    page-break-after: always;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.report.CheckInOut .header {
+    height: min-content;
+}
+
+.report.CheckInOut .main {
+    flex: auto;
+}
+
+.report.CheckInOut .main table {
+    margin-bottom: 1.5em;
+}
+
+.report.CheckInOut .entrant {
+    font-weight: bold;
+}
+
+.report.CheckInOut .footer {
+    height: min-content;
+}
+
+.report.CheckInOut td {
+    font-size: 10pt;
+    vertical-align: text-top;
+}
+
+.report.CheckInOut td.initials {
+    width: 1in;
+    max-width: 1in;
+    min-width: 1in;
+}
+
+.report.CheckInOut td.number {
+    width: 1in;
+    max-width: 1in;
+    min-width: 1in;
+}
+
+.report.CheckInOut td.name {
+    width: 2in;
+    max-width: 2in;
+    min-width: 2in;
+}
+
+.report.CheckInOut td.location {
+    width: 1.5in;
+    max-width: 1.5in;
+    min-width: 1.5in;
+}
+
+.report.CheckInOut td.tags {
+    width: 1.5in;
+    max-width: 1.5in;
+    min-width: 1.5in;
+}
+
+.report.CheckInOut td.initial-label {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-top: 1px solid black;
+
+}
+
+.report.CheckInOut td.initial-box {
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+
+}

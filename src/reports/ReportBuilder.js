@@ -4,6 +4,7 @@ import SearchQuilts from "../search/SearchQuilts";
 import ReportService, { IN_PROGRESS_REPORT } from "../services/ReportService";
 import ExpiringStorage from "../services/ExpiringStorage";
 import { Formatters } from "./formatters/ReportFormatter";
+import { QuiltFields } from "../components/quilts/QuiltFields";
 
 
 const reportCategories = {
@@ -14,6 +15,7 @@ const reportCategories = {
 
 const ReportBuilder = (props) => {
     const [report, setReport] = useState({ fields: [], order: [] });
+    const [saveResult, setSaveResult] = useState([]);
     const { show } = props;
 
     const updateSearch = (newSearch) => {
@@ -26,7 +28,27 @@ const ReportBuilder = (props) => {
     };
 
     const saveReport = () => {
-        ReportService.saveReport(report);
+
+        // validate
+        let errors = [];
+        if(!report.reportName) { errors.push("Report must have a name");}
+        if(!report.reportDescription) { errors.push("Report must have a description");}
+        if(!report.fields || report.fields.length === 0) { errors.push("You must select at least one field for the report")};
+
+        if(errors.length > 0) {
+            setSaveResult(errors);
+        }
+        else {
+            let result = ReportService.saveReport(report);
+
+            if(result) {
+                setSaveResult(["Report saved"]);
+            }
+            else {
+                setSaveResult(["Unable to save report"]);
+            }
+        }
+        document.getElementById("saveResult").showModal();
     };
 
     return (
@@ -68,17 +90,24 @@ const ReportBuilder = (props) => {
                     <div className="form-label"><label htmlFor="format">Format</label></div>
                     <div className="form-input">
                         {Formatters.map(f => (
-                            <label htmlFor={`format_${f}`} >
+                            <label htmlFor={`format_${f.format}`} >
                                 <input type="radio"
-                                    id={`format_${f}`}
+                                    id={`format_${f.format}`}
                                     name="format"
-                                    value={f}
-                                    checked={(f === report.format) || ((f === "Table") && !report.format)}
-                                    onChange={(e) => updateSearch({ ...report, format: f })} />
-                                {f}
+                                    value={f.format}
+                                    checked={(f.format === report.format) || ((f.name === "Table") && !report.format)}
+                                    onChange={(e) => updateSearch({ ...report, format: f.format })} />
+                                {f.name}
                             </label>
                         ))}
                     </div>
+                    <select id="groupField" value={report.groupField} onChange={(e) => updateSearch({...report, groupField: e.target.value})}>
+                        {
+                            Object.keys(QuiltFields).filter(f => !(["id","tags","designSource","hangingLocation","submittedOn","additionalQuilters"].includes(f))).map(f => 
+                                <option value={f}>{QuiltFields[f].label}</option>
+                            )
+                        }
+                    </select>
                 </div>
                 <div className="operations">
                     <button id="runReport" onClick={runReport}>Run</button>
@@ -86,6 +115,14 @@ const ReportBuilder = (props) => {
                 </div>
             </div>
             <SearchQuilts show={show} search={report} updateSearch={updateSearch} />
+            <dialog id="saveResult">
+                <p>{saveResult.map(msg => 
+                    <div>{msg}</div>
+                )}</p>
+                <form method="dialog">
+                    <button>OK</button>
+                </form>
+            </dialog>
         </>
     );
 

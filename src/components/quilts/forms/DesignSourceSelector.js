@@ -68,6 +68,8 @@ const DesignSourceSelector = (props) => {
             name="designSourceType"
             onChange={(e) => onInputChange(e)}
             value={designSourceTypeSelected ? props.quilt.designSource.designSourceType : ""}
+            className={designSourceTypeSelected ? "" : "empty-data"}
+            disabled={props.readOnly || false}
           >
             <option value=""></option>
             {designSourceTypes.sort((a, b) => a.order - b.order).map((d) => (
@@ -85,7 +87,7 @@ const DesignSourceSelector = (props) => {
           <>
             {(getDesignFieldLabel("name") == null) ? (<></>) : (
               <Row>
-                <Col sm={2}><Form.Label htmlFor="designSource_name">{getDesignFieldLabel("name")}</Form.Label></Col>
+                <Col sm={3}><Form.Label htmlFor="designSource_name">{getDesignFieldLabel("name")}</Form.Label></Col>
                 <Col>
                   <Form.Control
                     type="text"
@@ -93,13 +95,15 @@ const DesignSourceSelector = (props) => {
                     name="designSource_name"
                     value={props.quilt.designSource.name || ""}
                     onChange={(e) => onInputChange(e)}
+                    className={props.quilt.designSource.name ? "" : "empty-data"}
+                    disabled={props.readOnly || false}
                   />
                 </Col>
               </Row>
             )}
             {(getDesignFieldLabel("issueNumber") == null) ? (<></>) : (
               <Row>
-                <Col sm={2}><Form.Label htmlFor="designSource_issueNumber">{getDesignFieldLabel("issueNumber")}</Form.Label></Col>
+                <Col sm={3}><Form.Label htmlFor="designSource_issueNumber">{getDesignFieldLabel("issueNumber")}</Form.Label></Col>
                 <Col>
                   <Form.Control
                     type="text"
@@ -107,13 +111,14 @@ const DesignSourceSelector = (props) => {
                     name="designSource_issueNumber"
                     value={props.quilt.designSource.issueNumber || ""}
                     onChange={(e) => onInputChange(e)}
+                    disabled={props.readOnly || false}
                   />
                 </Col>
               </Row>
             )}
             {(getDesignFieldLabel("author") == null) ? (<></>) : (
               <Row>
-                <Col sm={2}><Form.Label htmlFor="designSource_author">{getDesignFieldLabel("author")}</Form.Label></Col>
+                <Col sm={3}><Form.Label htmlFor="designSource_author">{getDesignFieldLabel("author")}</Form.Label></Col>
                 <Col>
                   <Form.Control
                     type="text"
@@ -121,13 +126,14 @@ const DesignSourceSelector = (props) => {
                     name="designSource_author"
                     value={props.quilt.designSource.author || ""}
                     onChange={(e) => onInputChange(e)}
+                    disabled={props.readOnly || false}
                   />
                 </Col>
               </Row>
             )}
             {(getDesignFieldLabel("publishedYear") == null) ? (<></>) : (
               <Row>
-                <Col sm={2}><Form.Label htmlFor="designSource_publishedYear">{getDesignFieldLabel("publishedYear")}</Form.Label></Col>
+                <Col sm={3}><Form.Label htmlFor="designSource_publishedYear">{getDesignFieldLabel("publishedYear")}</Form.Label></Col>
                 <Col>
                   <Form.Control
                     type="text"
@@ -135,13 +141,14 @@ const DesignSourceSelector = (props) => {
                     name="designSource_publishedYear"
                     value={props.quilt.designSource.publishedYear || ""}
                     onChange={(e) => onInputChange(e)}
+                    disabled={props.readOnly || false}
                   />
                 </Col>
               </Row>
             )}
             {(getDesignFieldLabel("title") == null) ? (<></>) : (
               <Row>
-                <Col sm={2}><Form.Label htmlFor="designSource_title">{getDesignFieldLabel("title")}</Form.Label></Col>
+                <Col sm={3}><Form.Label htmlFor="designSource_title">{getDesignFieldLabel("title")}</Form.Label></Col>
                 <Col>
                   <Form.Control
                     type="text"
@@ -149,13 +156,14 @@ const DesignSourceSelector = (props) => {
                     name="designSource_title"
                     value={props.quilt.designSource.title || ""}
                     onChange={(e) => onInputChange(e)}
+                    disabled={props.readOnly || false}
                   />
                 </Col>
               </Row>
             )}
             {(getDesignFieldLabel("contactInfo") == null) ? (<></>) : (
               <Row>
-                <Col sm={2}><Form.Label htmlFor="designSource_contactInfo">{getDesignFieldLabel("contactInfo")}</Form.Label></Col>
+                <Col sm={3}><Form.Label htmlFor="designSource_contactInfo">{getDesignFieldLabel("contactInfo")}</Form.Label></Col>
                 <Col>
                   <Form.Control
                     type="text"
@@ -163,6 +171,7 @@ const DesignSourceSelector = (props) => {
                     name="designSource_contactInfo"
                     value={props.quilt.designSource.contactInfo || ""}
                     onChange={(e) => onInputChange(e)}
+                    disabled={props.readOnly || false}
                   />
                 </Col>
               </Row>

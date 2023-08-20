@@ -20,6 +20,8 @@ const getDataType = (type) => {
             return "string";
 
         case "designSource":
+        case "location":
+        case "judgeComment":
             return "nosearch";
 
         default:

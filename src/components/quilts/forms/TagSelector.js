@@ -54,6 +54,7 @@ const TagSelector = (props) => {
                         key={t.id}
                         checked={listContainsTag(props.list, t)}
                         onChange={(e) => toggleTag(t.id)}
+                        disabled={props.readOnly || false}
                     />
                 ))
             }

@@ -39,6 +39,18 @@ const PaymentStatusFormatter = (props) => {
         return data["Entrant"] === "null null";
     };
 
+    const buildLink = (url) => {
+        if(!url) {
+            return "";
+        }
+
+        if(url === "external") {
+            return "Check Payment";
+        }
+
+        return (<a href={url}>Payment</a>);
+    };
+
     const buildRow = (data, index) => {
         if(isEmpty(data)) {
             return (<></>);
@@ -49,7 +61,7 @@ const PaymentStatusFormatter = (props) => {
 
         return (
             <tr key={`report_row_${index}`} className={totalMet ? "paid" : "unpaid" }>
-                <td className="link">{ paymentMade ? data["Payment Links"].map(url => (<a href={url}>Payment</a>)) : "" }</td>
+                <td className="link">{ paymentMade ? data["Payment Links"].map(url => buildLink(url)) : "" }</td>
                 <td className="link">{ data["Total"] ? StringUtils.toString(data["Total"], "currency") : "$0.00" }</td>
                 <td className="link">{ data["Paid"] ? StringUtils.toString(data["Paid"], "currency") : "$0.00" }</td>
                 <td className="link">{ data["Entrant"] ? data["Entrant"] : "---" }</td>
@@ -63,13 +75,26 @@ const PaymentStatusFormatter = (props) => {
         return (<p>Report details missing</p>)
     }
 
+
+    const sorter = (a,b) => {
+        if(!a && !b) return 0;
+        if(a && !b) return 1;
+        if(!a && b) return -1;
+
+        return (a['Entrant'] < b['Entrant']) 
+                ? -1
+                : (a['Entrant'] > b['Entrant']) 
+                    ? 1
+                    : 0;
+    };
+
     return (
         <table className="report payment-status">
             <thead>{buildHeader()}</thead>
             <tbody>
                 {preview
                     ? buildPreview()
-                    : results?.map((d, i) =>
+                    : results?.sort(sorter)?.map((d, i) =>
                         buildRow(d, i)
                     )
                 }

@@ -42,6 +42,8 @@ const IntakePage1 = (props) => {
               value={props.quilt.name || ""}
               onChange={(e) => onInputChange(e)}
               required
+              className={props.quilt.name ? "" : "empty-data"}
+              disabled={props.readOnly || false}
             />
           </Col>
         </Row>
@@ -63,6 +65,8 @@ const IntakePage1 = (props) => {
               onChange={(e) => onInputChange(e)}
               style={{ height: "100px" }}
               required
+              className={props.quilt.description ? "" : "empty-data"}
+              disabled={props.readOnly || false}
             />
           </Col>
         </Row>
@@ -79,6 +83,8 @@ const IntakePage1 = (props) => {
               name="width"
               value={props.quilt.width || ""}
               onChange={(e) => onInputChange(e)}
+              className={props.quilt.width ? "" : "empty-data"}
+              disabled={props.readOnly || false}
             />
           </Col>
         </Row>
@@ -95,6 +101,8 @@ const IntakePage1 = (props) => {
               name="length"
               value={props.quilt.length || ""}
               onChange={(e) => onInputChange(e)}
+              className={props.quilt.length ? "" : "empty-data"}
+              disabled={props.readOnly || false}
             />
           </Col>
         </Row>
@@ -111,6 +119,7 @@ const IntakePage1 = (props) => {
               name="mainColor"
               value={props.quilt.mainColor || ""}
               onChange={(e) => onInputChange(e)}
+              disabled={props.readOnly || false}
             />
           </Col>
         </Row>
@@ -129,6 +138,7 @@ const IntakePage1 = (props) => {
               name="hangingPreference"
               value={props.quilt.hangingPreference || (props.numQuilts + 1)}
               onChange={(e) => onInputChange(e)}
+              disabled={props.readOnly || false}
             />
           </Col>
         </Row>

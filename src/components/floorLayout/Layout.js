@@ -1,13 +1,20 @@
 
 import React, { useState, useEffect } from 'react';
+import LoadingButton from '../LoadingButton';
 import "../../styles/layout.css";
+import RoomService from "../../services/RoomService";
+import HangingUnitFactory from "./hangingUnit/HangingUnitFactory";
 import Grid, { SINGLE_UNIT_SELECTION, MULTI_UNIT_SELECTION, SELECTION_CLEARED } from './Grid';
-import { HANGING_UNIT_UPDATED } from './hangingUnit/HangingUnit';
+import { HANGING_UNIT_UPDATED, HANGING_UNIT_DELETED } from './hangingUnit/HangingUnit';
 import { Room } from './Room';
-import { SingleSideWall } from './hangingUnit/SingleSideWall';
-import { DoubleSideWall } from './hangingUnit/DoubleSideWall';
-import { Booth } from './hangingUnit/Booth';
-import Announcer from './Announcer';
+import { Wall } from './hangingUnit/Wall';
+import { Block } from './hangingUnit/Block';
+import { Door } from './hangingUnit/Door';
+import { UBooth } from './hangingUnit/UBooth';
+import { HBooth } from './hangingUnit/HBooth';
+import Announcer from '../../utilities/Announcer';
+import RoomSelector from './RoomSelector';
+import UnitList from './UnitList';
 
 
 
@@ -15,11 +22,11 @@ import Announcer from './Announcer';
 const Layout = (props) => {
     const [selection, setSelection] = useState({ unit: null });
     const [gridSize, setGridSize] = useState(props.gridSize || 2);
-    const [room, setRoom] = useState(props.room || new Room("room", "room", 80, 60, 2, []));
-    //        new SingleSideWall(1, "sample", { left: 20, top: 10, angle: 90.0 }, { length: 40 }),
-    //        new DoubleSideWall(2, "sample2", { left: 50, top: 20, angle: 0.0 }, { length: 20 }),
-    //        new Booth(3, "sampleBooth", { left: 0, top: 0, angle: 0.0 }, { depth: 5, width: 10 }),
-    //    ]));
+    const [room, setRoom] = useState({});
+    const [saveResult, setSaveResult] = useState("");
+    const [rooms, setRooms] = useState([]);
+    const [roomSelection, setRoomSelection] = useState(null);
+
     const [grid, setGrid] = useState(null);
     const [announcer, setAnnouncer] = useState(new Announcer());
 
@@ -31,13 +38,34 @@ const Layout = (props) => {
         else if (evt.is(MULTI_UNIT_SELECTION) || evt.is(SELECTION_CLEARED)) {
             setSelection({ unit: null });
         }
+        else if(evt.is(HANGING_UNIT_DELETED)) {
+            removeHangingUnit(msg, source);
+        }
     };
 
     useEffect(() => {
-        announcer.registerEventHandler("Layout", announcementHandler);
-        setGrid(new Grid("floorCanvas", room, 2, 800, announcer));
+        async function fetchRooms() {
+            let rooms = await RoomService.getRooms();
+            setRooms(rooms);
+            announcer.registerEventHandler("Layout", announcementHandler);
+            let startingRoom = rooms.length > 0 ? rooms[0] : new Room("room", "room", 80, 60, 2, []);
+            rooms.forEach(r => { if(r.active) { startingRoom = r; } });
+
+            normalizeRoom(startingRoom);
+            setRoom(startingRoom);
+            setGrid(new Grid("floorCanvas", startingRoom, 2, 800, announcer));
+        }
+        fetchRooms();
     }, []);
 
+
+    const normalizeRoom = (sysRoom) => {
+        if(sysRoom.hangingUnits) {
+            sysRoom.hangingUnits = sysRoom.hangingUnits.map(u => HangingUnitFactory.getUnit(u));
+        }
+
+        return sysRoom;
+    };
 
     const updateRoomWidth = (evt) => {
         let newWidth = Number(evt.target.value.replaceAll(/[^0-9.]/ig, ''));
@@ -56,29 +84,158 @@ const Layout = (props) => {
         grid.updateRoom(room, gridSize);
     };
 
+    const loadRoom = async () => {
+        document.getElementById("selectRoom").showModal();
+    };
+
+    const selectRoom = async () => {
+        if(roomSelection) {
+            let selectedRoom = await RoomService.getRoom(roomSelection);
+
+            normalizeRoom(selectedRoom);
+
+            grid.updateRoom(selectedRoom);
+            setRoom(selectedRoom);
+        }
+
+        document.getElementById("selectRoom").close();
+    };
+
+    const newRoom = () => {
+        let newRoom = new Room("room", "room", 80, 60, 2, []);
+        grid.updateRoom(newRoom);
+        setRoom(newRoom);
+    };
+
+    const saveRoom = async () => {
+        if(room.id) {
+            room.hangingUnits = grid.getHangingUnits();
+            let savedRoom = await RoomService.saveRoom(room);
+            normalizeRoom(savedRoom);
+
+            setRoom(savedRoom);
+            setSaveResult("Room saved");
+            grid.updateRoom(savedRoom);
+            document.getElementById("saveResult").showModal();
+        }
+        else {
+            document.getElementById("newRoomDialog").showModal();
+        }
+    };
+
+    const saveNewRoom = async() => {
+        if(!room.name || room.name === "") {
+            return;
+        }
+
+        room.hangingUnits = grid.getHangingUnits();
+        let savedRoom = await RoomService.saveRoom(room);
+        normalizeRoom(savedRoom);
+
+        setRoom(savedRoom);
+        setSaveResult("Room saved");
+        grid.updateRoom(savedRoom);
+        
+        setRooms([...rooms, savedRoom]);
+        document.getElementById("newRoomDialog").close();
+        document.getElementById("saveResult").showModal();
+    };
+
+    const deleteRoom = async () => {
+        if(room.id) {
+            RoomService.deleteRoom(room.id);
+        }
+
+        setRoom(null);
+        grid.updateRoom(null);
+        setSaveResult("Room deleted");
+        document.getElementById("saveResult").showModal();
+};
+
 
     const addSingleWall = () => {
-        let id = Date.now();
-        let unit = new SingleSideWall(id, `Wall ${id}`);
+        let id = RoomService.getTempId();
+        let label = grid.getHangingUnits().length + 1;
+        let unit = new Wall(id, `Wall ${label}`);
         grid.addHangingUnit(unit, true);
-        room.hangingUnits.push(unit);
-        setRoom({ ...room });
     };
 
-    const addDoubleWall = () => {
-        let id = Date.now();
-        let unit = new DoubleSideWall(id, `Wall ${id}`);
+    const addUBooth = () => {
+        let id = RoomService.getTempId();
+        let label = grid.getHangingUnits().length + 1;
+        let unit = new UBooth(id, `Booth ${label}`);
         grid.addHangingUnit(unit, true);
-        room.hangingUnits.push(unit);
-        setRoom({ ...room });
     };
 
-    const addBooth = () => {
-        let id = Date.now();
-        let unit = new Booth(id, `Booth ${id}`);
+    const addHBooth = () => {
+        let id = RoomService.getTempId();
+        let label = grid.getHangingUnits().length + 1;
+        let unit = new HBooth(id, `Booth ${label}`);
         grid.addHangingUnit(unit, true);
-        room.hangingUnits.push(unit);
-        setRoom({ ...room });
+    };
+
+    const addBlock = () => {
+        let id = RoomService.getTempId();
+        let label = grid.getHangingUnits().length + 1;
+        let unit = new Block(id, `Block ${label}`);
+        grid.addHangingUnit(unit, true);
+    };
+
+    const addDoor = () => {
+        let id = RoomService.getTempId();
+        let label = grid.getHangingUnits().length + 1;
+        let unit = new Door(id, `Door ${id}`);
+        grid.addHangingUnit(unit, true);
+    };
+
+    const printRoom = () => {
+        let url = grid.getDataUrl();
+        let link = document.createElement("a");
+        link.download = room.name;
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
+    const hoverUnit = (hangingUnit, unitGrid) => {
+        if(unitGrid) {
+            unitGrid.highlightUnit(hangingUnit);
+        }
+        else {
+            grid.highlightUnit(hangingUnit);
+        }
+    };
+
+    const copyHangingUnit = (unit, unitGrid) => {
+        let id = RoomService.getTempId();
+        let copiedUnit = unit.copy();
+        copiedUnit.setId(id);
+
+        let regex = new RegExp(`^${unit.getName()}( [0-9]*)?$`)
+        let copyCount = grid.getHangingUnits().filter(u => u.getName().match(regex)).length;
+        copiedUnit.setName(`${copiedUnit.getName()} ${copyCount}`);
+
+        copiedUnit.location.left = copiedUnit.location.left + gridSize * copyCount;
+        copiedUnit.location.top = copiedUnit.location.top + gridSize * copyCount;
+
+        grid.addHangingUnit(copiedUnit, false);
+    };
+
+    const removeHangingUnit = (unit, unitGrid) => {
+        if(unitGrid) {
+            unitGrid.removeHangingUnit(unit);
+        } else {
+            grid.removeHangingUnit(unit);
+        }
+
+        if(unit === selection?.unit) {
+            setSelection({ unit: null });
+        }
+    };
+
+    const selectUnit = (unit) => {
+        setSelection({ unit: unit });
     };
 
 
@@ -86,23 +243,66 @@ const Layout = (props) => {
         <div className="floor-layout-container">
             <div className='grid-container'>
                 <div className="room-values">
-                    <div><label htmlFor="room-width">Room Width (ft) &#8596;</label><input id="room-width" value={room.width} onChange={updateRoomWidth} /></div>
-                    <div><label htmlFor="room-length">Room Length (ft)  &#8597;</label><input id="room-length" value={room.length} onChange={updateRoomLength} /></div>
+                    <div><label htmlFor="room-width">Room Width (ft) &#8596;</label><input id="room-width" value={room?.width || ""} onChange={updateRoomWidth} /></div>
+                    <div><label htmlFor="room-length">Room Length (ft)  &#8597;</label><input id="room-length" value={room?.length || ""} onChange={updateRoomLength} /></div>
                     <div><label htmlFor="grid-size">Grid size (ft)</label><input id="grid-size" value={gridSize} onChange={updateGridSize} /></div>
                     <div><button id="update-grid" onClick={updateGrid}>Update Room</button></div>
                 </div>
                 <canvas id="floorCanvas" />
             </div>
             <div className="floor-layout-operations">
-                <div className='add-units'>
-                    <button id="add-single-wall" onClick={addSingleWall}>Add Single Sided Wall</button>
-                    <button id="add-single-wall" onClick={addDoubleWall}>Add Double Sided Wall</button>
-                    <button id="add-single-wall" onClick={addBooth}>Add Booth</button>
-                </div>
-                <div className='grid-controls'>
-                    {selection?.unit ? selection.unit.buildForm(announcer) : (<></>)}
-                </div>
+                <div><LoadingButton id="new-room" loadingLabel="Creating..." method={newRoom}>New Room</LoadingButton></div>
+                <div><LoadingButton id="load-room" loadingLabel="Loading..." method={loadRoom}>Load Room</LoadingButton></div>
+                <div><LoadingButton id="save-room" loadingLabel="Saving..." method={saveRoom} disabled={room === null}>Save Room</LoadingButton></div>
+                <div><LoadingButton id="delete-room" loadingLabel="Deleting..." method={deleteRoom} disabled={room === null}>Delete Room</LoadingButton></div>
+                <div><LoadingButton id="add-single-wall" method={addSingleWall}>Add Wall</LoadingButton></div>
+                <div><LoadingButton id="add-booth" method={addUBooth}>Add "U" Booth</LoadingButton></div>
+                <div><LoadingButton id="add-booth" method={addHBooth}>Add "H" Booth</LoadingButton></div>
+                <div><LoadingButton id="add-door" method={addDoor}>Add Door</LoadingButton></div>
+                <div><LoadingButton id="add-block" method={addBlock}>Add Block</LoadingButton></div>
+                <div><LoadingButton id="print-room" loadingLabel="Converting..." method={printRoom}>Download Image</LoadingButton></div>
             </div>
+            <div className='grid-controls'>
+                {selection?.unit ? selection.unit.buildForm(announcer) : (<></>)}
+                {selection?.unit 
+                    ?   (<>
+                            <button id="remove-unit" onClick={() => removeHangingUnit(selection.unit)}>Remove</button>
+                            <button id="copy-unit" onClick={() => copyHangingUnit(selection.unit)}>Create Copy</button>
+                        </>)
+                    : (<></>)
+                }
+                {!selection?.unit
+                    ? <UnitList units={grid?.getHangingUnits()} highlightUnit={(unit) => hoverUnit(unit, grid)} selectUnit={selectUnit} />
+                    : <></>
+                }
+            </div>
+            <dialog id="saveResult">
+                <p>{saveResult}</p>
+                <form method='dialog'>
+                    <button>OK</button>
+                </form>
+            </dialog>
+            <dialog id="selectRoom">
+                <RoomSelector rooms={rooms} currentRoom={roomSelection} selectRoom={setRoomSelection} />
+                <div>
+                    <LoadingButton id="load-selected-room" loadingLabel="Loading..." method={selectRoom}>Ok</LoadingButton>
+                    <button onClick={() => document.getElementById("selectRoom").close()}>Cancel</button>
+                </div>
+            </dialog>
+            <dialog id="newRoomDialog">
+                <div>
+                    <label htmlFor="room.name">Room Name</label>
+                    <input type="text" value={room?.name || ""} onChange={(evt) => setRoom({...(room || {}), name: evt.target.value})} />
+                </div>
+                <div>
+                    <label htmlFor="room.description">Description</label>
+                    <input type="textarea" value={room?.description || ""} onChange={(evt) => setRoom({...(room || {}), description: evt.target.value})} />
+                </div>
+                <div>
+                    <LoadingButton id="create-new-room" loadingLabel="Creating..." method={saveNewRoom}>Ok</LoadingButton>
+                    <button onClick={() => document.getElementById("newRoomDialog").close()}>Cancel</button>
+                </div>
+            </dialog>
         </div>
     )
 };

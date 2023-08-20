@@ -1,0 +1,42 @@
+.grid-controls {
+    overflow-y: scroll;
+    max-height: 60vh;
+}
+
+.unit-list {
+    display: flex;
+    flex-direction: column;
+    width: 25em;
+    min-width: 20em;
+}
+
+.unit-list .unit {
+    border: 1px solid black;
+    margin-bottom: .4em;
+    border: 1px solid black;
+    border-radius: 10px;
+}
+
+.unit-list .unit, .unit-list .header {
+    padding: .2em;
+    display: grid;
+    grid-template-columns: auto 5em;
+}
+
+.unit-list .field-name:hover {
+    text-decoration: underline;
+}
+
+.unit-list .unit:hover {
+    border-color: blue;
+    background-color: hsla(246, 80%, 46%, 0.247); ;
+}
+
+.unit-list .field:last-child {
+    width: fit-content;    
+}
+
+
+.unit-list .field-name {
+    font-weight: bold;
+}

@@ -16,6 +16,9 @@ const Header = (props) => {
     { route: "", name: "Quilts", accessLevel: "user" },
     { route: "reports", name: "Reports", accessLevel: "admin" },
     { route: "floorLayout", name: "Floor Layout", accessLevel: "admin" },
+    { route: "hangingTool", name: "Quilt Hanger", accessLevel: "admin" },
+    { route: "judgeComments", name: "Judge's Comments", accessLevel: "admin" },
+    { route: "awards", name: "Awards", accessLevel: "admin" },
     { route: "configuration", name: "Configuration", accessLevel: "admin" },
   ];
 

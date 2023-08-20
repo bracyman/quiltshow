@@ -1,5 +1,7 @@
 
-import { Renderers, } from "../../components/quilts/QuiltFields";
+import { ReportRenderers, } from "../../components/quilts/QuiltFields";
+import StringUtils from "../../utilities/StringUtils";
+import { ReportSorters } from "../../components/quilts/QuiltFields";
 import TableFormatter from "./TableFormatter";
 import "./styles/GroupFormatter.css";
 
@@ -8,31 +10,55 @@ const GroupingFormatter = (props) => {
     const { report, results, preview, show } = props;
 
 
-    const getDistinctGroups = () => {
+    const groupResults = () => {
         let groups = {};
-        (results || []).forEach(r => {
-            console.log(`${r.id} - ${r[report.groupField]}`);
-            groups[render(report.groupField, r[report.groupField])] = 1;
-        });
 
-        return Object.keys(groups).sort();
+        if(report.groupField === "awards") {
+            (results || []).forEach(qsd => {
+                (qsd.quilt.awards || []).forEach(award => {
+                    let group = StringUtils.upperFirstOnly(award.category?.name || "Specialty");
+                    if(groups[group])
+                        groups[group].push(qsd);
+                    else {
+                        groups[group] = [qsd];
+                }
+                });
+            });
+
+            Object.keys(groups).forEach(group => {
+                groups[group].sort((a, b) => ReportSorters.awards(a, b, group));
+            });
+        } 
+        else {
+            (results || []).forEach(qsd => {
+                let group = groupName(report.groupField, qsd);
+                if(groups[group])
+                    groups[group].push(qsd);
+                else {
+                    groups[group] = [qsd];
+                }
+            });
+        }
+        return groups;
     };
 
 
-    const getGroupRows = (group, data) => {
-        return data.filter(d => render(report.groupField, d[report.groupField]) === group);
+    const sortByLastName = (a,b) => {
+        let aSplit =  a.trim().split(" ");
+        let bSplit =  b.trim().split(" ");
+        let aLast = aSplit[aSplit.length - 1];
+        let bLast = bSplit[bSplit.length - 1];
+
+        return aLast > bLast ? 1 : aLast < bLast ? -1 : 0;
     };
 
-
-    const render = (field, data) => {
-        let renderers = Renderers[field];
-        let renderer = Renderers.default;
+    const groupName = (field, data) => {
+        let renderers = ReportRenderers[field];
+        let renderer = renderers.default;
         if (renderers) {
             renderer = renderers.report || renderers.default;
         }
 
-        console.log(`Rendering ${field}`);
-        console.log(data);
         let renderedValue = renderer(data);
         return renderedValue;
     }
@@ -51,17 +77,34 @@ const GroupingFormatter = (props) => {
         );
     }
     else {
+        let groupedResults = groupResults(results);
+        let distinctGroups = (report.groupField === "enteredBy")
+            ?  Object.keys(groupedResults).sort(sortByLastName)
+            : Object.keys(groupedResults).sort();
+
+        let subReport = { ...report };
+        if(report.groupField === "awards") {
+            if(!report.fields.includes("awards")) {
+                subReport.fields = ["awards", ...report.fields];
+            }
+
+            if(!report.sortOrder.includes("awards")) {
+                subReport.sortOrder = ["awards", ...report.sortOrder];
+            }
+        }
+
         return (
-            <div className="report">
+            <div className="report group-formatter">
                 {
-                    getDistinctGroups().map(group => {
-                        let groupResults = getGroupRows(group, results);
-                        return (
+                    distinctGroups.map(group => {
+                        let groupResults = groupedResults[group];
+                        return (<>
                             <div className="group">
                                 <div className="group-title">{`${group} | ${groupResults.length} item(s)`}</div>
-                                <TableFormatter report={report} results={groupResults} preview={false} show={show} />
+                                <TableFormatter report={subReport} results={groupResults} preview={false} show={show} />
                             </div>
-                        );
+                            <div className="pagebreak"> </div>
+                        </>);
                     })
                 }
             </div>

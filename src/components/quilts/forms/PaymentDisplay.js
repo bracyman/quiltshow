@@ -54,7 +54,7 @@ const PaymentDisplay = (props) => {
 
     return (
         <>
-            <button type="button" onClick={displayPaymentInfo} class="btn btn-success btn btn-primary"><span>Payment Information</span></button>
+            <button type="button" onClick={displayPaymentInfo} className="btn btn-success btn btn-primary"><span>Payment Information</span></button>
 
             <Modal show={showPaymentInfo} onHide={hidePaymentInfo} className="payment-info">
                 <Modal.Header closeButton>
@@ -88,7 +88,7 @@ const PaymentDisplay = (props) => {
                                         : <b> {StringUtils.toString(data.totalDue, "currency")}</b>
                                 }
                                 <br />
-                                <button type="button" onClick={payOnline} class="btn btn-success btn btn-primary" disabled={!isSuccess || (data.totalDue <= 0.0)}><span>Pay Online</span></button>
+                                <button type="button" onClick={payOnline} className="btn btn-success btn btn-primary" disabled={!isSuccess || (data.totalDue <= 0.0)}><span>Pay Online</span></button>
                             </p>
                         </div>
                     }

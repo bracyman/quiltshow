@@ -1,13 +1,13 @@
-import { HangingUnit, } from "./HangingUnit";
+import { HangingUnit, WALL } from "./HangingUnit";
 
 const DEFAULT_LINE = {
     location: { left: 0, top: 0, angle: 0 },
     size: { length: 20 }
 };
 
-export class SingleSideWall extends HangingUnit {
-    constructor(id, name, location, size,) {
-        super(id, name, location || { ...DEFAULT_LINE.location }, size || { ...DEFAULT_LINE.size });
+export class Wall extends HangingUnit {
+    constructor(id, name, location, size, walls) {
+        super(id, name, location || DEFAULT_LINE.location, size || DEFAULT_LINE.size, WALL, walls, true);
     }
 
     getLines() {
@@ -25,9 +25,9 @@ export class SingleSideWall extends HangingUnit {
     }
 
     buildForm(announcer) {
-        return (<div className="hanging-unit-form SingleSideWall" aria-label="Single Side Wall">
+        return (<div className="hanging-unit-form Wall" aria-label="Wall">
             <div className="row" aria-label="Wall Name">
-                {super.inputCell("Name", (<input type="text" name="name" id="name" value={this.name} />))}
+                {super.inputCell("Name", (<input type="text" name="name" id="name" value={this.getName()} onChange={this.update(announcer)} />))}
             </div>
             <div className="row" aria-label="Wall Location">
                 {super.inputCell("Left Position", (<input type="text" name="location.left" id="location.left" value={this.getLocation().left} onChange={this.update(announcer)} />))}
@@ -40,4 +40,7 @@ export class SingleSideWall extends HangingUnit {
         </div>);
     }
 
+    copy() {
+        return new Wall(null, this.getName(), {...this.getLocation()}, {...this.getSize()}, []);
+    }
 }

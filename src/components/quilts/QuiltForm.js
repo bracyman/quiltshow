@@ -1,5 +1,6 @@
 import { Form, Row, Col, Button } from "react-bootstrap";
 import { useState } from "react";
+import AuthService from "../../services/AuthService";
 import IntakePage1 from "./forms/IntakePage1";
 import IntakePage2 from "./forms/IntakePage2";
 import IntakePage3 from "./forms/IntakePage3";
@@ -51,14 +52,16 @@ const QuiltForm = (props) => {
     props.cancelQuilt();
   };
 
+  let formProps = {...props, readOnly: !AuthService.userHasRole("admin")};
+
   return (
     <>
       {currentStep === 1 ? (
-        <IntakePage1 {...props}></IntakePage1>
+        <IntakePage1 {...formProps}></IntakePage1>
       ) : currentStep === 2 ? (
-        <IntakePage2 {...props}></IntakePage2>
+        <IntakePage2 {...formProps}></IntakePage2>
       ) : (
-        <IntakePage3 {...props}></IntakePage3>
+        <IntakePage3 {...formProps}></IntakePage3>
       )}
       <Form.Group className="mb-1">
         <Row>
@@ -83,7 +86,7 @@ const QuiltForm = (props) => {
               </Button>
             )}
             {(props.validQuilt(props.quilt, props.show) && visitedAllSteps()) ? (
-              <Button variant="primary" onClick={submitQuilt}>
+              <Button variant="primary" onClick={submitQuilt} disabled={!AuthService.userHasRole("admin")}>
                 Save
               </Button>
             ) : (
